@@ -2,50 +2,85 @@
 <html>
 <head>
     <title>Dashboard</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-<h1>School SaaS Dashboard</h1>
+<body class="bg-light">
 
-<a href="/logout">Logout</a>
+<div class="container mt-4">
 
-<hr>
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>🎓 School Dashboard</h2>
+        <a class="btn btn-danger" href="/logout">Logout</a>
+    </div>
 
-<h2>Add Student</h2>
+    <hr>
 
-<form action="/add" method="POST">
+    <!-- ADD STUDENT CARD -->
+    <div class="card p-3 mb-4">
+        <h5>Add Student</h5>
 
-    <input type="text" name="name" placeholder="Name" required>
-    <br><br>
+        <form action="/add" method="POST" class="row g-2">
 
-    <input type="text" name="age" placeholder="Age" required>
-    <br><br>
+            <div class="col-md-4">
+                <input class="form-control" type="text" name="name" placeholder="Name" required>
+            </div>
 
-    <input type="text" name="grade" placeholder="Grade" required>
-    <br><br>
+            <div class="col-md-3">
+                <input class="form-control" type="text" name="age" placeholder="Age" required>
+            </div>
 
-    <button type="submit">Add</button>
+            <div class="col-md-3">
+                <input class="form-control" type="text" name="grade" placeholder="Grade" required>
+            </div>
 
-</form>
+            <div class="col-md-2">
+                <button class="btn btn-success w-100">Add</button>
+            </div>
 
-<hr>
+        </form>
+    </div>
 
-<h2>Students List</h2>
+    <!-- STUDENTS TABLE -->
+    <div class="card p-3">
 
-{% for student in students %}
+        <h5>Students List</h5>
 
-<p>
-    ID: {{ student[0] }} |
-    Name: {{ student[1] }} |
-    Age: {{ student[2] }} |
-    Grade: {{ student[3] }}
+        <table class="table table-striped">
 
-    <a href="/edit/{{ student[0] }}">Edit</a>
-    |
-    <a href="/delete/{{ student[0] }}">Delete</a>
-</p>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Grade</th>
+                <th>Actions</th>
+            </tr>
 
-{% endfor %}
+            {% for student in students %}
+
+            <tr>
+                <td>{{ student[0] }}</td>
+                <td>{{ student[1] }}</td>
+                <td>{{ student[2] }}</td>
+                <td>{{ student[3] }}</td>
+                <td>
+
+                    <a class="btn btn-sm btn-primary" href="/edit/{{ student[0] }}">Edit</a>
+
+                    <a class="btn btn-sm btn-danger" href="/delete/{{ student[0] }}">Delete</a>
+
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</div>
 
 </body>
 </html>
