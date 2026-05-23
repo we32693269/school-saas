@@ -22,7 +22,7 @@ def init_db():
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
+            username TEXT UNIQUE,
             password TEXT
         )
     """)
@@ -38,11 +38,19 @@ def init_db():
         )
     """)
 
-    # ADMIN USER
-    c.execute("""
-        INSERT OR IGNORE INTO users (id, username, password)
-        VALUES (1, 'admin', ?)
-    """, (generate_password_hash("1234"),))
+    # DEFAULT ADMIN
+    c.execute("SELECT * FROM users WHERE username='admin'")
+
+    admin = c.fetchone()
+
+    if not admin:
+
+        hashed_password = generate_password_hash("1234")
+
+        c.execute("""
+            INSERT INTO users (username, password)
+            VALUES (?, ?)
+        """, ("admin", hashed_password))
 
     conn.commit()
     conn.close()
@@ -79,6 +87,47 @@ def login():
             return redirect("/dashboard")
 
     return render_template("login.html")
+
+
+# ---------------- REGISTER ----------------
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "POST":
+
+        username = request.form["username"]
+        password = request.form["password"]
+
+        hashed_password = generate_password_hash(password)
+
+        conn = sqlite3.connect("school.db")
+        c = conn.cursor()
+
+        # CHECK DUPLICATE USERNAME
+        c.execute(
+            "SELECT * FROM users WHERE username=?",
+            (username,)
+        )
+
+        existing_user = c.fetchone()
+
+        if existing_user:
+
+            conn.close()
+
+            return "Username already exists"
+
+        c.execute(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            (username, hashed_password)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/")
+
+    return render_template("register.html")
 
 
 # ---------------- DASHBOARD ----------------
