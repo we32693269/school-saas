@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 import os
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -233,6 +236,53 @@ def search():
         total_students=total_students,
         grade_data=grade_data
     )
+
+
+# ---------------- EXPORT PDF ----------------
+@app.route("/export/pdf")
+def export_pdf():
+
+    if "user" not in session:
+        return redirect("/")
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students")
+    students = c.fetchall()
+
+    conn.close()
+
+    pdf_file = "students_report.pdf"
+
+    doc = SimpleDocTemplate(pdf_file)
+
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    title = Paragraph("Student Report", styles['Title'])
+
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+
+    for student in students:
+
+        text = f"""
+        ID: {student[0]} <br/>
+        Name: {student[1]} <br/>
+        Age: {student[2]} <br/>
+        Grade: {student[3]} <br/><br/>
+        """
+
+        p = Paragraph(text, styles['BodyText'])
+
+        elements.append(p)
+        elements.append(Spacer(1, 12))
+
+    doc.build(elements)
+
+    return send_file(pdf_file, as_attachment=True)
 
 
 # ---------------- LOGOUT ----------------
