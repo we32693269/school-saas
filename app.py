@@ -130,7 +130,14 @@ def delete(id):
     conn.close()
 
     return redirect("/dashboard")
+#-------------- LOGOUT ----------------
 
+@app.route("/logout")
+def logout():
+
+    session.pop("user", None)
+
+    return redirect("/")
 # ---------------- EDIT ----------------
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
@@ -142,6 +149,7 @@ def edit(id):
     c = conn.cursor()
 
     if request.method == "GET":
+
         c.execute("SELECT * FROM students WHERE id=?", (id,))
         student = c.fetchone()
 
@@ -153,26 +161,15 @@ def edit(id):
     age = request.form["age"]
     grade = request.form["grade"]
 
-    c.execute("""
-        UPDATE students
-        SET name=?, age=?, grade=?
-        WHERE id=?
-    """, (name, age, grade, id))
+    c.execute(
+        "UPDATE students SET name=?, age=?, grade=? WHERE id=?",
+        (name, age, grade, id)
+    )
 
     conn.commit()
     conn.close()
 
     return redirect("/dashboard")
-
-# ---------------- LOGOUT ----------------
-
-@app.route("/logout")
-def logout():
-
-    session.pop("user", None)
-
-    return redirect("/")
-
 # ---------------- RUN ----------------
 
 if __name__ == "__main__":
