@@ -132,7 +132,6 @@ def delete(id):
     return redirect("/dashboard")
 
 # ---------------- EDIT ----------------
-
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
 
@@ -142,29 +141,28 @@ def edit(id):
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    if request.method == "POST":
+    if request.method == "GET":
+        c.execute("SELECT * FROM students WHERE id=?", (id,))
+        student = c.fetchone()
 
-        name = request.form["name"]
-        age = request.form["age"]
-        grade = request.form["grade"]
+        conn.close()
 
-        c.execute("""
+        return render_template("edit.html", student=student)
+
+    name = request.form["name"]
+    age = request.form["age"]
+    grade = request.form["grade"]
+
+    c.execute("""
         UPDATE students
         SET name=?, age=?, grade=?
         WHERE id=?
-        """, (name, age, grade, id))
+    """, (name, age, grade, id))
 
-        conn.commit()
-        conn.close()
-
-        return redirect("/dashboard")
-
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
-    student = c.fetchone()
-
+    conn.commit()
     conn.close()
 
-    return render_template("edit.html", student=student)
+    return redirect("/dashboard")
 
 # ---------------- LOGOUT ----------------
 
