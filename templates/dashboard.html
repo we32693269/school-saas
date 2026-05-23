@@ -2,93 +2,57 @@
 <html>
 <head>
     <title>Dashboard</title>
-
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container mt-4">
+<h2>School Dashboard</h2>
 
-    <div class="d-flex justify-content-between align-items-center">
-        <h2>🎓 School Dashboard</h2>
-        <a class="btn btn-danger" href="/logout">Logout</a>
-    </div>
+<a href="/logout">Logout</a>
 
-    <hr>
-<form action="/search" method="GET" class="mb-3">
+<hr>
 
-    <input type="text" name="q" placeholder="Search student name..." class="form-control" required>
+<!-- SEARCH -->
+<form action="/search" method="GET">
 
-    <br>
+    <input type="text" name="q" placeholder="Search student name...">
 
-    <button class="btn btn-primary">Search</button>
+    <button type="submit">Search</button>
+
+    <a href="/dashboard">Reset</a>
 
 </form>
-    <!-- ADD STUDENT CARD -->
-    <div class="card p-3 mb-4">
-        <h5>Add Student</h5>
 
-        <form action="/add" method="POST" class="row g-2">
+<hr>
 
-            <div class="col-md-4">
-                <input class="form-control" type="text" name="name" placeholder="Name" required>
-            </div>
+<!-- ADD STUDENT -->
+<h3>Add Student</h3>
 
-            <div class="col-md-3">
-                <input class="form-control" type="text" name="age" placeholder="Age" required>
-            </div>
+<form action="/add" method="POST">
 
-            <div class="col-md-3">
-                <input class="form-control" type="text" name="grade" placeholder="Grade" required>
-            </div>
+    <input type="text" name="name" placeholder="Name">
+    <input type="text" name="age" placeholder="Age">
+    <input type="text" name="grade" placeholder="Grade">
 
-            <div class="col-md-2">
-                <button class="btn btn-success w-100">Add</button>
-            </div>
+    <button type="submit">Add</button>
 
-        </form>
-    </div>
+</form>
 
-    <!-- STUDENTS TABLE -->
-    <div class="card p-3">
+<hr>
 
-        <h5>Students List</h5>
+<!-- STUDENTS LIST -->
+<h3>Students</h3>
 
-        <table class="table table-striped">
+{% for student in students %}
 
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Actions</th>
-            </tr>
+<p>
+    {{ student[1] }} | {{ student[2] }} | {{ student[3] }}
 
-            {% for student in students %}
+    <a href="/edit/{{ student[0] }}">Edit</a>
+    <a href="/delete/{{ student[0] }}">Delete</a>
+</p>
 
-            <tr>
-                <td>{{ student[0] }}</td>
-                <td>{{ student[1] }}</td>
-                <td>{{ student[2] }}</td>
-                <td>{{ student[3] }}</td>
-                <td>
-
-                    <a class="btn btn-sm btn-primary" href="/edit/{{ student[0] }}">Edit</a>
-
-                    <a class="btn btn-sm btn-danger" href="/delete/{{ student[0] }}">Delete</a>
-
-                </td>
-            </tr>
-
-            {% endfor %}
-
-        </table>
-
-    </div>
-
-</div>
+{% endfor %}
 
 </body>
 </html>
