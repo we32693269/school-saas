@@ -87,7 +87,8 @@ def dashboard():
     students = c.fetchall()
 
     conn.close()
-
+c.execute("SELECT COUNT(*) FROM students")
+total_students = c.fetchone()[0]
     return render_template("dashboard.html", students=students)
 
 
