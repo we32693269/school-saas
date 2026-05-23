@@ -14,11 +14,15 @@
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary">🎓 School Dashboard</h2>
+
+        <h2 class="text-primary">
+            🎓 School Dashboard
+        </h2>
 
         <a href="/logout" class="btn btn-danger">
             Logout
         </a>
+
     </div>
 
     <!-- STATS -->
@@ -38,12 +42,14 @@
         <form action="/search" method="GET" class="row g-2">
 
             <div class="col-md-9">
+
                 <input
                     type="text"
                     name="q"
                     class="form-control"
                     placeholder="Search student name..."
                 >
+
             </div>
 
             <div class="col-md-3 d-flex gap-2">
@@ -67,9 +73,15 @@
 
         <h5>Add Student</h5>
 
-        <form action="/add" method="POST" class="row g-2">
+        <form
+            action="/add"
+            method="POST"
+            enctype="multipart/form-data"
+            class="row g-2"
+        >
 
-            <div class="col-md-4">
+            <div class="col-md-3">
+
                 <input
                     type="text"
                     name="name"
@@ -77,9 +89,11 @@
                     placeholder="Name"
                     required
                 >
+
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
+
                 <input
                     type="text"
                     name="age"
@@ -87,9 +101,11 @@
                     placeholder="Age"
                     required
                 >
+
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
+
                 <input
                     type="text"
                     name="grade"
@@ -97,12 +113,26 @@
                     placeholder="Grade"
                     required
                 >
+
+            </div>
+
+            <div class="col-md-3">
+
+                <input
+                    type="file"
+                    name="image"
+                    class="form-control"
+                    required
+                >
+
             </div>
 
             <div class="col-md-2">
+
                 <button class="btn btn-success w-100">
                     Add
                 </button>
+
             </div>
 
         </form>
@@ -127,6 +157,7 @@
 
             <tr>
                 <th>ID</th>
+                <th>Image</th>
                 <th>Name</th>
                 <th>Age</th>
                 <th>Grade</th>
@@ -138,6 +169,18 @@
             <tr>
 
                 <td>{{ student[0] }}</td>
+
+                <td>
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/' + student[4]) }}"
+                        width="60"
+                        height="60"
+                        style="border-radius:50%; object-fit:cover;"
+                    >
+
+                </td>
+
                 <td>{{ student[1] }}</td>
                 <td>{{ student[2] }}</td>
                 <td>{{ student[3] }}</td>
@@ -170,7 +213,7 @@
 
 </div>
 
-<!-- CHART SCRIPT -->
+<!-- CHART -->
 <script>
 
 const ctx = document.getElementById('gradeChart');
