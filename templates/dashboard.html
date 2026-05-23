@@ -13,66 +13,114 @@
 <div class="container py-4">
 
     <!-- HEADER -->
-    <div class="d-flex justify-content-between">
-        <h2>🎓 School Dashboard</h2>
-        <a href="/logout" class="btn btn-danger">Logout</a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">🎓 School Dashboard</h2>
+
+        <a href="/logout" class="btn btn-danger">
+            Logout
+        </a>
     </div>
 
     <!-- STATS -->
-    <div class="card p-3 my-3 text-center">
+    <div class="card p-3 mb-3 shadow-sm text-center">
+
         <h5>Total Students</h5>
-        <h2 class="text-primary">{{ total_students }}</h2>
+
+        <h2 class="text-primary">
+            {{ total_students }}
+        </h2>
+
     </div>
 
     <!-- SEARCH -->
-    <div class="card p-3 mb-3">
+    <div class="card p-3 mb-3 shadow-sm">
+
         <form action="/search" method="GET" class="row g-2">
 
             <div class="col-md-9">
-                <input type="text" name="q" class="form-control" placeholder="Search student">
+                <input
+                    type="text"
+                    name="q"
+                    class="form-control"
+                    placeholder="Search student name..."
+                >
             </div>
 
             <div class="col-md-3 d-flex gap-2">
-                <button class="btn btn-primary w-100">Search</button>
-                <a href="/dashboard" class="btn btn-secondary w-100">Reset</a>
+
+                <button class="btn btn-primary w-100">
+                    Search
+                </button>
+
+                <a href="/dashboard" class="btn btn-secondary w-100">
+                    Reset
+                </a>
+
             </div>
 
         </form>
+
     </div>
 
-    <!-- ADD -->
-    <div class="card p-3 mb-3">
+    <!-- ADD STUDENT -->
+    <div class="card p-3 mb-3 shadow-sm">
+
+        <h5>Add Student</h5>
+
         <form action="/add" method="POST" class="row g-2">
 
             <div class="col-md-4">
-                <input class="form-control" name="name" placeholder="Name">
+                <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    placeholder="Name"
+                >
             </div>
 
             <div class="col-md-3">
-                <input class="form-control" name="age" placeholder="Age">
+                <input
+                    type="text"
+                    name="age"
+                    class="form-control"
+                    placeholder="Age"
+                >
             </div>
 
             <div class="col-md-3">
-                <input class="form-control" name="grade" placeholder="Grade">
+                <input
+                    type="text"
+                    name="grade"
+                    class="form-control"
+                    placeholder="Grade"
+                >
             </div>
 
             <div class="col-md-2">
-                <button class="btn btn-success w-100">Add</button>
+                <button class="btn btn-success w-100">
+                    Add
+                </button>
             </div>
 
         </form>
+
     </div>
 
     <!-- CHART -->
-    <div class="card p-3 mb-3">
-        <h5>Students by Grade</h5>
+    <div class="card p-3 mb-3 shadow-sm">
+
+        <h5>Students By Grade</h5>
+
         <canvas id="gradeChart"></canvas>
+
     </div>
 
     <!-- TABLE -->
-    <div class="card p-3">
+    <div class="card p-3 shadow-sm">
 
-        <table class="table table-striped">
+        <h5>Students List</h5>
+
+        <table class="table table-striped table-hover">
 
             <tr>
                 <th>ID</th>
@@ -85,13 +133,30 @@
             {% for student in students %}
 
             <tr>
+
                 <td>{{ student[0] }}</td>
                 <td>{{ student[1] }}</td>
                 <td>{{ student[2] }}</td>
                 <td>{{ student[3] }}</td>
+
                 <td>
-                    <a href="/delete/{{ student[0] }}" class="btn btn-danger btn-sm">Delete</a>
+
+                    <a
+                        href="/edit/{{ student[0] }}"
+                        class="btn btn-primary btn-sm"
+                    >
+                        Edit
+                    </a>
+
+                    <a
+                        href="/delete/{{ student[0] }}"
+                        class="btn btn-danger btn-sm"
+                    >
+                        Delete
+                    </a>
+
                 </td>
+
             </tr>
 
             {% endfor %}
@@ -104,27 +169,41 @@
 
 <!-- CHART SCRIPT -->
 <script>
-    const ctx = document.getElementById('gradeChart');
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [
+const ctx = document.getElementById('gradeChart');
+
+new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: [
+
+            {% for g in grade_data %}
+                "{{ g[0] }}",
+            {% endfor %}
+
+        ],
+
+        datasets: [{
+
+            label: 'Students',
+
+            data: [
+
                 {% for g in grade_data %}
-                    "{{ g[0] }}",
+                    {{ g[1] }},
                 {% endfor %}
+
             ],
-            datasets: [{
-                label: 'Students',
-                data: [
-                    {% for g in grade_data %}
-                        {{ g[1] }},
-                    {% endfor %}
-                ],
-                backgroundColor: 'blue'
-            }]
-        }
-    });
+
+            backgroundColor: 'blue'
+
+        }]
+    }
+});
+
 </script>
 
 </body>
