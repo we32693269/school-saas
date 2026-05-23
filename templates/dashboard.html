@@ -5,13 +5,44 @@
 </head>
 <body>
 
-<h1>School SaaS Dashboard</h1>
+    <h1>School Dashboard</h1>
 
-<p>Welcome 😎</p>
+    <a href="/logout">Logout</a>
 
-<a href="/edit/{{ student[0] }}">Edit</a>
-<br><br>
-<a href="/logout">Logout</a>
+    <hr>
+
+    <h2>Add Student</h2>
+
+    <form action="/add" method="POST">
+
+        <input type="text" name="name" placeholder="Name" required><br><br>
+
+        <input type="text" name="age" placeholder="Age" required><br><br>
+
+        <input type="text" name="grade" placeholder="Grade" required><br><br>
+
+        <button type="submit">Add Student</button>
+
+    </form>
+
+    <hr>
+
+    <h2>Students List</h2>
+
+    {% for student in students %}
+
+        <p>
+            ID: {{ student[0] }} |
+            Name: {{ student[1] }} |
+            Age: {{ student[2] }} |
+            Grade: {{ student[3] }}
+
+            <a href="/edit/{{ student[0] }}">Edit</a>
+
+            <a href="/delete/{{ student[0] }}">Delete</a>
+        </p>
+
+    {% endfor %}
 
 </body>
 </html>
