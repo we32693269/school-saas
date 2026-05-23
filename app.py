@@ -7,6 +7,7 @@ app.secret_key = "secret123"
 
 # ---------------- DATABASE ----------------
 def init_db():
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
@@ -51,7 +52,11 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
+
         user = c.fetchone()
 
         conn.close()
@@ -73,12 +78,15 @@ def dashboard():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # STUDENTS
     c.execute("SELECT * FROM students")
     students = c.fetchall()
 
+    # TOTAL STUDENTS
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
+    # CHART DATA
     c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
     grade_data = c.fetchall()
 
@@ -103,7 +111,10 @@ def add():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("INSERT INTO students (name, age, grade) VALUES (?, ?, ?)", (name, age, grade))
+    c.execute(
+        "INSERT INTO students (name, age, grade) VALUES (?, ?, ?)",
+        (name, age, grade)
+    )
 
     conn.commit()
     conn.close()
@@ -126,6 +137,44 @@ def delete(id):
     return redirect("/dashboard")
 
 
+# ---------------- EDIT ----------------
+@app.route("/edit/<int:id>")
+def edit(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template("edit.html", student=student)
+
+
+# ---------------- UPDATE ----------------
+@app.route("/update/<int:id>", methods=["POST"])
+def update(id):
+
+    name = request.form["name"]
+    age = request.form["age"]
+    grade = request.form["grade"]
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+        UPDATE students
+        SET name=?, age=?, grade=?
+        WHERE id=?
+    """, (name, age, grade, id))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/dashboard")
+
+
 # ---------------- SEARCH ----------------
 @app.route("/search")
 def search():
@@ -138,7 +187,11 @@ def search():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students WHERE name LIKE ?", ('%' + query + '%',))
+    c.execute(
+        "SELECT * FROM students WHERE name LIKE ?",
+        ('%' + query + '%',)
+    )
+
     students = c.fetchall()
 
     c.execute("SELECT COUNT(*) FROM students")
@@ -160,7 +213,9 @@ def search():
 # ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
+
     session.clear()
+
     return redirect("/")
 
 
