@@ -1,58 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
+    <title>School Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="bg-light">
 
-<h2>School Dashboard</h2>
+<div class="container py-4">
 
-<a href="/logout">Logout</a>
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">🎓 School Dashboard</h2>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
 
-<hr>
+    <!-- SEARCH -->
+    <div class="card p-3 mb-3 shadow-sm">
 
-<!-- SEARCH -->
-<form action="/search" method="GET">
+        <form action="/search" method="GET" class="row g-2">
 
-    <input type="text" name="q" placeholder="Search student name...">
+            <div class="col-md-9">
+                <input type="text" name="q" class="form-control" placeholder="Search student name...">
+            </div>
 
-    <button type="submit">Search</button>
+            <div class="col-md-3 d-flex gap-2">
+                <button class="btn btn-primary w-100">Search</button>
+                <a href="/dashboard" class="btn btn-secondary w-100">Reset</a>
+            </div>
 
-    <a href="/dashboard">Reset</a>
+        </form>
 
-</form>
+    </div>
 
-<hr>
+    <!-- ADD STUDENT -->
+    <div class="card p-3 mb-4 shadow-sm">
 
-<!-- ADD STUDENT -->
-<h3>Add Student</h3>
+        <h5>Add Student</h5>
 
-<form action="/add" method="POST">
+        <form action="/add" method="POST" class="row g-2">
 
-    <input type="text" name="name" placeholder="Name">
-    <input type="text" name="age" placeholder="Age">
-    <input type="text" name="grade" placeholder="Grade">
+            <div class="col-md-4">
+                <input type="text" name="name" class="form-control" placeholder="Name">
+            </div>
 
-    <button type="submit">Add</button>
+            <div class="col-md-3">
+                <input type="text" name="age" class="form-control" placeholder="Age">
+            </div>
 
-</form>
+            <div class="col-md-3">
+                <input type="text" name="grade" class="form-control" placeholder="Grade">
+            </div>
 
-<hr>
+            <div class="col-md-2">
+                <button class="btn btn-success w-100">Add</button>
+            </div>
 
-<!-- STUDENTS LIST -->
-<h3>Students</h3>
+        </form>
 
-{% for student in students %}
+    </div>
 
-<p>
-    {{ student[1] }} | {{ student[2] }} | {{ student[3] }}
+    <!-- STUDENTS LIST -->
+    <div class="card p-3 shadow-sm">
 
-    <a href="/edit/{{ student[0] }}">Edit</a>
-    <a href="/delete/{{ student[0] }}">Delete</a>
-</p>
+        <h5>Students List</h5>
 
-{% endfor %}
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Grade</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for student in students %}
+
+                <tr>
+                    <td>{{ student[0] }}</td>
+                    <td>{{ student[1] }}</td>
+                    <td>{{ student[2] }}</td>
+                    <td>{{ student[3] }}</td>
+                    <td>
+                        <a href="/edit/{{ student[0] }}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="/delete/{{ student[0] }}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
 </body>
 </html>
