@@ -6,7 +6,8 @@ app.secret_key = "secret123"
 
 # ---------------- DATABASE ----------------
 
-conn = sqlite3.connect("school.db", check_same_thread=False)
+conn = sqlite3.connect("school.db", 
+check_same_thread=False)
 c = conn.cursor()
 
 c.execute("""
