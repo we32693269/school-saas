@@ -1,73 +1,78 @@
 from flask import Flask, render_template, request, redirect, session
-app = Flask(__name__)
-app.secret_key = "secret123"
 import sqlite3
 
-def init_users():
+app = Flask(__name__)
+app.secret_key = "secret123"
+
+
+# ---------------- DATABASE ----------------
+
+def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # users table
     c.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        password TEXT
-    )
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            password TEXT
+        )
     """)
 
-    c.execute("INSERT OR IGNORE INTO users (id, username, password) VALUES (1,'admin','1234')")
+    # students table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS students (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            age TEXT,
+            grade TEXT
+        )
+    """)
+
+    # default admin user
+    c.execute("""
+        INSERT OR IGNORE INTO users (id, username, password)
+        VALUES (1, 'admin', '1234')
+    """)
 
     conn.commit()
     conn.close()
 
-init_users()
-# ---------------- DATABASE ----------------
 
-conn = sqlite3.connect("school.db", 
-check_same_thread=False)
-c = conn.cursor()
+init_db()
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS students(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    age TEXT,
-    grade TEXT
-)
-""")
-
-conn.commit()
-conn.close()
 
 # ---------------- LOGIN ----------------
 
-   @app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
+
         username = request.form["username"]
         password = request.form["password"]
 
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute("SELECT * FROM users WHERE username=? AND password=?",
-                  (username, password))
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
 
         user = c.fetchone()
+
         conn.close()
 
         if user:
-            return redirect("/dashboard")
-        else:
-            return "Invalid login ❌"
-
-    return render_template("login.html")     if username == "admin" and password == "1234":
-
             session["user"] = username
-
             return redirect("/dashboard")
+
+        return "Invalid Login ❌"
 
     return render_template("login.html")
+
 
 # ---------------- DASHBOARD ----------------
 
@@ -81,12 +86,12 @@ def dashboard():
     c = conn.cursor()
 
     c.execute("SELECT * FROM students")
-
     students = c.fetchall()
 
     conn.close()
 
     return render_template("dashboard.html", students=students)
+
 
 # ---------------- ADD STUDENT ----------------
 
@@ -104,7 +109,7 @@ def add():
     c = conn.cursor()
 
     c.execute(
-        "INSERT INTO students(name, age, grade) VALUES(?,?,?)",
+        "INSERT INTO students(name, age, grade) VALUES (?, ?, ?)",
         (name, age, grade)
     )
 
@@ -112,6 +117,7 @@ def add():
     conn.close()
 
     return redirect("/dashboard")
+
 
 # ---------------- DELETE ----------------
 
@@ -130,15 +136,10 @@ def delete(id):
     conn.close()
 
     return redirect("/dashboard")
-#-------------- LOGOUT ----------------
 
-@app.route("/logout")
-def logout():
 
-    session.pop("user", None)
-
-    return redirect("/")
 # ---------------- EDIT ----------------
+
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
 
@@ -170,6 +171,18 @@ def edit(id):
     conn.close()
 
     return redirect("/dashboard")
+
+
+# ---------------- LOGOUT ----------------
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
+
+
 # ---------------- RUN ----------------
 
 if __name__ == "__main__":
