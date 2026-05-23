@@ -1,9 +1,26 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
-
 app = Flask(__name__)
 app.secret_key = "secret123"
+import sqlite3
 
+def init_users():
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        password TEXT
+    )
+    """)
+
+    c.execute("INSERT OR IGNORE INTO users VALUES (1,'admin','1234')")
+
+    conn.commit()
+    conn.close()
+
+init_users()
 # ---------------- DATABASE ----------------
 
 conn = sqlite3.connect("school.db", 
