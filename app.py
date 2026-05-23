@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+import os
+
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -27,7 +30,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             age TEXT,
-            grade TEXT
+            grade TEXT,
+            image TEXT
         )
     """)
 
@@ -65,7 +69,6 @@ def login():
 
         conn.close()
 
-        # SECURE PASSWORD CHECK
         if user and check_password_hash(user[2], password):
 
             session["user"] = username
@@ -85,15 +88,12 @@ def dashboard():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # STUDENTS
     c.execute("SELECT * FROM students")
     students = c.fetchall()
 
-    # TOTAL STUDENTS
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    # CHART DATA
     c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
     grade_data = c.fetchall()
 
@@ -118,13 +118,19 @@ def add():
     age = request.form["age"]
     grade = request.form["grade"]
 
+    image = request.files["image"]
+
+    filename = secure_filename(image.filename)
+
+    image.save(os.path.join("static/uploads", filename))
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "INSERT INTO students (name, age, grade) VALUES (?, ?, ?)",
-        (name, age, grade)
-    )
+    c.execute("""
+        INSERT INTO students (name, age, grade, image)
+        VALUES (?, ?, ?, ?)
+    """, (name, age, grade, filename))
 
     conn.commit()
     conn.close()
