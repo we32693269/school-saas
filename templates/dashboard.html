@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="bg-light">
+<body id="body" class="bg-light">
 
 <div class="container py-4">
 
@@ -19,9 +19,17 @@
             🎓 School Dashboard
         </h2>
 
-        <a href="/logout" class="btn btn-danger">
-            Logout
-        </a>
+        <div class="d-flex gap-2">
+
+            <button onclick="toggleDarkMode()" class="btn btn-dark">
+                🌙 Dark
+            </button>
+
+            <a href="/logout" class="btn btn-danger">
+                Logout
+            </a>
+
+        </div>
 
     </div>
 
@@ -68,7 +76,7 @@
 
     </div>
 
-    <!-- ADD STUDENT -->
+    <!-- ADD -->
     <div class="card p-3 mb-3 shadow-sm">
 
         <h5>Add Student</h5>
@@ -81,58 +89,25 @@
         >
 
             <div class="col-md-3">
-
-                <input
-                    type="text"
-                    name="name"
-                    class="form-control"
-                    placeholder="Name"
-                    required
-                >
-
+                <input type="text" name="name" class="form-control" placeholder="Name" required>
             </div>
 
             <div class="col-md-2">
-
-                <input
-                    type="text"
-                    name="age"
-                    class="form-control"
-                    placeholder="Age"
-                    required
-                >
-
+                <input type="text" name="age" class="form-control" placeholder="Age" required>
             </div>
 
             <div class="col-md-2">
-
-                <input
-                    type="text"
-                    name="grade"
-                    class="form-control"
-                    placeholder="Grade"
-                    required
-                >
-
+                <input type="text" name="grade" class="form-control" placeholder="Grade" required>
             </div>
 
             <div class="col-md-3">
-
-                <input
-                    type="file"
-                    name="image"
-                    class="form-control"
-                    required
-                >
-
+                <input type="file" name="image" class="form-control" required>
             </div>
 
             <div class="col-md-2">
-
                 <button class="btn btn-success w-100">
                     Add
                 </button>
-
             </div>
 
         </form>
@@ -171,14 +146,12 @@
                 <td>{{ student[0] }}</td>
 
                 <td>
-
                     <img
                         src="{{ url_for('static', filename='uploads/' + student[4]) }}"
                         width="60"
                         height="60"
                         style="border-radius:50%; object-fit:cover;"
                     >
-
                 </td>
 
                 <td>{{ student[1] }}</td>
@@ -249,6 +222,24 @@ new Chart(ctx, {
         }]
     }
 });
+
+
+// DARK MODE
+function toggleDarkMode() {
+
+    document.body.classList.toggle("bg-dark");
+    document.body.classList.toggle("text-white");
+
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+
+        card.classList.toggle("bg-secondary");
+        card.classList.toggle("text-white");
+
+    });
+
+}
 
 </script>
 
