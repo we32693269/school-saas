@@ -11,14 +11,17 @@ from reportlab.lib.styles import getSampleStyleSheet
 app = Flask(__name__)
 app.secret_key = "secret123"
 
+UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ---------------- DATABASE ----------------
+
+# ---------------- INIT DB ----------------
 def init_db():
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # USERS TABLE
+    # USERS
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +30,7 @@ def init_db():
         )
     """)
 
-    # STUDENTS TABLE
+    # STUDENTS
     c.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,17 +43,11 @@ def init_db():
 
     # DEFAULT ADMIN
     c.execute("SELECT * FROM users WHERE username='admin'")
-
-    admin = c.fetchone()
-
-    if not admin:
-
-        hashed_password = generate_password_hash("1234")
-
-        c.execute("""
-            INSERT INTO users (username, password)
-            VALUES (?, ?)
-        """, ("admin", hashed_password))
+    if not c.fetchone():
+        c.execute(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            ("admin", generate_password_hash("1234"))
+        )
 
     conn.commit()
     conn.close()
@@ -71,20 +68,16 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute(
-            "SELECT * FROM users WHERE username=?",
-            (username,)
-        )
-
+        c.execute("SELECT * FROM users WHERE username=?", (username,))
         user = c.fetchone()
 
         conn.close()
 
         if user and check_password_hash(user[2], password):
-
             session["user"] = username
-
             return redirect("/dashboard")
+
+        return "Invalid login"
 
     return render_template("login.html")
 
@@ -98,28 +91,17 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
 
-        hashed_password = generate_password_hash(password)
-
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        # CHECK DUPLICATE USERNAME
-        c.execute(
-            "SELECT * FROM users WHERE username=?",
-            (username,)
-        )
-
-        existing_user = c.fetchone()
-
-        if existing_user:
-
+        c.execute("SELECT * FROM users WHERE username=?", (username,))
+        if c.fetchone():
             conn.close()
-
-            return "Username already exists"
+            return "User already exists"
 
         c.execute(
             "INSERT INTO users (username, password) VALUES (?, ?)",
-            (username, hashed_password)
+            (username, generate_password_hash(password))
         )
 
         conn.commit()
@@ -159,7 +141,7 @@ def dashboard():
     )
 
 
-# ---------------- ADD ----------------
+# ---------------- ADD STUDENT ----------------
 @app.route("/add", methods=["POST"])
 def add():
 
@@ -170,11 +152,13 @@ def add():
     age = request.form["age"]
     grade = request.form["grade"]
 
-    image = request.files["image"]
+    image = request.files.get("image")
 
-    filename = secure_filename(image.filename)
+    filename = "default.png"
 
-    image.save(os.path.join("static/uploads", filename))
+    if image and image.filename != "":
+        filename = secure_filename(image.filename)
+        image.save(os.path.join(UPLOAD_FOLDER, filename))
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
@@ -259,16 +243,12 @@ def search():
     if "user" not in session:
         return redirect("/")
 
-    query = request.args.get("q")
+    q = request.args.get("q")
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "SELECT * FROM students WHERE name LIKE ?",
-        ('%' + query + '%',)
-    )
-
+    c.execute("SELECT * FROM students WHERE name LIKE ?", ('%' + q + '%',))
     students = c.fetchall()
 
     c.execute("SELECT COUNT(*) FROM students")
@@ -287,7 +267,7 @@ def search():
     )
 
 
-# ---------------- EXPORT PDF ----------------
+# ---------------- PDF EXPORT ----------------
 @app.route("/export/pdf")
 def export_pdf():
 
@@ -305,29 +285,16 @@ def export_pdf():
     pdf_file = "students_report.pdf"
 
     doc = SimpleDocTemplate(pdf_file)
-
     styles = getSampleStyleSheet()
 
     elements = []
-
-    title = Paragraph("Student Report", styles['Title'])
-
-    elements.append(title)
+    elements.append(Paragraph("Students Report", styles["Title"]))
     elements.append(Spacer(1, 12))
 
-    for student in students:
-
-        text = f"""
-        ID: {student[0]} <br/>
-        Name: {student[1]} <br/>
-        Age: {student[2]} <br/>
-        Grade: {student[3]} <br/><br/>
-        """
-
-        p = Paragraph(text, styles['BodyText'])
-
-        elements.append(p)
-        elements.append(Spacer(1, 12))
+    for s in students:
+        text = f"ID:{s[0]} Name:{s[1]} Age:{s[2]} Grade:{s[3]}"
+        elements.append(Paragraph(text, styles["BodyText"]))
+        elements.append(Spacer(1, 10))
 
     doc.build(elements)
 
@@ -337,9 +304,7 @@ def export_pdf():
 # ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect("/")
 
 
