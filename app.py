@@ -2,14 +2,14 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key ="secret123"
-# ---------------- DATABASE ----------------
+app.secret_key = "secret123"
 
+
+# ---------------- DATABASE ----------------
 def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # users table
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,7 +18,6 @@ def init_db():
         )
     """)
 
-    # students table
     c.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +27,6 @@ def init_db():
         )
     """)
 
-    # default admin user
     c.execute("""
         INSERT OR IGNORE INTO users (id, username, password)
         VALUES (1, 'admin', '1234')
@@ -42,7 +40,6 @@ init_db()
 
 
 # ---------------- LOGIN ----------------
-
 @app.route("/", methods=["GET", "POST"])
 def login():
 
@@ -54,11 +51,7 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
-            (username, password)
-        )
-
+        c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
         user = c.fetchone()
 
         conn.close()
@@ -66,8 +59,6 @@ def login():
         if user:
             session["user"] = username
             return redirect("/dashboard")
-
-        return "Invalid Login ❌"
 
     return render_template("login.html")
 
@@ -82,26 +73,28 @@ def dashboard():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # 1. GET ALL STUDENTS
     c.execute("SELECT * FROM students")
     students = c.fetchall()
 
-    # 👇 THIS IS WHERE YOU ADD STATISTICS
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
+    c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
+    grade_data = c.fetchall()
+
     conn.close()
 
-    return render_template("dashboard.html",
-                           students=students,
-                           total_students=total_students)
-# ---------------- ADD STUDENT ----------------
+    return render_template(
+        "dashboard.html",
+        students=students,
+        total_students=total_students,
+        grade_data=grade_data
+    )
 
+
+# ---------------- ADD ----------------
 @app.route("/add", methods=["POST"])
 def add():
-
-    if "user" not in session:
-        return redirect("/")
 
     name = request.form["name"]
     age = request.form["age"]
@@ -110,10 +103,7 @@ def add():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "INSERT INTO students(name, age, grade) VALUES (?, ?, ?)",
-        (name, age, grade)
-    )
+    c.execute("INSERT INTO students (name, age, grade) VALUES (?, ?, ?)", (name, age, grade))
 
     conn.commit()
     conn.close()
@@ -122,12 +112,8 @@ def add():
 
 
 # ---------------- DELETE ----------------
-
 @app.route("/delete/<int:id>")
 def delete(id):
-
-    if "user" not in session:
-        return redirect("/")
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
@@ -140,52 +126,43 @@ def delete(id):
     return redirect("/dashboard")
 
 
-# ---------------- EDIT ----------------
-
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit(id):
+# ---------------- SEARCH ----------------
+@app.route("/search")
+def search():
 
     if "user" not in session:
         return redirect("/")
 
+    query = request.args.get("q")
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    if request.method == "GET":
+    c.execute("SELECT * FROM students WHERE name LIKE ?", ('%' + query + '%',))
+    students = c.fetchall()
 
-        c.execute("SELECT * FROM students WHERE id=?", (id,))
-        student = c.fetchone()
+    c.execute("SELECT COUNT(*) FROM students")
+    total_students = c.fetchone()[0]
 
-        conn.close()
+    c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
+    grade_data = c.fetchall()
 
-        return render_template("edit.html", student=student)
-
-    name = request.form["name"]
-    age = request.form["age"]
-    grade = request.form["grade"]
-
-    c.execute(
-        "UPDATE students SET name=?, age=?, grade=? WHERE id=?",
-        (name, age, grade, id)
-    )
-
-    conn.commit()
     conn.close()
 
-    return redirect("/dashboard")
+    return render_template(
+        "dashboard.html",
+        students=students,
+        total_students=total_students,
+        grade_data=grade_data
+    )
 
 
 # ---------------- LOGOUT ----------------
-
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect("/")
 
-
-# ---------------- RUN ----------------
 
 if __name__ == "__main__":
     app.run(debug=True)
