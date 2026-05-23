@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -11,6 +12,7 @@ def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # USERS TABLE
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,6 +21,7 @@ def init_db():
         )
     """)
 
+    # STUDENTS TABLE
     c.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,10 +31,11 @@ def init_db():
         )
     """)
 
+    # ADMIN USER
     c.execute("""
         INSERT OR IGNORE INTO users (id, username, password)
-        VALUES (1, 'admin', '1234')
-    """)
+        VALUES (1, 'admin', ?)
+    """, (generate_password_hash("1234"),))
 
     conn.commit()
     conn.close()
@@ -53,16 +57,19 @@ def login():
         c = conn.cursor()
 
         c.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
-            (username, password)
+            "SELECT * FROM users WHERE username=?",
+            (username,)
         )
 
         user = c.fetchone()
 
         conn.close()
 
-        if user:
+        # SECURE PASSWORD CHECK
+        if user and check_password_hash(user[2], password):
+
             session["user"] = username
+
             return redirect("/dashboard")
 
     return render_template("login.html")
@@ -104,6 +111,9 @@ def dashboard():
 @app.route("/add", methods=["POST"])
 def add():
 
+    if "user" not in session:
+        return redirect("/")
+
     name = request.form["name"]
     age = request.form["age"]
     grade = request.form["grade"]
@@ -126,6 +136,9 @@ def add():
 @app.route("/delete/<int:id>")
 def delete(id):
 
+    if "user" not in session:
+        return redirect("/")
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
@@ -141,6 +154,9 @@ def delete(id):
 @app.route("/edit/<int:id>")
 def edit(id):
 
+    if "user" not in session:
+        return redirect("/")
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
@@ -155,6 +171,9 @@ def edit(id):
 # ---------------- UPDATE ----------------
 @app.route("/update/<int:id>", methods=["POST"])
 def update(id):
+
+    if "user" not in session:
+        return redirect("/")
 
     name = request.form["name"]
     age = request.form["age"]
