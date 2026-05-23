@@ -15,7 +15,7 @@ def init_users():
     )
     """)
 
-    c.execute("INSERT OR IGNORE INTO users VALUES (1,'admin','1234')")
+    c.execute("INSERT OR IGNORE INTO users (id, username, password) VALUES (1,'admin','1234')")
 
     conn.commit()
     conn.close()
@@ -41,15 +41,27 @@ conn.close()
 
 # ---------------- LOGIN ----------------
 
-@app.route("/", methods=["GET", "POST"])
+   @app.route("/", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
-
         username = request.form["username"]
         password = request.form["password"]
 
-        if username == "admin" and password == "1234":
+        conn = sqlite3.connect("school.db")
+        c = conn.cursor()
+
+        c.execute("SELECT * FROM users WHERE username=? AND password=?",
+                  (username, password))
+
+        user = c.fetchone()
+        conn.close()
+
+        if user:
+            return redirect("/dashboard")
+        else:
+            return "Invalid login ❌"
+
+    return render_template("login.html")     if username == "admin" and password == "1234":
 
             session["user"] = username
 
