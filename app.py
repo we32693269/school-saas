@@ -66,10 +66,10 @@ def init_db():
 
 init_db()
 #--—----------attendance student —--------------
-@app.route("/attendance/<int:student_id>/<status>")
+@app.route("/ attendance/<int:student_id>/<status>")
 def attendance(student_id, status):
 
-    conn = sqlite3.connect("school.db")
+  attendance_data=attendance_data  conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
     c.execute("""
