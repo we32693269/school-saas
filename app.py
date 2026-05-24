@@ -158,7 +158,13 @@ def dashboard():
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    c.execute("""
+  c.execute("""
+    SELECT status, COUNT(*) 
+    FROM attendance 
+    GROUP BY status
+""")
+
+attendance_data = c.fetchall()  c.execute("""
         SELECT grade, COUNT(*)
         FROM students
         GROUP BY grade
