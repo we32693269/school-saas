@@ -5,6 +5,9 @@ import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+
 app = Flask(__name__)
 app.secret_key = "secret123"
 
@@ -12,13 +15,12 @@ UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-# ---------------- DATABASE ----------------
+# ================= DB INIT =================
 def init_db():
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # USERS TABLE
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +30,6 @@ def init_db():
         )
     """)
 
-    # STUDENTS TABLE
     c.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +40,7 @@ def init_db():
         )
     """)
 
-    # DEFAULT ADMIN
+    # default admin
     c.execute("SELECT * FROM users WHERE username='admin'")
 
     if not c.fetchone():
@@ -47,11 +48,7 @@ def init_db():
         c.execute("""
             INSERT INTO users (username, password, role)
             VALUES (?, ?, ?)
-        """, (
-            "admin",
-            generate_password_hash("1234"),
-            "admin"
-        ))
+        """, ("admin", generate_password_hash("1234"), "admin"))
 
     conn.commit()
     conn.close()
@@ -60,8 +57,8 @@ def init_db():
 init_db()
 
 
-# ---------------- LOGIN ----------------
-@app.route("/", methods=["GET", "POST"])
+# ================= LOGIN =================
+@app.route("/", methods=["GET","POST"])
 def login():
 
     if request.method == "POST":
@@ -72,11 +69,7 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute(
-            "SELECT * FROM users WHERE username=?",
-            (username,)
-        )
-
+        c.execute("SELECT * FROM users WHERE username=?", (username,))
         user = c.fetchone()
 
         conn.close()
@@ -91,8 +84,8 @@ def login():
     return render_template("login.html")
 
 
-# ---------------- REGISTER ----------------
-@app.route("/register", methods=["GET", "POST"])
+# ================= REGISTER =================
+@app.route("/register", methods=["GET","POST"])
 def register():
 
     if request.method == "POST":
@@ -105,13 +98,9 @@ def register():
         c = conn.cursor()
 
         c.execute("""
-            INSERT INTO users (username, password, role)
-            VALUES (?, ?, ?)
-        """, (
-            username,
-            generate_password_hash(password),
-            role
-        ))
+            INSERT INTO users (username,password,role)
+            VALUES (?,?,?)
+        """, (username, generate_password_hash(password), role))
 
         conn.commit()
         conn.close()
@@ -121,7 +110,7 @@ def register():
     return render_template("register.html")
 
 
-# ---------------- DASHBOARD ----------------
+# ================= DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
 
@@ -137,12 +126,7 @@ def dashboard():
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    c.execute("""
-        SELECT grade, COUNT(*)
-        FROM students
-        GROUP BY grade
-    """)
-
+    c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
     grade_data = c.fetchall()
 
     conn.close()
@@ -156,15 +140,12 @@ def dashboard():
     )
 
 
-# ---------------- ADD STUDENT ----------------
+# ================= ADD STUDENT =================
 @app.route("/add", methods=["POST"])
 def add():
 
-    if "user" not in session:
-        return redirect("/")
-
-    if session["role"] not in ["admin", "teacher"]:
-        return "Access denied"
+    if session["role"] not in ["admin","teacher"]:
+        return "No permission"
 
     name = request.form["name"]
     age = request.form["age"]
@@ -174,18 +155,17 @@ def add():
 
     filename = "default.png"
 
-    if image and image.filename != "":
+    if image and image.filename:
 
         filename = secure_filename(image.filename)
-
         image.save(os.path.join(UPLOAD_FOLDER, filename))
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
     c.execute("""
-        INSERT INTO students (name, age, grade, image)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO students(name,age,grade,image)
+        VALUES (?,?,?,?)
     """, (name, age, grade, filename))
 
     conn.commit()
@@ -194,12 +174,12 @@ def add():
     return redirect("/dashboard")
 
 
-# ---------------- DELETE ----------------
+# ================= DELETE =================
 @app.route("/delete/<int:id>")
 def delete(id):
 
     if session["role"] != "admin":
-        return "Only admin can delete"
+        return "Only admin"
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
@@ -212,21 +192,14 @@ def delete(id):
     return redirect("/dashboard")
 
 
-# ---------------- EDIT ----------------
+# ================= EDIT =================
 @app.route("/edit/<int:id>")
 def edit(id):
-
-    if session["role"] not in ["admin", "teacher"]:
-        return "Access denied"
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "SELECT * FROM students WHERE id=?",
-        (id,)
-    )
-
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
 
     conn.close()
@@ -234,12 +207,9 @@ def edit(id):
     return render_template("edit.html", student=student)
 
 
-# ---------------- UPDATE ----------------
+# ================= UPDATE =================
 @app.route("/update/<int:id>", methods=["POST"])
 def update(id):
-
-    if session["role"] not in ["admin", "teacher"]:
-        return "Access denied"
 
     name = request.form["name"]
     age = request.form["age"]
@@ -252,12 +222,7 @@ def update(id):
         UPDATE students
         SET name=?, age=?, grade=?
         WHERE id=?
-    """, (
-        name,
-        age,
-        grade,
-        id
-    ))
+    """, (name, age, grade, id))
 
     conn.commit()
     conn.close()
@@ -265,31 +230,22 @@ def update(id):
     return redirect("/dashboard")
 
 
-# ---------------- SEARCH ----------------
+# ================= SEARCH =================
 @app.route("/search")
 def search():
 
-    query = request.args.get("q")
+    q = request.args.get("q")
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("""
-        SELECT * FROM students
-        WHERE name LIKE ?
-    """, ('%' + query + '%',))
-
+    c.execute("SELECT * FROM students WHERE name LIKE ?", ('%'+q+'%',))
     students = c.fetchall()
 
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    c.execute("""
-        SELECT grade, COUNT(*)
-        FROM students
-        GROUP BY grade
-    """)
-
+    c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
     grade_data = c.fetchall()
 
     conn.close()
@@ -303,12 +259,52 @@ def search():
     )
 
 
-# ---------------- LOGOUT ----------------
+# ================= PDF EXPORT =================
+@app.route("/export_pdf")
+def export_pdf():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students")
+    students = c.fetchall()
+
+    conn.close()
+
+    pdf = SimpleDocTemplate("students.pdf")
+
+    table_data = [["ID","Name","Age","Grade"]]
+
+    for s in students:
+        table_data.append([s[0], s[1], s[2], s[3]])
+
+    table = Table(table_data)
+
+    table.setStyle(TableStyle([
+        ("BACKGROUND",(0,0),(-1,0),colors.grey),
+        ("TEXTCOLOR",(0,0),(-1,0),colors.whitesmoke),
+        ("GRID",(0,0),(-1,-1),1,colors.black),
+    ]))
+
+    pdf.build([table])
+
+    return redirect("/dashboard")
+
+
+# ================= DARK MODE =================
+@app.route("/theme/<mode>")
+def theme(mode):
+
+    session["theme"] = mode
+
+    return redirect("/dashboard")
+
+
+# ================= LOGOUT =================
 @app.route("/logout")
 def logout():
 
     session.clear()
-
     return redirect("/")
 
 
