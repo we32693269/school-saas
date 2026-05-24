@@ -16,7 +16,14 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def init_db():
 
     conn = sqlite3.connect("school.db")
-    c = conn.cursor()
+ c.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        date TEXT,
+        status TEXT
+    )
+""")   c = conn.cursor()
 
     # USERS TABLE
     c.execute("""
