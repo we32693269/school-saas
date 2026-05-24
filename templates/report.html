@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f6f9;
+            padding:20px;
+        }
+
+        .box{
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:20px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        th,td{
+            border:1px solid #ddd;
+            padding:10px;
+        }
+
+        th{
+            background:#2c3e50;
+            color:white;
+        }
+
+        .present{color:green;font-weight:bold;}
+        .absent{color:red;font-weight:bold;}
+    </style>
+</head>
+<body>
+
+<h1>Attendance Report</h1>
+
+<div class="box">
+    <h3>Summary</h3>
+    <p>Present: {{ present }}</p>
+    <p>Absent: {{ absent }}</p>
+</div>
+
+<div class="box">
+    <h3>Full Report</h3>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+
+        {% for r in reports %}
+        <tr>
+            <td>{{ r.name }}</td>
+
+            <td>
+                {% if r.status == 'present' %}
+                    <span class="present">Present</span>
+                {% else %}
+                    <span class="absent">Absent</span>
+                {% endif %}
+            </td>
+
+            <td>{{ r.attendance_date }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+</div>
+
+</body>
+</html>
