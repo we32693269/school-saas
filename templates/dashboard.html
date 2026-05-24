@@ -59,7 +59,16 @@
         <h3>Total Students</h3>
 
         <h1 class="text-primary">
-            {{ total_students }}
+  <h3>Attendance Control</h3>
+
+{% for s in students %}
+<div style="margin-bottom:5px;">
+    {{ s[1] }}
+
+    <a href="/attendance/{{ s[0] }}/present">✔ Present</a>
+    <a href="/attendance/{{ s[0] }}/absent">❌ Absent</a>
+</div>
+{% endfor %}          {{ total_students }}
         </h1>
 
     </div>
