@@ -274,7 +274,21 @@ def dashboard():
         user=session['user'],
         role=session['role']
     )
+@app.route('/reports')
+def reports():
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
 
+    students = c.execute("SELECT * FROM students").fetchall()
+    attendance = c.execute("SELECT * FROM attendance").fetchall()
+
+    conn.close()
+
+    return render_template(
+        "reports.html",
+        students=students,
+        attendance=attendance
+    )
 # =====================================================
 # ADD STUDENT
 # =====================================================
