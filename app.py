@@ -4,8 +4,7 @@ import os
 def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
-
-    # ================= USERS =================
+  # ================= DATABASE =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
