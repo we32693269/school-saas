@@ -76,9 +76,7 @@ def init_db():
 
 init_db()
 
-# =====================================================
-# LOGIN
-# =====================================================
+# ================= LOGIN =================
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -91,29 +89,27 @@ def login():
         conn = get_db()
         c = conn.cursor()
 
-        c.execute('SELECT * FROM users WHERE username=?', (username,))
+        c.execute(
+            'SELECT * FROM users WHERE username=? AND password=?',
+            (username, password)
+        )
+
         user = c.fetchone()
 
         conn.close()
 
+        # ✅ LOGIN SUCCESS
         if user:
 
-            if user['password'] == password:
+            session['user'] = user['username']
+            session['role'] = user['role']
 
-                session['user'] = user['username']
-                session['role'] = user['role']
-
-                return redirect('/dashboard')
-
-            else:
-                flash('Wrong password')
+            return redirect('/dashboard')
 
         else:
-            flash('User not found')
+            return "Wrong username or password"
 
     return render_template('login.html')
-
-# =====================================================
 # REGISTER
 # =====================================================
 
