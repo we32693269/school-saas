@@ -1,60 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <title>Edit Student</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body{
+            font-family:Arial;
+            background:#f4f6f9;
+            padding:40px;
+        }
 
+        .box{
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            width:400px;
+            margin:auto;
+        }
+
+        input, select{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            background:#2c3e50;
+            color:white;
+            border:none;
+        }
+    </style>
 </head>
+<body>
 
-<body class="bg-light">
+<div class="box">
 
-<div class="container mt-5">
+<h2>Edit Student</h2>
 
-    <div class="card shadow-sm p-4">
+<form action="/update/{{ student.id }}" method="post">
 
-        <h2 class="mb-4">
-            Edit Student
-        </h2>
+<input name="name" value="{{ student.name }}">
 
-        <form action="/update/{{ student[0] }}" method="POST">
+<input name="age" value="{{ student.age }}">
 
-            <input
-                type="text"
-                name="name"
-                value="{{ student[1] }}"
-                class="form-control mb-3"
-                required
-            >
+<input name="grade" value="{{ student.grade }}">
 
-            <input
-                type="number"
-                name="age"
-                value="{{ student[2] }}"
-                class="form-control mb-3"
-                required
-            >
+<select name="gender">
+    <option>{{ student.gender }}</option>
+    <option>Male</option>
+    <option>Female</option>
+</select>
 
-            <input
-                type="text"
-                name="grade"
-                value="{{ student[3] }}"
-                class="form-control mb-3"
-                required
-            >
+<input name="phone" value="{{ student.phone }}">
 
-            <button class="btn btn-success">
-                Update Student
-            </button>
+<input name="address" value="{{ student.address }}">
 
-            <a href="/dashboard" class="btn btn-secondary">
-                Back
-            </a>
+<button>Update Student</button>
 
-        </form>
-
-    </div>
+</form>
 
 </div>
 
