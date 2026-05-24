@@ -31,7 +31,6 @@ app = Flask(__name__)
 app.secret_key = "secret123"
 
 DATABASE = "school.db"
-
 # =====================================================
 # DATABASE CONNECTION
 # =====================================================
