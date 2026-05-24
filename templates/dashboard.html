@@ -1,256 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-    <title>Dashboard</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-</head>
-
-<body class="bg-light">
-
-<div class="container mt-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <div>
-
-            <h2>School Dashboard</h2>
-
-            <p>
-                Logged in as:
-                <b>{{ role }}</b>
-            </p>
-
-        </div>
-
-        <a href="/logout" class="btn btn-danger">
-            Logout
-        </a>
-
-    </div>
-
-
-    <!-- SEARCH -->
-    <form action="/search" method="GET" class="mb-4">
-
-        <div class="input-group">
-
-            <input
-                type="text"
-                name="q"
-                class="form-control"
-                placeholder="Search student..."
-            >
-
-            <button class="btn btn-primary">
-                Search
-            </button>
-
-        </div>
-
-    </form>
-
-
-    <!-- STATISTICS -->
-    <div class="card shadow-sm p-4 mb-4 text-center">
-
-        <h3>Total Students</h3>
-
-        <h1 class="text-primary">
-            {{ total_students }}
-        </h1>
-
-    </div>
-
-
-    <!-- CHART -->
-    <div class="card shadow-sm p-4 mb-4">
-
-        <h4 class="mb-4">
-            Grade Statistics
-        </h4>
-
-        <canvas id="gradeChart"></canvas>
-
-    </div>
-
-
-    <!-- ADD STUDENT -->
-    {% if role == "admin" or role == "teacher" %}
-
-    <div class="card shadow-sm p-4 mb-4">
-
-        <h4>Add Student</h4>
-
-        <form action="/add" method="POST" enctype="multipart/form-data">
-
-            <input
-                type="text"
-                name="name"
-                class="form-control mb-3"
-                placeholder="Name"
-                required
-            >
-
-            <input
-                type="number"
-                name="age"
-                class="form-control mb-3"
-                placeholder="Age"
-                required
-            >
-
-            <input
-                type="text"
-                name="grade"
-                class="form-control mb-3"
-                placeholder="Grade"
-                required
-            >
-
-            <input
-                type="file"
-                name="image"
-                class="form-control mb-3"
-            >
-
-            <button class="btn btn-success">
-                Add Student
-            </button>
-
-        </form>
-
-    </div>
-
-    {% endif %}
-
-
-    <!-- STUDENT TABLE -->
-    <div class="card shadow-sm p-4">
-
-        <h4 class="mb-4">
-            Students List
-        </h4>
-
-        <table class="table table-bordered table-hover">
-
-            <tr>
-
-                <th>ID</th>
-                <th>Photo</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Actions</th>
-
-            </tr>
-
-            {% for student in students %}
-
-            <tr>
-
-                <td>{{ student[0] }}</td>
-
-                <td>
-
-                    <img
-                        src="{{ url_for('static', filename='uploads/' + student[4]) }}"
-                        width="60"
-                        height="60"
-                        style="object-fit:cover;border-radius:50%;"
-                    >
-
-                </td>
-
-                <td>{{ student[1] }}</td>
-                <td>{{ student[2] }}</td>
-                <td>{{ student[3] }}</td>
-
-                <td>
-
-                    {% if role == "admin" or role == "teacher" %}
-
-                    <a
-                        href="/edit/{{ student[0] }}"
-                        class="btn btn-warning btn-sm"
-                    >
-                        Edit
-                    </a>
-
-                    {% endif %}
-
-                    {% if role == "admin" %}
-
-                    <a
-                        href="/delete/{{ student[0] }}"
-                        class="btn btn-danger btn-sm"
-                    >
-                        Delete
-                    </a>
-
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </table>
-
-    </div>
-
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-
-const gradeData = {{ grade_data|tojson }};
-
-const labels = gradeData.map(item => item[0]);
-
-const counts = gradeData.map(item => item[1]);
-
-const ctx = document.getElementById('gradeChart');
-
-new Chart(ctx, {
-
-    type: 'bar',
-
-    data: {
-
-        labels: labels,
-
-        datasets: [{
-
-            label: 'Students Per Grade',
-
-            data: counts,
-
-            borderWidth: 1
-
-        }]
-    },
-
-    options: {
-
-        responsive: true,
-
-        scales: {
-
-            y: {
-
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-</script>
-
-</body>
-</html>
+<h2>Dashboard</h2>
+
+<p>Role: {{ role }}</p>
+
+<a href="/theme/dark">🌙 Dark</a>
+<a href="/theme/light">☀ Light</a>
+
+<h3>Total Students: {{ total_students }}</h3>
+
+<form action="/search">
+    <input name="q">
+    <button>Search</button>
+</form>
+
+{% if role in ["admin","teacher"] %}
+<form action="/add" method="post" enctype="multipart/form-data">
+    <input name="name">
+    <input name="age">
+    <input name="grade">
+    <input type="file" name="image">
+    <button>Add</button>
+</form>
+{% endif %}
+
+<table border="1">
+{% for s in students %}
+<tr>
+<td>{{ s[1] }}</td>
+<td>{{ s[2] }}</td>
+<td>{{ s[3] }}</td>
+
+<td>
+<a href="/edit/{{ s[0] }}">Edit</a>
+
+{% if role == "admin" %}
+<a href="/delete/{{ s[0] }}">Delete</a>
+{% endif %}
+</td>
+
+</tr>
+{% endfor %}
+</table>
