@@ -1,252 +1,176 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <title>Dashboard</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f6f9;
+            margin:0;
+        }
+
+        .topbar{
+            background:#2c3e50;
+            color:white;
+            padding:15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .cards{
+            display:flex;
+            gap:15px;
+            padding:20px;
+            flex-wrap:wrap;
+        }
+
+        .card{
+            flex:1;
+            min-width:200px;
+            padding:20px;
+            border-radius:12px;
+            color:white;
+            box-shadow:0px 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .green{background:#27ae60;}
+        .blue{background:#2980b9;}
+        .orange{background:#f39c12;}
+
+        .container{
+            padding:20px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        th,td{
+            padding:10px;
+            border:1px solid #ddd;
+        }
+
+        th{
+            background:#34495e;
+            color:white;
+        }
+
+        .btn{
+            padding:5px 10px;
+            text-decoration:none;
+            border-radius:5px;
+            color:white;
+        }
+
+        .edit{background:#f39c12;}
+        .delete{background:#e74c3c;}
+        .present{background:#27ae60;}
+        .absent{background:#c0392b;}
+
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container mt-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <div>
-
-            <h2>School Dashboard</h2>
-
-            <p>
-                Logged in as:
-                <b>{{ role }}</b>
-            </p>
-
-        </div>
-
-        <a href="/logout" class="btn btn-danger">
-            Logout
-        </a>
-
+<div class="topbar">
+    <h2>School Dashboard</h2>
+    <div>
+        👤 {{ user }} | <a href="/logout" style="color:white;">Logout</a>
     </div>
+</div>
 
+<!-- CARDS -->
+<div class="cards">
 
-    <!-- SEARCH -->
-    <form action="/search" method="GET" class="mb-4">
-
-        <div class="input-group">
-
-            <input
-                type="text"
-                name="q"
-                class="form-control"
-                placeholder="Search student..."
-            >
-
-            <button class="btn btn-primary">
-                Search
-            </button>
-
-        </div>
-
-    </form>
-
-
-    <!-- STATISTICS -->
-    <div class="card shadow-sm p-4 mb-4 text-center">
-
+    <div class="card green">
         <h3>Total Students</h3>
-
-        <h1 class="text-primary">
-            {{ total_students }}
-        </h1>
-
+        <h1>{{ total_students }}</h1>
     </div>
 
-
-    <!-- CHART -->
-    <div class="card shadow-sm p-4 mb-4">
-
-        <h4 class="mb-4">
-            Grade Statistics
-        </h4>
-
-        <canvas id="gradeChart"></canvas>
-
+    <div class="card blue">
+        <h3>System Status</h3>
+        <h1>Online</h1>
     </div>
 
-
-    <!-- ADD STUDENT -->
-    {% if role == "admin" or role == "teacher" %}
-
-    <div class="card shadow-sm p-4 mb-4">
-
-        <h4>Add Student</h4>
-
-        <form action="/add" method="POST" enctype="multipart/form-data">
-
-            <input
-                type="text"
-                name="name"
-                class="form-control mb-3"
-                placeholder="Name"
-                required
-            >
-
-            <input
-                type="number"
-                name="age"
-                class="form-control mb-3"
-                placeholder="Age"
-                required
-            >
-
-            <input
-                type="text"
-                name="grade"
-                class="form-control mb-3"
-                placeholder="Grade"
-                required
-            >
-
-            <input
-                type="file"
-                name="image"
-                class="form-control mb-3"
-            >
-
-            <button class="btn btn-success">
-                Add Student
-            </button>
-
-        </form>
-
-    </div>
-
-    {% endif %}
-
-
-    <!-- STUDENT TABLE -->
-    <div class="card shadow-sm p-4">
-
-        <h4 class="mb-4">
-            Students List
-        </h4>
-
-        <table class="table table-bordered table-hover">
-
-            <tr>
-
-                <th>ID</th>
-                <th>Photo</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Actions</th>
-
-            </tr>
-
-            {% for student in students %}
-
-            <tr>
-
-                <td>{{ student[0] }}</td>
-
-                <td>
-
-                    <img
-                        src="{{ url_for('static', filename='uploads/' + student[4]) }}"
-                        width="60"
-                        height="60"
-                        style="object-fit:cover;border-radius:50%;"
-                    >
-
-                </td>
-
-                <td>{{ student[1] }}</td>
-                <td>{{ student[2] }}</td>
-                <td>{{ student[3] }}</td>
-
-                <td>
-
-                    {% if role == "admin" or role == "teacher" %}
-
-                    <a
-                        href="/edit/{{ student[0] }}"
-                        class="btn btn-warning btn-sm"
-                    >
-                        Edit
-                    </a>
-
-                    {% endif %}
-
-                    {% if role == "admin" %}
-
-                    <a
-                        href="/delete/{{ student[0] }}"
-                        class="btn btn-danger btn-sm"
-                    >
-                        Delete
-                    </a>
-
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </table>
-
+    <div class="card orange">
+        <h3>Role</h3>
+        <h1>{{ role }}</h1>
     </div>
 
 </div>
 
+<!-- ADD STUDENT -->
+<div class="container">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <h3>Add Student</h3>
+
+    <form action="/add" method="post">
+        <input name="name" placeholder="Name">
+        <input name="age" placeholder="Age">
+        <input name="grade" placeholder="Grade">
+        <button>Add</button>
+    </form>
+
+    <br>
+
+    <!-- STUDENTS TABLE -->
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Grade</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in students %}
+        <tr>
+            <td>{{ s[1] }}</td>
+            <td>{{ s[2] }}</td>
+            <td>{{ s[3] }}</td>
+            <td>
+
+                <a class="btn edit" href="/edit/{{ s[0] }}">Edit</a>
+                <a class="btn delete" href="/delete/{{ s[0] }}">Delete</a>
+
+                <a class="btn present" href="/attendance/{{ s[0] }}/present">✔</a>
+                <a class="btn absent" href="/attendance/{{ s[0] }}/absent">❌</a>
+
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <!-- CHART -->
+    <h3>Attendance Chart</h3>
+    <canvas id="chart"></canvas>
+
+</div>
 
 <script>
 
-const gradeData = {{ grade_data|tojson }};
+const data = {{ attendance_data|tojson }};
+const labels = data.map(x => x[0]);
+const values = data.map(x => x[1]);
 
-const labels = gradeData.map(item => item[0]);
-
-const counts = gradeData.map(item => item[1]);
-
-const ctx = document.getElementById('gradeChart');
-
-new Chart(ctx, {
-
-    type: 'bar',
-
+new Chart(document.getElementById("chart"), {
+    type: "pie",
     data: {
-
         labels: labels,
-
         datasets: [{
-
-            label: 'Students Per Grade',
-
-            data: counts,
-
-            borderWidth: 1
-
+            data: values,
+            backgroundColor:["#27ae60","#e74c3c"]
         }]
-    },
-
-    options: {
-
-        responsive: true,
-
-        scales: {
-
-            y: {
-
-                beginAtZero: true
-            }
-        }
     }
 });
 
