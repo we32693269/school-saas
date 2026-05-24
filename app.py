@@ -2,7 +2,31 @@ from flask import Flask, render_template, request, redirect, session, flash
 import sqlite3
 import os
 from datetime import datetime
+def init_db():
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
 
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        age TEXT,
+        grade TEXT,
+        gender TEXT,
+        phone TEXT
+    )
+    """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        status TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 app = Flask(__name__)
 app.secret_key = "secret123"
 
@@ -159,9 +183,24 @@ def register():
 
 @app.route('/dashboard')
 def dashboard():
-
     if 'user' not in session:
-        return redirect('/')
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    students = c.execute("SELECT * FROM students").fetchall()
+
+    present = c.execute("SELECT * FROM attendance WHERE status='present'").fetchall()
+    absent = c.execute("SELECT * FROM attendance WHERE status='absent'").fetchall()
+
+    conn.close()
+
+    return render_template(
+        "dashboard.html",
+        students=students,
+        total_students=len(students),
+        present=len(present),
+        absent=len(absent)
+    )       return redirect('/')
 
     conn = get_db()
     c = conn.cursor()
