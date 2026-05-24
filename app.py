@@ -236,23 +236,19 @@ def add_student():
 # DELETE STUDENT
 # =========================
 
-@app.route('/delete_student/<int:id>')
-def delete_student(id):
+@app.route('/delete_users')
+def delete_users():
 
-    if 'user' not in session:
-        return redirect('/login')
-
-    conn = get_db()
+  if 'user' not in session:
+        return redirect('/login')  conn = get_db()
     c = conn.cursor()
 
-    c.execute("DELETE FROM students WHERE id=?", (id,))
+    c.execute("DELETE FROM users")
 
     conn.commit()
     conn.close()
 
-    return redirect('/dashboard')
-
-
+    return "All users deleted"
 # =========================
 # EDIT STUDENT
 # =========================
