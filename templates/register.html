@@ -3,7 +3,9 @@
 <head>
     <title>Register</title>
 
-    <style>
+  {% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}  <style>
         body{
             background:#f4f6f9;
             font-family:Arial;
