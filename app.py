@@ -18,14 +18,17 @@ def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # USERS TABLE
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
-            password TEXT
+            password TEXT,
+            role TEXT
         )
     """)
 
+    # STUDENTS TABLE
     c.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,14 +39,19 @@ def init_db():
         )
     """)
 
+    # DEFAULT ADMIN
     c.execute("SELECT * FROM users WHERE username='admin'")
 
     if not c.fetchone():
 
-        c.execute(
-            "INSERT INTO users (username, password) VALUES (?, ?)",
-            ("admin", generate_password_hash("1234"))
-        )
+        c.execute("""
+            INSERT INTO users (username, password, role)
+            VALUES (?, ?, ?)
+        """, (
+            "admin",
+            generate_password_hash("1234"),
+            "admin"
+        ))
 
     conn.commit()
     conn.close()
@@ -64,7 +72,11 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute("SELECT * FROM users WHERE username=?", (username,))
+        c.execute(
+            "SELECT * FROM users WHERE username=?",
+            (username,)
+        )
+
         user = c.fetchone()
 
         conn.close()
@@ -72,6 +84,7 @@ def login():
         if user and check_password_hash(user[2], password):
 
             session["user"] = username
+            session["role"] = user[3]
 
             return redirect("/dashboard")
 
@@ -86,12 +99,19 @@ def register():
 
         username = request.form["username"]
         password = request.form["password"]
+        role = request.form["role"]
 
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute("INSERT INTO users (username, password) VALUES (?, ?)",
-                  (username, generate_password_hash(password)))
+        c.execute("""
+            INSERT INTO users (username, password, role)
+            VALUES (?, ?, ?)
+        """, (
+            username,
+            generate_password_hash(password),
+            role
+        ))
 
         conn.commit()
         conn.close()
@@ -117,7 +137,12 @@ def dashboard():
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
+    c.execute("""
+        SELECT grade, COUNT(*)
+        FROM students
+        GROUP BY grade
+    """)
+
     grade_data = c.fetchall()
 
     conn.close()
@@ -126,7 +151,8 @@ def dashboard():
         "dashboard.html",
         students=students,
         total_students=total_students,
-        grade_data=grade_data
+        grade_data=grade_data,
+        role=session["role"]
     )
 
 
@@ -136,6 +162,9 @@ def add():
 
     if "user" not in session:
         return redirect("/")
+
+    if session["role"] not in ["admin", "teacher"]:
+        return "Access denied"
 
     name = request.form["name"]
     age = request.form["age"]
@@ -169,6 +198,9 @@ def add():
 @app.route("/delete/<int:id>")
 def delete(id):
 
+    if session["role"] != "admin":
+        return "Only admin can delete"
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
@@ -184,10 +216,17 @@ def delete(id):
 @app.route("/edit/<int:id>")
 def edit(id):
 
+    if session["role"] not in ["admin", "teacher"]:
+        return "Access denied"
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
     student = c.fetchone()
 
     conn.close()
@@ -198,6 +237,9 @@ def edit(id):
 # ---------------- UPDATE ----------------
 @app.route("/update/<int:id>", methods=["POST"])
 def update(id):
+
+    if session["role"] not in ["admin", "teacher"]:
+        return "Access denied"
 
     name = request.form["name"]
     age = request.form["age"]
@@ -210,7 +252,12 @@ def update(id):
         UPDATE students
         SET name=?, age=?, grade=?
         WHERE id=?
-    """, (name, age, grade, id))
+    """, (
+        name,
+        age,
+        grade,
+        id
+    ))
 
     conn.commit()
     conn.close()
@@ -227,17 +274,22 @@ def search():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "SELECT * FROM students WHERE name LIKE ?",
-        ('%' + query + '%',)
-    )
+    c.execute("""
+        SELECT * FROM students
+        WHERE name LIKE ?
+    """, ('%' + query + '%',))
 
     students = c.fetchall()
 
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    c.execute("SELECT grade, COUNT(*) FROM students GROUP BY grade")
+    c.execute("""
+        SELECT grade, COUNT(*)
+        FROM students
+        GROUP BY grade
+    """)
+
     grade_data = c.fetchall()
 
     conn.close()
@@ -246,7 +298,8 @@ def search():
         "dashboard.html",
         students=students,
         total_students=total_students,
-        grade_data=grade_data
+        grade_data=grade_data,
+        role=session["role"]
     )
 
 
