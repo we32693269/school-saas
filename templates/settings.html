@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial;
+        }
+
+        body{
+            background:#f4f6f9;
+        }
+
+        .container{
+            width:90%;
+            max-width:700px;
+            margin:40px auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            margin-bottom:20px;
+            color:#2c3e50;
+        }
+
+        .setting-box{
+            background:#ecf0f1;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:20px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:10px;
+            font-weight:bold;
+        }
+
+        input{
+            width:100%;
+            padding:12px;
+            border:1px solid #ccc;
+            border-radius:6px;
+            margin-bottom:15px;
+        }
+
+        button{
+            padding:12px 20px;
+            border:none;
+            background:#2c3e50;
+            color:white;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#34495e;
+        }
+
+        .btn{
+            display:inline-block;
+            margin-top:10px;
+            text-decoration:none;
+            color:white;
+            background:#27ae60;
+            padding:12px 20px;
+            border-radius:6px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>System Settings</h1>
+
+        <div class="setting-box">
+
+            <form>
+
+                <label>School Name</label>
+                <input type="text" placeholder="Enter school name">
+
+                <label>Academic Year</label>
+                <input type="text" placeholder="2025/2026">
+
+                <label>Admin Email</label>
+                <input type="email" placeholder="admin@gmail.com">
+
+                <button type="submit">
+                    Save Settings
+                </button>
+
+            </form>
+
+        </div>
+
+        <a href="/dashboard" class="btn">
+            Back Dashboard
+        </a>
+
+    </div>
+
+</body>
+</html>
