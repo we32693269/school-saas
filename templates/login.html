@@ -1,9 +1,58 @@
-<h2>Login</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+
+    <style>
+        body{
+            background:#f4f6f9;
+            font-family:Arial;
+        }
+
+        .login-box{
+            width:350px;
+            background:white;
+            margin:100px auto;
+            padding:30px;
+            border-radius:10px;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+        }
+
+        button{
+            width:100%;
+            padding:10px;
+            background:#2c3e50;
+            color:white;
+            border:none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+
+<h2>School Login</h2>
 
 <form method="post">
+
 <input name="username" placeholder="Username">
-<input name="password" type="password" placeholder="Password">
+
+<input type="password" name="password" placeholder="Password">
+
 <button>Login</button>
+
 </form>
 
-<a href="/register">Register</a>
+<br>
+
+<a href="/register">Create Account</a>
+
+</div>
+
+</body>
+</html>
