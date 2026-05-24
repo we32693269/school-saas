@@ -402,20 +402,43 @@ def attendance(student_id, status):
 
 # =====================================================
 # REPORTS
-# =====================================================
+# ====================================================
 @app.route('/report')
 def report():
+
+    if 'user' not in session:
+        return redirect('/')
 
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT * FROM attendance")
-    attendance_data = c.fetchall()
+    # 📊 Attendance with student info
+    c.execute("""
+        SELECT students.name,
+               attendance.status,
+               attendance.attendance_date
+        FROM attendance
+        JOIN students ON students.id = attendance.student_id
+        ORDER BY attendance.id DESC
+    """)
+
+    reports = c.fetchall()
+
+    # 📊 Summary
+    c.execute("SELECT COUNT(*) FROM attendance WHERE status='present'")
+    present = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM attendance WHERE status='absent'")
+    absent = c.fetchone()[0]
 
     conn.close()
 
-    return render_template('report.html', attendance_data=attendance_data)
-# =====================================================
+    return render_template(
+        "report.html",
+        reports=reports,
+        present=present,
+        absent=absent
+    )
 # SEARCH
 # =====================================================
 
