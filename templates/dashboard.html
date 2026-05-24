@@ -14,13 +14,23 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h2>School Dashboard</h2>
+        <div>
+
+            <h2>School Dashboard</h2>
+
+            <p>
+                Logged in as:
+                <b>{{ role }}</b>
+            </p>
+
+        </div>
 
         <a href="/logout" class="btn btn-danger">
             Logout
         </a>
 
     </div>
+
 
     <!-- SEARCH -->
     <form action="/search" method="GET" class="mb-4">
@@ -42,7 +52,8 @@
 
     </form>
 
-    <!-- TOTAL STUDENTS -->
+
+    <!-- STATISTICS -->
     <div class="card shadow-sm p-4 mb-4 text-center">
 
         <h3>Total Students</h3>
@@ -52,6 +63,7 @@
         </h1>
 
     </div>
+
 
     <!-- CHART -->
     <div class="card shadow-sm p-4 mb-4">
@@ -64,20 +76,45 @@
 
     </div>
 
+
     <!-- ADD STUDENT -->
+    {% if role == "admin" or role == "teacher" %}
+
     <div class="card shadow-sm p-4 mb-4">
 
         <h4>Add Student</h4>
 
         <form action="/add" method="POST" enctype="multipart/form-data">
 
-            <input type="text" name="name" class="form-control mb-3" placeholder="Name" required>
+            <input
+                type="text"
+                name="name"
+                class="form-control mb-3"
+                placeholder="Name"
+                required
+            >
 
-            <input type="number" name="age" class="form-control mb-3" placeholder="Age" required>
+            <input
+                type="number"
+                name="age"
+                class="form-control mb-3"
+                placeholder="Age"
+                required
+            >
 
-            <input type="text" name="grade" class="form-control mb-3" placeholder="Grade" required>
+            <input
+                type="text"
+                name="grade"
+                class="form-control mb-3"
+                placeholder="Grade"
+                required
+            >
 
-            <input type="file" name="image" class="form-control mb-3">
+            <input
+                type="file"
+                name="image"
+                class="form-control mb-3"
+            >
 
             <button class="btn btn-success">
                 Add Student
@@ -87,7 +124,10 @@
 
     </div>
 
-    <!-- STUDENTS TABLE -->
+    {% endif %}
+
+
+    <!-- STUDENT TABLE -->
     <div class="card shadow-sm p-4">
 
         <h4 class="mb-4">
@@ -130,13 +170,27 @@
 
                 <td>
 
-                    <a href="/edit/{{ student[0] }}" class="btn btn-warning btn-sm">
+                    {% if role == "admin" or role == "teacher" %}
+
+                    <a
+                        href="/edit/{{ student[0] }}"
+                        class="btn btn-warning btn-sm"
+                    >
                         Edit
                     </a>
 
-                    <a href="/delete/{{ student[0] }}" class="btn btn-danger btn-sm">
+                    {% endif %}
+
+                    {% if role == "admin" %}
+
+                    <a
+                        href="/delete/{{ student[0] }}"
+                        class="btn btn-danger btn-sm"
+                    >
                         Delete
                     </a>
+
+                    {% endif %}
 
                 </td>
 
