@@ -100,8 +100,7 @@ def register():
             c.execute("INSERT INTO users(username,password,role) VALUES (?,?,?)",
                       (username, password, role))
             conn.commit()
-        except:
-            return "User already exists"
+    
 
         conn.close()
         return redirect('/')
