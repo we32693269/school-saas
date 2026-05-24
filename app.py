@@ -1,75 +1,50 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import sqlite3
 import os
-from datetime import datetime
-
-app = Flask(__name__)
-app.secret_key = "secret123"
-
-DATABASE = "school.db"
-
-# =====================================================
-# DATABASE CONNECTION
-# =====================================================
-
-def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-# =====================================================
-# INIT DATABASE
-# =====================================================
-
 def init_db():
-
-    conn = get_db()
+    conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # USERS TABLE
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS users(
+    # ================= USERS =================
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
         password TEXT,
-        role TEXT,
-        created_at TEXT
+        role TEXT
     )
-    ''')
+    """)
 
-    # STUDENTS TABLE
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS students(
+    # ================= STUDENTS =================
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        age TEXT,
         grade TEXT,
         gender TEXT,
-        phone TEXT,
-        address TEXT,
-        created_at TEXT
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
-    ''')
+    """)
 
-    # ATTENDANCE TABLE
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS attendance(
+    # ================= ATTENDANCE =================
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER,
         status TEXT,
-        attendance_date TEXT
+        attendance_date TEXT,
+        FOREIGN KEY(student_id) REFERENCES students(id)
     )
-    ''')
+    """)
 
-    # NOTIFICATIONS TABLE
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS notifications(
+    # ================= SETTINGS (OPTIONAL) =================
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS settings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        message TEXT,
-        created_at TEXT
+        school_name TEXT,
+        academic_year TEXT
     )
-    ''')
+    """)
 
     conn.commit()
     conn.close()
