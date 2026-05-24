@@ -403,29 +403,18 @@ def attendance(student_id, status):
 # =====================================================
 # REPORTS
 # =====================================================
-
-@app.route('/reports')
-def reports():
-
-    if 'user' not in session:
-        return redirect('/')
+@app.route('/report')
+def report():
 
     conn = get_db()
     c = conn.cursor()
 
-    c.execute('''
-    SELECT students.name, attendance.status, attendance.attendance_date
-    FROM attendance
-    JOIN students ON students.id = attendance.student_id
-    ORDER BY attendance.id DESC
-    ''')
-
-    reports = c.fetchall()
+    c.execute("SELECT * FROM attendance")
+    attendance_data = c.fetchall()
 
     conn.close()
 
-    return render_template('reports.html', reports=reports)
-
+    return render_template('report.html', attendance_data=attendance_data)
 # =====================================================
 # SEARCH
 # =====================================================
@@ -452,27 +441,27 @@ def search():
 # =====================================================
 # PROFILE
 # =====================================================
-
 @app.route('/profile')
 def profile():
 
-    if 'user' not in session:
-        return redirect('/')
+    conn = get_db()
+    c = conn.cursor()
 
-    return render_template('profile.html')
+    c.execute("SELECT * FROM users WHERE username=?",
+              (session.get('user'),))
+
+    user = c.fetchone()
+
+    conn.close()
+
+    return render_template('profile.html', user=user)
 
 # =====================================================
 # SETTINGS
 # =====================================================
-
 @app.route('/settings')
 def settings():
-
-    if 'user' not in session:
-        return redirect('/')
-
     return render_template('settings.html')
-
 # =====================================================
 # LOGOUT
 # =====================================================
