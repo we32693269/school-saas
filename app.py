@@ -65,8 +65,22 @@ def init_db():
 
 
 init_db()
+#--—----------attendance student —--------------
+@app.route("/attendance/<int:student_id>/<status>")
+def attendance(student_id, status):
 
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
 
+    c.execute("""
+        INSERT INTO attendance(student_id, date, status)
+        VALUES (datetime('now'), ?, ?)
+    """, (student_id, status))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/dashboard")
 # ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
