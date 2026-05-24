@@ -132,9 +132,27 @@ def dashboard():
     c = conn.cursor()
 
     c.execute("SELECT * FROM students")
-    students = c.fetchall()
+c.execute("""
+SELECT grade, COUNT(*) 
+FROM students 
+GROUP BY grade
+""")
+grade_analysis = c.fetchall()
 
-    c.execute("SELECT COUNT(*) FROM students")
+c.execute("""
+SELECT name, grade, COUNT(*) as total
+FROM students
+GROUP BY grade
+ORDER BY total DESC
+""")
+top_data = c.fetchall()  students = c.fetchall()
+
+  c.execute("""
+SELECT status, COUNT(*) 
+FROM attendance 
+GROUP BY status
+""")
+attendance_data = c.fetchall()  c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
     c.execute("""
