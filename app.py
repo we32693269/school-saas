@@ -1,19 +1,16 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
-from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
+
 # =========================
 # DATABASE
 # =========================
-
 def get_db():
     conn = sqlite3.connect("school.db")
     conn.row_factory = sqlite3.Row
     return conn
-
-
 def create_tables():
     conn = get_db()
     c = conn.cursor()
@@ -215,7 +212,7 @@ def add_student():
     phone = request.form['phone']
     address = request.form['address']
 
-    conn = get_db()
+    
     c = conn.cursor()
 
     c.execute("""
@@ -238,7 +235,7 @@ def edit_student(id):
     if 'user' not in session:
         return redirect('/login')
 
-    conn = get_db()
+    
     c = conn.cursor()
 
     if request.method == 'POST':
@@ -298,7 +295,6 @@ def present(id):
     if 'user' not in session:
         return redirect('/login')
 
-    conn = get_db()
     c = conn.cursor()
 
     c.execute("""
@@ -382,26 +378,9 @@ def reports():
     )
 
 
-# =========================
-# PROFILE
-# =========================
-
-@app.route('/profile')
-def profile():
-
-    if 'user' not in session:
-        return redirect('/login')
-
-    return render_template(
-        'profile.html',
-        username=session['user']
-    )
-
-
-# =========================
+#=========================
 # SETTINGS
 # =========================
-
 @app.route('/settings')
 def settings():
 
@@ -555,7 +534,7 @@ def test_db():
 @app.route('/delete_users')
 def delete_users():
 if 'user' not in session:
-return redirect('/login')  conn = get_db()
+
     c = conn.cursor()
 
     c.execute("DELETE FROM users")
