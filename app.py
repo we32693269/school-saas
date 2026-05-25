@@ -231,25 +231,6 @@ def add_student():
 
     return redirect('/dashboard')
 
-
-# =========================
-# DELETE STUDENT
-# =========================
-
-@app.route('/delete_users')
-def delete_users():
-
-  if 'user' not in session:
-        return redirect('/login')  conn = get_db()
-    c = conn.cursor()
-
-    c.execute("DELETE FROM users")
-
-    conn.commit()
-    conn.close()
-
-    return "All users deleted"
-# =========================
 # EDIT STUDENT
 # =========================
 
@@ -570,7 +551,23 @@ def test_db():
     <p>Attendance: {attendance}</p>
     """
 
+# =========================
+# DELETE STUDENT
+# =========================
 
+@app.route('/delete_users')
+def delete_users():
+
+  if 'user' not in session:
+        return redirect('/login')  conn = get_db()
+    c = conn.cursor()
+
+    c.execute("DELETE FROM users")
+
+    conn.commit()
+    conn.close()
+
+    return "All users deleted"
 # =========================
 # RUN APP
 # =========================
