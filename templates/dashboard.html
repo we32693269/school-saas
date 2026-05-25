@@ -2,267 +2,133 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        body{
-            margin:0;
-            font-family:Arial;
-            background:#f4f6f9;
-        }
-
-        .sidebar{
-            width:220px;
-            background:#2c3e50;
-            position:fixed;
-            top:0;
-            left:0;
-            bottom:0;
-            color:white;
-            padding:20px;
-        }
-
-        .sidebar h2{
-            text-align:center;
-        }
-
-        .sidebar a{
-            display:block;
-            color:white;
-            text-decoration:none;
-            margin:10px 0;
-            padding:10px;
-            background:#34495e;
-            border-radius:5px;
-        }
-
-        .main{
-            margin-left:240px;
-            padding:20px;
-        }
-
-        .cards{
-            display:flex;
-            gap:20px;
-            flex-wrap:wrap;
-        }
-
-        .card{
-            background:white;
-            padding:20px;
-            border-radius:10px;
-            flex:1;
-            min-width:200px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-            background:white;
-        }
-
-        th, td{
-            border:1px solid #ddd;
-            padding:10px;
-        }
-
-        th{
-            background:#2c3e50;
-            color:white;
-        }
-
-        .btn{
-            padding:6px 12px;
-            border-radius:5px;
-            text-decoration:none;
-            color:white;
-        }
-
-        .edit{background:orange;}
-        .delete{background:red;}
-        .present{background:green;}
-        .absent{background:#c0392b;}
-
-        input, select{
-            padding:10px;
-            margin:5px;
-        }
-
-        button{
-            padding:10px 15px;
-            background:#2c3e50;
-            color:white;
-            border:none;
-        }
-    </style>
 </head>
+
 <body>
 
-<div class="sidebar">
-    <h2>School SaaS</h2>
+<h1>School Dashboard</h1>
 
-    <a href="/dashboard">Dashboard</a>
-    <a href="/reports">Reports</a>
-    <a href="/profile">Profile</a>
-    <a href="/settings">Settings</a>
-    <a href="/logout">Logout</a>
-</div>
+<a href="/profile">Profile</a> |
+<a href="/settings">Settings</a> |
+<a href="/reports">Reports</a> |
+<a href="/logout">Logout</a>
 
-<div class="main">
+<hr>
 
-    <h1>Welcome {{ user }}</h1>
-    <p>Role: {{ role }}</p>
+<h2>Total Students: {{ total_students }}</h2>
 
-    <div class="cards">
+<h2>Present: {{ present }}</h2>
 
-        <div class="card">
-            <h3>Total Students</h3>
-            <h1>{{ total_students }}</h1>
-        </div>
-<h3>Total Students: {{ total_students }}</h3>
-<h3>Present: {{ present }}</h3>
-<h3>Absent: {{ absent }}</h3>
-        <div class="card">
-            <h3>Total Users</h3>
-            <h1>{{ total_users }}</h1>
-        </div>
+<h2>Absent: {{ absent }}</h2>
 
-        <div class="card">
-            <h3>Present</h3>
-            <h1>{{ present_count }}</h1>
-        </div>
+<hr>
 
-        <div class="card">
-            <h3>Absent</h3>
-            <h1>{{ absent_count }}</h1>
-        </div>
+<h2>Add Student</h2>
 
-    </div>
+<form action="/add_student" method="POST">
 
-    <br>
+    <input type="text"
+           name="name"
+           placeholder="Name"
+           required>
 
-    <div class="card">
-        <h2>AI Smart Insight</h2>
-        <p>{{ ai_message }}</p>
-    </div>
+    <br><br>
 
-    <br>
+    <input type="text"
+           name="age"
+           placeholder="Age"
+           required>
 
-    <div class="card">
-        <h2>Add Student</h2>
+    <br><br>
 
-        <form action="/add" method="post">
+    <input type="text"
+           name="grade"
+           placeholder="Grade"
+           required>
 
-            <input name="name" placeholder="Name">
-            <input name="age" placeholder="Age">
-            <input name="grade" placeholder="Grade">
+    <br><br>
 
-            <select name="gender">
-                <option>Male</option>
-                <option>Female</option>
-            </select>
+    <input type="text"
+           name="gender"
+           placeholder="Gender"
+           required>
 
-            <input name="phone" placeholder="Phone">
-            <input name="address" placeholder="Address">
+    <br><br>
 
-            <button>Add Student</button>
+    <input type="text"
+           name="phone"
+           placeholder="Phone"
+           required>
 
-        </form>
-    </div>
+    <br><br>
 
-    <br>
+    <input type="text"
+           name="address"
+           placeholder="Address"
+           required>
 
-    <div class="card">
-        <h2>Students Table</h2>
+    <br><br>
 
-        <table>
+    <button type="submit">
+        Add Student
+    </button>
 
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Gender</th>
-                <th>Phone</th>
-                <th>Actions</th>
-            </tr>
+</form>
 
-            {% for s in students %}
-            <tr>
-                <td>{{ s.id }}</td>
-                <td>{{ s.name }}</td>
-                <td>{{ s.age }}</td>
-                <td>{{ s.grade }}</td>
-                <td>{{ s.gender }}</td>
-                <td>{{ s.phone }}</td>
+<hr>
 
-                <td>
-                    <a class="btn edit" href="/edit/{{ s.id }}">Edit</a>
-                    <a class="btn delete" href="/delete/{{ s.id }}">Delete</a>
-                    <a class="btn present" href="/attendance/{{ s.id }}/present">✔</a>
-                    <a class="btn absent" href="/attendance/{{ s.id }}/absent">❌</a>
-                </td>
-            </tr>
-            {% endfor %}
+<h2>Students List</h2>
 
-        </table>
-    </div>
+<table border="1" cellpadding="10">
 
-    <br>
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Grade</th>
+    <th>Gender</th>
+    <th>Phone</th>
+    <th>Address</th>
+    <th>Actions</th>
+</tr>
 
-    <div class="card">
-        <h2>Attendance Analytics</h2>
+{% for student in students %}
 
-        <canvas id="chart"></canvas>
-    </div>
+<tr>
 
-    <br>
+<td>{{ student[0] }}</td>
+<td>{{ student[1] }}</td>
+<td>{{ student[2] }}</td>
+<td>{{ student[3] }}</td>
+<td>{{ student[4] }}</td>
+<td>{{ student[5] }}</td>
+<td>{{ student[6] }}</td>
 
-    <div class="card">
-        <h2>Grade Analysis</h2>
+<td>
 
-        {% for g in grade_analysis %}
-            <p>Grade {{ g.grade }} = {{ g.total }} students</p>
-        {% endfor %}
-    </div>
+<a href="/present/{{ student[0] }}">
+<button>Present</button>
+</a>
 
-    <br>
+<a href="/absent/{{ student[0] }}">
+<button>Absent</button>
+</a>
 
-    <div class="card">
-        <h2>Recent Students</h2>
+<a href="/edit/{{ student[0] }}">
+<button>Edit</button>
+</a>
 
-        {% for r in recent_students %}
-            <p>{{ r.name }} - {{ r.grade }}</p>
-        {% endfor %}
-    </div>
+<a href="/delete/{{ student[0] }}">
+<button>Delete</button>
+</a>
 
-</div>
+</td>
 
-<script>
+</tr>
 
-const data = {{ attendance_data|tojson }};
+{% endfor %}
 
-const labels = data.map(x => x.status);
-const values = data.map(x => x.total);
-
-new Chart(document.getElementById('chart'), {
-    type:'pie',
-    data:{
-        labels:labels,
-        datasets:[{
-            data:values,
-            backgroundColor:[
-                'green',
-                'red'
-            ]
-        }]
-    }
-});
-
-</script>
+</table>
 
 </body>
 </html>
