@@ -4,8 +4,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
-
-
 # =========================
 # DATABASE
 # =========================
