@@ -169,7 +169,7 @@ def reports():
 
     attendance = c.execute("SELECT * FROM attendance").fetchall()
 
-conn.close()
+    conn.close()
 
     return render_template(
         "reports.html",
