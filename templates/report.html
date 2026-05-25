@@ -1,1 +1,102 @@
-<h1>Reports Page</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            padding:20px;
+        }
+
+        h1{
+            color:#1e293b;
+        }
+
+        table{
+            width:100%;
+            border-collapse: collapse;
+            background:white;
+        }
+
+        th{
+            background:#1e293b;
+            color:white;
+            padding:10px;
+        }
+
+        td{
+            padding:10px;
+            border:1px solid #ddd;
+        }
+
+        .card{
+            background:white;
+            padding:15px;
+            margin-bottom:15px;
+            border-radius:10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>📊 Reports Page</h1>
+
+<a href="/dashboard">⬅ Back Dashboard</a>
+
+<div class="card">
+    <h2>Total Students: {{ students|length }}</h2>
+    <h2>Total Attendance Records: {{ attendance|length }}</h2>
+</div>
+
+<h2>Students Report</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Grade</th>
+        <th>Gender</th>
+        <th>Phone</th>
+    </tr>
+
+    {% for s in students %}
+    <tr>
+        <td>{{ s[0] }}</td>
+        <td>{{ s[1] }}</td>
+        <td>{{ s[2] }}</td>
+        <td>{{ s[3] }}</td>
+        <td>{{ s[4] }}</td>
+        <td>{{ s[5] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+
+<h2>Attendance Report</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Student ID</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+
+    {% for a in attendance %}
+    <tr>
+        <td>{{ a[0] }}</td>
+        <td>{{ a[1] }}</td>
+        <td>{{ a[2] }}</td>
+        <td>{{ a[3] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
