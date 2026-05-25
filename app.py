@@ -554,8 +554,7 @@ def test_db():
 # =========================
 @app.route('/delete_users')
 def delete_users():
-
-  if 'user' not in session:
+if 'user' not in session:
 return redirect('/login')  conn = get_db()
     c = conn.cursor()
 
