@@ -2,119 +2,90 @@
 <html>
 <head>
     <title>Reports</title>
-
     <style>
         body{
             font-family: Arial;
-            background:#f4f4f4;
             padding:20px;
-        }
-
-        h1{
-            color:#1e293b;
-        }
-
-        h2{
-            color:#334155;
-        }
-
-        a{
-            text-decoration:none;
-            color:blue;
-        }
-
-        .card{
-            background:white;
-            padding:15px;
-            border-radius:10px;
-            margin-bottom:20px;
+            background:#f4f4f4;
         }
 
         table{
             width:100%;
             border-collapse: collapse;
             background:white;
+            margin-bottom:30px;
+        }
+
+        th, td{
+            border:1px solid #ccc;
+            padding:10px;
+            text-align:center;
         }
 
         th{
             background:#1e293b;
             color:white;
-            padding:10px;
         }
 
-        td{
-            padding:10px;
-            border:1px solid #ddd;
+        h1,h2{
+            color:#111827;
         }
 
+        a{
+            text-decoration:none;
+            color:blue;
+        }
     </style>
-
 </head>
-
 <body>
 
-<h1>📊 School Reports</h1>
+<h1>Reports</h1>
 
-<a href="/dashboard">⬅ Back Dashboard</a>
-
-<div class="card">
-    <h2>Total Students: {{ students|length }}</h2>
-    <h2>Total Attendance: {{ attendance|length }}</h2>
-</div>
+<a href="/dashboard">Back</a>
 
 <h2>Students Report</h2>
 
 <table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Grade</th>
+        <th>Gender</th>
+        <th>Phone</th>
+        <th>Address</th>
+    </tr>
 
-<tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Age</th>
-    <th>Grade</th>
-    <th>Gender</th>
-    <th>Phone</th>
-    <th>Address</th>
-</tr>
-
-{% for s in students %}
-
-<tr>
-    <td>{{ s[0] }}</td>
-    <td>{{ s[1] }}</td>
-    <td>{{ s[2] }}</td>
-    <td>{{ s[3] }}</td>
-    <td>{{ s[4] }}</td>
-    <td>{{ s[5] }}</td>
-    <td>{{ s[6] }}</td>
-</tr>
-
-{% endfor %}
+    {% for student in students %}
+    <tr>
+        <td>{{ student[0] }}</td>
+        <td>{{ student[1] }}</td>
+        <td>{{ student[2] }}</td>
+        <td>{{ student[3] }}</td>
+        <td>{{ student[4] }}</td>
+        <td>{{ student[5] }}</td>
+        <td>{{ student[6] }}</td>
+    </tr>
+    {% endfor %}
 
 </table>
-
-<br><br>
 
 <h2>Attendance Report</h2>
 
 <table>
+    <tr>
+        <th>ID</th>
+        <th>Student ID</th>
+        <th>Status</th>
+    </tr>
 
-<tr>
-    <th>ID</th>
-    <th>Student ID</th>
-    <th>Status</th>
-    <th>Date</th>
-</tr>
-
-{% for a in attendance %}
-
-<tr>
-    <td>{{ a[0] }}</td>
-    <td>{{ a[1] }}</td>
-    <td>{{ a[2] }}</td>
-    <td>{{ a[3] }}</td>
-</tr>
-
-{% endfor %}
+    {% for row in attendance %}
+    <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+    </tr>
+    {% endfor %}
 
 </table>
 
