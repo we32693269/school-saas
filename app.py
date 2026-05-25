@@ -4,7 +4,35 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "secret123"
 
+def init_db():
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
 
+    # students table (if not exists)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        age INTEGER,
+        grade TEXT,
+        gender TEXT,
+        phone TEXT,
+        address TEXT
+    )
+    """)
+
+    # attendance table (IMPORTANT FIX)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        status TEXT,
+        date TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 def get_db():
     conn = sqlite3.connect("school.db")
     conn.row_factory = sqlite3.Row
