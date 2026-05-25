@@ -121,7 +121,29 @@ def register():
 
     return render_template("register.html")
 
+# =========================
+# REPORTS
+# =========================
+@app.route('/reports')
+def reports():
 
+    if 'user' not in session:
+        return redirect('/login')
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    students = c.execute("SELECT * FROM students").fetchall()
+
+    attendance = c.execute("SELECT * FROM attendance").fetchall()
+
+    conn.close()
+
+    return render_template(
+        "reports.html",
+        students=students,
+        attendance=attendance
+    )
 # =========================
 # DASHBOARD
 # =========================
@@ -204,31 +226,6 @@ def mark(id, status):
     conn.close()
 
     return redirect('/dashboard')
-
-# =========================
-# REPORTS
-# =========================
-@app.route('/reports')
-def reports():
-
-    if 'user' not in session:
-        return redirect('/login')
-
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    students = c.execute("SELECT * FROM students").fetchall()
-
-    attendance = c.execute("SELECT * FROM attendance").fetchall()
-
-    conn.close()
-
-    return render_template(
-        "reports.html",
-        students=students,
-        attendance=attendance
-    )
-
 
 # =========================
 # EDIT
