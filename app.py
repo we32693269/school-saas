@@ -212,15 +212,25 @@ def mark(id, status):
 @app.route('/reports')
 def reports():
 
+    if 'user' not in session:
+        return redirect('/login')
+
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    students = c.execute("SELECT * FROM students").fetchall()
-    attendance = c.execute("""
-        SELECT attendance.id, students.name, attendance.status, attendance.date
-        FROM attendance
-        JOIN students ON students.id = attendance.student_id
-    """).fetchall()
+    try:
+        students = c.execute(
+            "SELECT * FROM students"
+        ).fetchall()
+    except:
+        students = []
+
+    try:
+        attendance = c.execute(
+            "SELECT * FROM attendance"
+        ).fetchall()
+    except:
+        attendance = []
 
     conn.close()
 
@@ -229,7 +239,6 @@ def reports():
         students=students,
         attendance=attendance
     )
-
 
 # =========================
 # EDIT
