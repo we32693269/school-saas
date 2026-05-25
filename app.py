@@ -287,39 +287,13 @@ def settings():
         return redirect('/login')
 
     return render_template("settings.html")
-# =========================
+    # =========================
 # REPORTS
 # =========================
 @app.route('/reports')
 def reports():
 
-    if 'user' not in session:
-        return redirect('/login')
-
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    try:
-        students = c.execute(
-            "SELECT * FROM students"
-        ).fetchall()
-    except:
-        students = []
-
-    try:
-        attendance = c.execute(
-            "SELECT * FROM attendance"
-        ).fetchall()
-    except:
-        attendance = []
-
-    conn.close()
-
-    return render_template(
-        "reports.html",
-        students=students,
-        attendance=attendance
-    )
+    return render_template("reports.html")
 # =========================
 # LOGOUT
 # =========================
