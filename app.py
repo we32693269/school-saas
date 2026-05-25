@@ -149,21 +149,6 @@ def dashboard():
         present=len(present),
         absent=len(absent)
     )
-@app.route('/reports')
-def reports():
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    students = c.execute("SELECT * FROM students").fetchall()
-    attendance = c.execute("SELECT * FROM attendance").fetchall()
-
-    conn.close()
-
-    return render_template(
-        "reports.html",
-        students=students,
-        attendance=attendance
-    )
 
 # ADD STUDENT
 @app.route('/add_student', methods=['POST'])
