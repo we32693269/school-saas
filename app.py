@@ -286,7 +286,30 @@ def delete(id):
     conn.close()
 
     return redirect('/dashboard')
+# =========================
+# PROFILE
+# =========================
+@app.route('/profile')
+def profile():
 
+    if 'user' not in session:
+        return redirect('/login')
+
+    return render_template(
+        "profile.html",
+        username=session['user']
+    )
+
+# =========================
+# SETTINGS
+# =========================
+@app.route('/settings')
+def settings():
+
+    if 'user' not in session:
+        return redirect('/login')
+
+    return render_template("settings.html")
 
 # =========================
 # LOGOUT
