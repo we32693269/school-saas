@@ -2,66 +2,67 @@
 <html>
 <head>
     <title>Edit Student</title>
-
-    <style>
-        body{
-            font-family:Arial;
-            background:#f4f6f9;
-            padding:40px;
-        }
-
-        .box{
-            background:white;
-            padding:30px;
-            border-radius:10px;
-            width:400px;
-            margin:auto;
-        }
-
-        input, select{
-            width:100%;
-            padding:10px;
-            margin:10px 0;
-        }
-
-        button{
-            width:100%;
-            padding:12px;
-            background:#2c3e50;
-            color:white;
-            border:none;
-        }
-    </style>
 </head>
+
 <body>
 
-<div class="box">
+<h1>Edit Student</h1>
 
-<h2>Edit Student</h2>
+<form method="POST">
 
-<form action="/update/{{ student.id }}" method="post">
+    <input type="text"
+           name="name"
+           value="{{ student[1] }}"
+           required>
 
-<input name="name" value="{{ student.name }}">
+    <br><br>
 
-<input name="age" value="{{ student.age }}">
+    <input type="text"
+           name="age"
+           value="{{ student[2] }}"
+           required>
 
-<input name="grade" value="{{ student.grade }}">
+    <br><br>
 
-<select name="gender">
-    <option>{{ student.gender }}</option>
-    <option>Male</option>
-    <option>Female</option>
-</select>
+    <input type="text"
+           name="grade"
+           value="{{ student[3] }}"
+           required>
 
-<input name="phone" value="{{ student.phone }}">
+    <br><br>
 
-<input name="address" value="{{ student.address }}">
+    <input type="text"
+           name="gender"
+           value="{{ student[4] }}"
+           required>
 
-<button>Update Student</button>
+    <br><br>
+
+    <input type="text"
+           name="phone"
+           value="{{ student[5] }}"
+           required>
+
+    <br><br>
+
+    <input type="text"
+           name="address"
+           value="{{ student[6] }}"
+           required>
+
+    <br><br>
+
+    <button type="submit">
+        Update Student
+    </button>
 
 </form>
 
-</div>
+<br>
+
+<a href="/dashboard">
+    Back To Dashboard
+</a>
 
 </body>
 </html>
