@@ -125,10 +125,10 @@ new Chart(document.getElementById('myChart'), {
 {% endfor %}
 </table>
 
-<!-- ATTENDANCE -->
-<h2>Attendance List</h2>
+<h2>Attendance Report</h2>
 
-<table>
+<table border="1">
+
 <tr>
     <th>ID</th>
     <th>Student ID</th>
@@ -136,12 +136,15 @@ new Chart(document.getElementById('myChart'), {
 </tr>
 
 {% for a in attendance %}
+
 <tr>
     <td>{{ a[0] }}</td>
     <td>{{ a[1] }}</td>
     <td>{{ a[2] }}</td>
 </tr>
+
 {% endfor %}
+
 </table>
 
 </body>
