@@ -148,7 +148,7 @@ def dashboard():
 # =========================
 # REPORTS
 # =========================
-  @app.route('/reports')
+@app.route('/reports')
 def reports():
     conn = get_db()
     c = conn.cursor()
