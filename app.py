@@ -156,27 +156,28 @@ def dashboard():
 # =========================
 # REPORTS
 # =========================
-@app.route('/reports')
+
+  @app.route('/reports')
 def reports():
 
-    if 'user' not in session:
-        return redirect('/login')
-
-    conn = sqlite3.connect("school.db")
+    conn = get_db()
     c = conn.cursor()
 
-    students = c.execute("SELECT * FROM students").fetchall()
+    students = c.execute(
+        "SELECT * FROM students"
+    ).fetchall()
 
-    attendance = c.execute("SELECT * FROM attendance").fetchall()
+    attendance = c.execute(
+        "SELECT * FROM attendance"
+    ).fetchall()
 
     conn.close()
 
     return render_template(
-        "reports.html",
+        'reports.html',
         students=students,
         attendance=attendance
     )
-  
 # =========================
 # PROFILE
 # =========================
