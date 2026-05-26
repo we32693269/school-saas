@@ -1,131 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reports Dashboard</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        body{
-            font-family: Arial;
-            background:#f4f4f4;
-            padding:20px;
-        }
-
-        h1{
-            color:#111827;
-        }
-
-        .grid{
-            display:grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap:15px;
-        }
-
-        .card{
-            background:white;
-            padding:20px;
-            border-radius:10px;
-            text-align:center;
-        }
-
-        table{
-            width:100%;
-            border-collapse: collapse;
-            background:white;
-            margin-top:20px;
-        }
-
-        th{
-            background:#1e293b;
-            color:white;
-            padding:10px;
-        }
-
-        td{
-            border:1px solid #ddd;
-            padding:10px;
-            text-align:center;
-        }
-
-        a{
-            text-decoration:none;
-            color:blue;
-        }
-    </style>
+    <title>Reports</title>
 </head>
-
 <body>
 
-<h1>📊 Upgraded Reports Dashboard</h1>
+<h1>Reports</h1>
 
-<a href="/dashboard">⬅ Back Dashboard</a>
+<a href="/dashboard">Back</a>
 
-<!-- CARDS -->
-<div class="grid">
+<h2>Students</h2>
 
-    <div class="card">
-        <h2>Total Students</h2>
-        <h3>{{ students|length }}</h3>
-    </div>
+<table border="1">
 
-    <div class="card">
-        <h2>Present</h2>
-        <h3>{{ attendance|selectattr("2","equalto","present")|list|length }}</h3>
-    </div>
-
-    <div class="card">
-        <h2>Absent</h2>
-        <h3>{{ attendance|selectattr("2","equalto","absent")|list|length }}</h3>
-    </div>
-
-</div>
-
-<!-- CHART -->
-<div class="card" style="margin-top:20px;">
-<canvas id="myChart"></canvas>
-</div>
-
-<script>
-let present = {{ attendance|selectattr("2","equalto","present")|list|length }};
-let absent = {{ attendance|selectattr("2","equalto","absent")|list|length }};
-
-new Chart(document.getElementById('myChart'), {
-    type: 'pie',
-    data: {
-        labels: ['Present', 'Absent'],
-        datasets: [{
-            data: [present, absent],
-            backgroundColor: ['green', 'red']
-        }]
-    }
-});
-</script>
-
-<!-- STUDENTS -->
-<h2>Students List</h2>
-
-<table>
 <tr>
     <th>ID</th>
     <th>Name</th>
-    <th>Age</th>
-    <th>Grade</th>
-    <th>Gender</th>
 </tr>
 
 {% for s in students %}
+
 <tr>
     <td>{{ s[0] }}</td>
     <td>{{ s[1] }}</td>
-    <td>{{ s[2] }}</td>
-    <td>{{ s[3] }}</td>
-    <td>{{ s[4] }}</td>
 </tr>
+
 {% endfor %}
+
 </table>
 
-<h2>Attendance Report</h2>
+<br><br>
+
+<h2>Attendance</h2>
 
 <table border="1">
 
