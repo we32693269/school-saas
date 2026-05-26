@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = "school_secret"
+app.secret_key = "secret"
 
 
 # DATABASE
@@ -15,33 +15,30 @@ def get_db():
 conn = get_db()
 c = conn.cursor()
 
-c.execute('''
+c.execute("""
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT,
     password TEXT
 )
-''')
+""")
 
-c.execute('''
+c.execute("""
 CREATE TABLE IF NOT EXISTS students(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     age TEXT,
-    grade TEXT,
-    gender TEXT,
-    phone TEXT,
-    address TEXT
+    grade TEXT
 )
-''')
+""")
 
-c.execute('''
+c.execute("""
 CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id INTEGER,
     status TEXT
 )
-''')
+""")
 
 conn.commit()
 conn.close()
@@ -70,7 +67,7 @@ def login():
             session['user'] = username
             return redirect('/dashboard')
 
-    return render_template('login.html')
+    return render_template("login.html")
 
 
 # REGISTER
@@ -85,15 +82,6 @@ def register():
         conn = get_db()
         c = conn.cursor()
 
-        existing = c.execute(
-            "SELECT * FROM users WHERE username=?",
-            (username,)
-        ).fetchone()
-
-        if existing:
-            conn.close()
-            return "User already exists"
-
         c.execute(
             "INSERT INTO users(username,password) VALUES(?,?)",
             (username, password)
@@ -104,41 +92,30 @@ def register():
 
         return redirect('/')
 
-    return render_template('register.html')
+    return render_template("register.html")
 
 
 # DASHBOARD
 @app.route('/dashboard')
 def dashboard():
 
-    if 'user' not in session:
-        return redirect('/')
-
     conn = get_db()
     c = conn.cursor()
 
     students = c.execute(
-        "SELECT * FROM students ORDER BY id DESC"
+        "SELECT * FROM students"
     ).fetchall()
 
-    total_students = len(students)
-
-    present = c.execute(
-        "SELECT * FROM attendance WHERE status='present'"
-    ).fetchall()
-
-    absent = c.execute(
-        "SELECT * FROM attendance WHERE status='absent'"
+    attendance = c.execute(
+        "SELECT * FROM attendance"
     ).fetchall()
 
     conn.close()
 
     return render_template(
-        'dashboard.html',
+        "dashboard.html",
         students=students,
-        total_students=total_students,
-        present=len(present),
-        absent=len(absent)
+        attendance=attendance
     )
 
 
@@ -149,20 +126,13 @@ def add_student():
     name = request.form['name']
     age = request.form['age']
     grade = request.form['grade']
-    gender = request.form['gender']
-    phone = request.form['phone']
-    address = request.form['address']
 
     conn = get_db()
     c = conn.cursor()
 
     c.execute(
-        '''
-        INSERT INTO students
-        (name, age, grade, gender, phone, address)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ''',
-        (name, age, grade, gender, phone, address)
+        "INSERT INTO students(name,age,grade) VALUES(?,?,?)",
+        (name, age, grade)
     )
 
     conn.commit()
@@ -171,72 +141,17 @@ def add_student():
     return redirect('/dashboard')
 
 
-# DELETE
-@app.route('/delete/<int:id>')
-def delete(id):
-
-    conn = get_db()
-    c = conn.cursor()
-
-    c.execute("DELETE FROM students WHERE id=?", (id,))
-
-    conn.commit()
-    conn.close()
-
-    return redirect('/dashboard')
-
-
-# EDIT
-@app.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit(id):
-
-    conn = get_db()
-    c = conn.cursor()
-
-    if request.method == 'POST':
-
-        name = request.form['name']
-        age = request.form['age']
-        grade = request.form['grade']
-        gender = request.form['gender']
-        phone = request.form['phone']
-        address = request.form['address']
-
-        c.execute(
-            '''
-            UPDATE students
-            SET name=?, age=?, grade=?, gender=?, phone=?, address=?
-            WHERE id=?
-            ''',
-            (name, age, grade, gender, phone, address, id)
-        )
-
-        conn.commit()
-        conn.close()
-
-        return redirect('/dashboard')
-
-    student = c.execute(
-        "SELECT * FROM students WHERE id=?",
-        (id,)
-    ).fetchone()
-
-    conn.close()
-
-    return render_template('edit.html', student=student)
-
-
 # ATTENDANCE
 @app.route('/attendance/<int:id>/<status>')
 def attendance(id, status):
 
-    conn = sqlite3.connect("school.db")
+    conn = get_db()
     c = conn.cursor()
 
-    c.execute("""
-        INSERT INTO attendance(student_id, status)
-        VALUES (?, ?)
-    """, (id, status))
+    c.execute(
+        "INSERT INTO attendance(student_id,status) VALUES(?,?)",
+        (id, status)
+    )
 
     conn.commit()
     conn.close()
@@ -262,37 +177,77 @@ def reports():
     conn.close()
 
     return render_template(
-        'reports.html',
+        "reports.html",
         students=students,
         attendance=attendance
     )
 
 
+# EDIT
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    if request.method == 'POST':
+
+        name = request.form['name']
+        age = request.form['age']
+        grade = request.form['grade']
+
+        c.execute(
+            "UPDATE students SET name=?, age=?, grade=? WHERE id=?",
+            (name, age, grade, id)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect('/dashboard')
+
+    student = c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    return render_template("edit.html", student=student)
+
+
+# DELETE
+@app.route('/delete/<int:id>')
+def delete(id):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("DELETE FROM students WHERE id=?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/dashboard')
+
+
 # PROFILE
 @app.route('/profile')
 def profile():
-
-    if 'user' not in session:
-        return redirect('/')
-
-    return render_template('profile.html')
+    return render_template("profile.html")
 
 
 # SETTINGS
 @app.route('/settings')
 def settings():
-
-    if 'user' not in session:
-        return redirect('/')
-
-    return render_template('settings.html')
+    return render_template("settings.html")
 
 
 # LOGOUT
 @app.route('/logout')
 def logout():
 
-    session.pop('user', None)
+    session.clear()
 
     return redirect('/')
 
