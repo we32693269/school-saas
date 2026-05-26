@@ -1,60 +1,54 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
-from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "school123"
-# =========================
-# DATABASE INIT
-# =========================
-def init_db():
+app.secret_key = "school_secret"
+
+
+# DATABASE
+def get_db():
     conn = sqlite3.connect("school.db")
-    c = conn.cursor()
+    return conn
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS students (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        age TEXT,
-        grade TEXT,
-        gender TEXT,
-        phone TEXT,
-        address TEXT
-    )
-    """)
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS attendance (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        status TEXT,
-        date TEXT
-    )
-    """)
+# CREATE TABLES
+conn = get_db()
+c = conn.cursor()
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        password TEXT
-    )
-    """)
+c.execute('''
+CREATE TABLE IF NOT EXISTS users(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    password TEXT
+)
+''')
 
-    conn.commit()
-    conn.close()
+c.execute('''
+CREATE TABLE IF NOT EXISTS students(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    age TEXT,
+    grade TEXT,
+    gender TEXT,
+    phone TEXT,
+    address TEXT
+)
+''')
 
-init_db()
-# =========================
-# HOME
-# =========================
-@app.route('/')
-def home():
-    return redirect('/login')
+c.execute('''
+CREATE TABLE IF NOT EXISTS attendance(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    status TEXT
+)
+''')
 
-# =========================
+conn.commit()
+conn.close()
+
+
 # LOGIN
-# =========================
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
 
     if request.method == 'POST':
@@ -62,7 +56,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        conn = sqlite3.connect("school.db")
+        conn = get_db()
         c = conn.cursor()
 
         user = c.execute(
@@ -76,13 +70,10 @@ def login():
             session['user'] = username
             return redirect('/dashboard')
 
-        return "Wrong username/password"
+    return render_template('login.html')
 
-    return render_template("login.html")
 
-# =========================
 # REGISTER
-# =========================
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
@@ -91,15 +82,16 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        conn = sqlite3.connect("school.db")
+        conn = get_db()
         c = conn.cursor()
 
-        exist = c.execute(
+        existing = c.execute(
             "SELECT * FROM users WHERE username=?",
             (username,)
         ).fetchone()
 
-        if exist:
+        if existing:
+            conn.close()
             return "User already exists"
 
         c.execute(
@@ -110,23 +102,26 @@ def register():
         conn.commit()
         conn.close()
 
-        return redirect('/login')
+        return redirect('/')
 
-    return render_template("register.html")
+    return render_template('register.html')
 
-# =========================
+
 # DASHBOARD
-# =========================
 @app.route('/dashboard')
 def dashboard():
 
     if 'user' not in session:
-        return redirect('/login')
+        return redirect('/')
 
-    conn = sqlite3.connect("school.db")
+    conn = get_db()
     c = conn.cursor()
 
-    students = c.execute("SELECT * FROM students").fetchall()
+    students = c.execute(
+        "SELECT * FROM students ORDER BY id DESC"
+    ).fetchall()
+
+    total_students = len(students)
 
     present = c.execute(
         "SELECT * FROM attendance WHERE status='present'"
@@ -139,137 +134,82 @@ def dashboard():
     conn.close()
 
     return render_template(
-        "dashboard.html",
+        'dashboard.html',
         students=students,
-        total_students=len(students),
+        total_students=total_students,
         present=len(present),
         absent=len(absent)
     )
-# =========================
-# REPORTS
-# =========================
-@app.route('/reports')
-def reports():
-    conn = get_db()
-    c = conn.cursor()
 
-    students = c.execute(
-        "SELECT * FROM students"
-    ).fetchall()
 
-    attendance = c.execute(
-        "SELECT * FROM attendance"
-    ).fetchall()
-
-    conn.close()
-    return render_template(
-        'reports.html',
-        students=students,
-        attendance=attendance
-    )
-# =========================
-# PROFILE
-# =========================
-@app.route('/profile')
-def profile():
-
-    if 'user' not in session:
-        return redirect('/login')
-    return render_template(
-        "profile.html",
-        username=session['user']
-    )  
-# =========================
 # ADD STUDENT
-# =========================
 @app.route('/add_student', methods=['POST'])
 def add_student():
 
-    conn = sqlite3.connect("school.db")
+    name = request.form['name']
+    age = request.form['age']
+    grade = request.form['grade']
+    gender = request.form['gender']
+    phone = request.form['phone']
+    address = request.form['address']
+
+    conn = get_db()
     c = conn.cursor()
-
-    c.execute("""
-    INSERT INTO students(name,age,grade,gender,phone,address)
-    VALUES(?,?,?,?,?,?)
-    """, (
-        request.form['name'],
-        request.form['age'],
-        request.form['grade'],
-        request.form['gender'],
-        request.form['phone'],
-        request.form['address']
-    ))
-
-    conn.commit()
-    conn.close()
-
-    return redirect('/dashboard')
-# =========================
-# ATTENDANCE
-# =========================
-@app.route('/mark/<int:id>/<status>')
-def mark(id, status):
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    c.execute("""
-    INSERT INTO attendance(student_id,status,date)
-    VALUES(?,?,?)
-    """, (
-        id,
-        status,
-        datetime.now().strftime("%Y-%m-%d")
-    ))
-
-    conn.commit()
-    conn.close()
-
-    return redirect('/dashboard')
-@app.route('/attendance/<int:id>/<status>')
-def attendance(id, status):
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS attendance (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            student_id INTEGER,
-            status TEXT
-        )
-    """)
 
     c.execute(
-        "INSERT INTO attendance (student_id, status) VALUES (?, ?)",
-        (id, status)
+        '''
+        INSERT INTO students
+        (name, age, grade, gender, phone, address)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ''',
+        (name, age, grade, gender, phone, address)
     )
 
     conn.commit()
     conn.close()
 
     return redirect('/dashboard')
-# =========================
+
+
+# DELETE
+@app.route('/delete/<int:id>')
+def delete(id):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("DELETE FROM students WHERE id=?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/dashboard')
+
+
 # EDIT
-# =========================
-@app.route('/edit/<int:id>', methods=['GET','POST'])
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
-    conn = sqlite3.connect("school.db")
+
+    conn = get_db()
     c = conn.cursor()
 
     if request.method == 'POST':
 
-        c.execute("""
-        UPDATE students SET
-        name=?, age=?, grade=?, gender=?, phone=?, address=?
-        WHERE id=?
-        """, (
-            request.form['name'],
-            request.form['age'],
-            request.form['grade'],
-            request.form['gender'],
-            request.form['phone'],
-            request.form['address'],
-            id
-        ))
+        name = request.form['name']
+        age = request.form['age']
+        grade = request.form['grade']
+        gender = request.form['gender']
+        phone = request.form['phone']
+        address = request.form['address']
+
+        c.execute(
+            '''
+            UPDATE students
+            SET name=?, age=?, grade=?, gender=?, phone=?, address=?
+            WHERE id=?
+            ''',
+            (name, age, grade, gender, phone, address, id)
+        )
 
         conn.commit()
         conn.close()
@@ -283,43 +223,79 @@ def edit(id):
 
     conn.close()
 
-    return render_template("edit.html", student=student)
-# =========================
-# DELETE
-# =========================
-@app.route('/delete/<int:id>')
-def delete(id):
+    return render_template('edit.html', student=student)
 
-    conn = sqlite3.connect("school.db")
+
+# ATTENDANCE
+@app.route('/attendance/<int:id>/<status>')
+def attendance(id, status):
+
+    conn = get_db()
     c = conn.cursor()
 
-    c.execute("DELETE FROM students WHERE id=?", (id,))
+    c.execute(
+        "INSERT INTO attendance(student_id,status) VALUES(?,?)",
+        (id, status)
+    )
 
     conn.commit()
     conn.close()
 
     return redirect('/dashboard')
 
-# =========================
+
+# REPORTS
+@app.route('/reports')
+def reports():
+
+    conn = get_db()
+    c = conn.cursor()
+
+    students = c.execute(
+        "SELECT * FROM students"
+    ).fetchall()
+
+    attendance = c.execute(
+        "SELECT * FROM attendance"
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        'reports.html',
+        students=students,
+        attendance=attendance
+    )
+
+
+# PROFILE
+@app.route('/profile')
+def profile():
+
+    if 'user' not in session:
+        return redirect('/')
+
+    return render_template('profile.html')
+
+
 # SETTINGS
-# =========================
 @app.route('/settings')
 def settings():
 
     if 'user' not in session:
-        return redirect('/login')
+        return redirect('/')
 
-    return render_template("settings.html")
+    return render_template('settings.html')
 
-# =========================
+
 # LOGOUT
-# =========================
 @app.route('/logout')
 def logout():
-    session.clear()
-    return redirect('/login')
-# =========================
-# RUN
-# =========================
-if __name__ == "__main__":
+
+    session.pop('user', None)
+
+    return redirect('/')
+
+
+if __name__ == '__main__':
     app.run(debug=True)
