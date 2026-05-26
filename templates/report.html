@@ -7,51 +7,17 @@
 
 <h1>Reports</h1>
 
-<a href="/dashboard">Back</a>
-
 <h2>Students</h2>
 
-<table border="1">
-
-<tr>
-    <th>ID</th>
-    <th>Name</th>
-</tr>
-
 {% for s in students %}
-
-<tr>
-    <td>{{ s[0] }}</td>
-    <td>{{ s[1] }}</td>
-</tr>
-
+<p>{{ s }}</p>
 {% endfor %}
-
-</table>
-
-<br><br>
 
 <h2>Attendance</h2>
 
-<table border="1">
-
-<tr>
-    <th>ID</th>
-    <th>Student ID</th>
-    <th>Status</th>
-</tr>
-
 {% for a in attendance %}
-
-<tr>
-    <td>{{ a[0] }}</td>
-    <td>{{ a[1] }}</td>
-    <td>{{ a[2] }}</td>
-</tr>
-
+<p>{{ a }}</p>
 {% endfor %}
-
-</table>
 
 </body>
 </html>
