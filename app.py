@@ -4,8 +4,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "school123"
-
-
 # =========================
 # DATABASE INIT
 # =========================
@@ -45,17 +43,13 @@ def init_db():
     conn.commit()
     conn.close()
 
-
 init_db()
-
-
 # =========================
 # HOME
 # =========================
 @app.route('/')
 def home():
     return redirect('/login')
-
 
 # =========================
 # LOGIN
@@ -85,7 +79,6 @@ def login():
         return "Wrong username/password"
 
     return render_template("login.html")
-
 
 # =========================
 # REGISTER
@@ -152,14 +145,11 @@ def dashboard():
         present=len(present),
         absent=len(absent)
     )
-
 # =========================
 # REPORTS
 # =========================
-
   @app.route('/reports')
 def reports():
-
     conn = get_db()
     c = conn.cursor()
 
@@ -172,7 +162,6 @@ def reports():
     ).fetchall()
 
     conn.close()
-
     return render_template(
         'reports.html',
         students=students,
@@ -186,7 +175,6 @@ def profile():
 
     if 'user' not in session:
         return redirect('/login')
-
     return render_template(
         "profile.html",
         username=session['user']
@@ -216,14 +204,11 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
-
-
 # =========================
 # ATTENDANCE
 # =========================
 @app.route('/mark/<int:id>/<status>')
 def mark(id, status):
-
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
@@ -242,7 +227,6 @@ def mark(id, status):
     return redirect('/dashboard')
 @app.route('/attendance/<int:id>/<status>')
 def attendance(id, status):
-
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
@@ -268,7 +252,6 @@ def attendance(id, status):
 # =========================
 @app.route('/edit/<int:id>', methods=['GET','POST'])
 def edit(id):
-
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
@@ -301,8 +284,6 @@ def edit(id):
     conn.close()
 
     return render_template("edit.html", student=student)
-
-
 # =========================
 # DELETE
 # =========================
@@ -337,8 +318,6 @@ def settings():
 def logout():
     session.clear()
     return redirect('/login')
-
-
 # =========================
 # RUN
 # =========================
