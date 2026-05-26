@@ -239,7 +239,29 @@ def mark(id, status):
     conn.close()
 
     return redirect('/dashboard')
+@app.route('/attendance/<int:id>/<status>')
+def attendance(id, status):
 
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS attendance (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER,
+            status TEXT
+        )
+    """)
+
+    c.execute(
+        "INSERT INTO attendance (student_id, status) VALUES (?, ?)",
+        (id, status)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/dashboard')
 # =========================
 # EDIT
 # =========================
