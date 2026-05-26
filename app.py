@@ -230,13 +230,13 @@ def edit(id):
 @app.route('/attendance/<int:id>/<status>')
 def attendance(id, status):
 
-    conn = get_db()
+    conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "INSERT INTO attendance(student_id,status) VALUES(?,?)",
-        (id, status)
-    )
+    c.execute("""
+        INSERT INTO attendance(student_id, status)
+        VALUES (?, ?)
+    """, (id, status))
 
     conn.commit()
     conn.close()
