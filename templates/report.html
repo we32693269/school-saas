@@ -2,26 +2,118 @@
 <html>
 <head>
     <title>Reports</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            padding:20px;
+        }
+
+        h1{
+            color:#111827;
+        }
+
+        .card{
+            background:white;
+            padding:15px;
+            margin-bottom:20px;
+            border-radius:10px;
+        }
+
+        table{
+            width:100%;
+            border-collapse: collapse;
+            background:white;
+            margin-bottom:30px;
+        }
+
+        th{
+            background:#1e293b;
+            color:white;
+            padding:10px;
+        }
+
+        td{
+            border:1px solid #ccc;
+            padding:10px;
+            text-align:center;
+        }
+
+        a{
+            text-decoration:none;
+            color:blue;
+        }
+    </style>
+
 </head>
+
 <body>
 
-<h2>Reports</h2>
+<h1>📊 School Reports</h1>
 
-<a href="/dashboard">Back</a>
+<a href="/dashboard">⬅ Back Dashboard</a>
 
-<h3>Students ({{ students|length }})</h3>
+<div class="card">
+    <h2>Total Students: {{ students|length }}</h2>
+    <h2>Total Attendance: {{ attendance|length }}</h2>
+</div>
+
+<!-- STUDENTS REPORT -->
+<div class="card">
+<h2>Students Report</h2>
+
+<table>
+
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Grade</th>
+    <th>Gender</th>
+    <th>Phone</th>
+</tr>
 
 {% for s in students %}
-<p>{{ s }}</p>
+
+<tr>
+    <td>{{ s[0] }}</td>
+    <td>{{ s[1] }}</td>
+    <td>{{ s[2] }}</td>
+    <td>{{ s[3] }}</td>
+    <td>{{ s[4] }}</td>
+    <td>{{ s[5] }}</td>
+</tr>
+
 {% endfor %}
 
-<hr>
+</table>
+</div>
 
-<h3>Attendance ({{ attendance|length }})</h3>
+<!-- ATTENDANCE REPORT -->
+<div class="card">
+<h2>Attendance Report</h2>
+
+<table>
+
+<tr>
+    <th>ID</th>
+    <th>Student ID</th>
+    <th>Status</th>
+</tr>
 
 {% for a in attendance %}
-<p>{{ a }}</p>
+
+<tr>
+    <td>{{ a[0] }}</td>
+    <td>{{ a[1] }}</td>
+    <td>{{ a[2] }}</td>
+</tr>
+
 {% endfor %}
+
+</table>
+</div>
 
 </body>
 </html>
