@@ -22,6 +22,7 @@
             color:white;
             text-decoration:none;
             margin-right:15px;
+            font-weight:bold;
         }
 
         .container{
@@ -39,15 +40,15 @@
             background:white;
             padding:20px;
             border-radius:10px;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
             text-align:center;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
         }
 
         .form-box{
             background:white;
             padding:20px;
             border-radius:10px;
-            margin-bottom:30px;
+            margin-bottom:20px;
             box-shadow:0 0 10px rgba(0,0,0,0.1);
         }
 
@@ -55,6 +56,8 @@
             width:100%;
             padding:10px;
             margin-top:10px;
+            border:1px solid #ccc;
+            border-radius:5px;
         }
 
         button{
@@ -109,6 +112,10 @@
             color:white;
         }
 
+        .search-box{
+            margin-bottom:20px;
+        }
+
     </style>
 
 </head>
@@ -137,18 +144,18 @@
         </div>
 
         <div class="card">
-            <h2>Present</h2>
+            <h2>Attendance</h2>
             <h1>{{ attendance|length }}</h1>
         </div>
 
         <div class="card">
-            <h2>School System</h2>
+            <h2>System</h2>
             <h1>Active</h1>
         </div>
 
     </div>
 
-    <!-- FORM -->
+    <!-- ADD STUDENT -->
 
     <div class="form-box">
 
@@ -170,9 +177,22 @@
 
     </div>
 
-    <!-- TABLE -->
+    <!-- SEARCH -->
 
-    <table>
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search Student..."
+            onkeyup="searchStudent()"
+        >
+
+    </div>
+
+    <!-- STUDENTS TABLE -->
+
+    <table id="studentTable">
 
         <tr>
             <th>ID</th>
@@ -218,6 +238,46 @@
     </table>
 
 </div>
+
+<script>
+
+function searchStudent() {
+
+    let input =
+    document.getElementById("searchInput")
+    .value.toLowerCase();
+
+    let table =
+    document.getElementById("studentTable");
+
+    let tr =
+    table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) {
+
+        let td =
+        tr[i].getElementsByTagName("td")[1];
+
+        if (td) {
+
+            let text =
+            td.textContent || td.innerText;
+
+            if (
+                text.toLowerCase().indexOf(input) > -1
+            ) {
+
+                tr[i].style.display = "";
+
+            } else {
+
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
+</script>
 
 </body>
 </html>
