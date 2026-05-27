@@ -1,18 +1,8 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
-import os
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "secret"
-
-# PHOTO UPLOAD
-UPLOAD_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# CREATE uploads folder
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 # DATABASE
 def get_db():
@@ -38,8 +28,7 @@ CREATE TABLE IF NOT EXISTS students(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     age TEXT,
-    grade TEXT,
-    photo TEXT
+    grade TEXT
 )
 """)
 
@@ -115,11 +104,16 @@ def dashboard():
         "SELECT * FROM students"
     ).fetchall()
 
+    attendance = c.execute(
+        "SELECT * FROM attendance"
+    ).fetchall()
+
     conn.close()
 
     return render_template(
         'dashboard.html',
-        students=students
+        students=students,
+        attendance=attendance
     )
 
 # ADD STUDENT
@@ -130,30 +124,15 @@ def add_student():
     age = request.form['age']
     grade = request.form['grade']
 
-    photo = request.files['photo']
-
-    filename = ""
-
-    if photo and photo.filename != "":
-
-        filename = secure_filename(photo.filename)
-
-        photo.save(
-            os.path.join(
-                app.config['UPLOAD_FOLDER'],
-                filename
-            )
-        )
-
     conn = get_db()
     c = conn.cursor()
 
     c.execute(
         """
-        INSERT INTO students(name, age, grade, photo)
-        VALUES(?,?,?,?)
+        INSERT INTO students(name, age, grade)
+        VALUES(?,?,?)
         """,
-        (name, age, grade, filename)
+        (name, age, grade)
     )
 
     conn.commit()
@@ -200,16 +179,6 @@ def reports():
         students=students,
         attendance=attendance
     )
-
-# PROFILE
-@app.route('/profile')
-def profile():
-    return render_template('profile.html')
-
-# SETTINGS
-@app.route('/settings')
-def settings():
-    return render_template('settings.html')
 
 # EDIT
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -266,6 +235,24 @@ def delete(id):
     conn.close()
 
     return redirect('/dashboard')
+
+# PROFILE
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+# SETTINGS
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+# LOGOUT
+@app.route('/logout')
+def logout():
+
+    session.clear()
+
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)
