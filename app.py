@@ -144,7 +144,7 @@ def add_student():
             app.config['UPLOAD_FOLDER'],
             filename
         )
-    )  filename = secure_filename(photo.filename)
+     )
 
     photo.save(
         os.path.join(
