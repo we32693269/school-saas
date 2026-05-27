@@ -137,11 +137,12 @@ def add_student():
     grade = request.form['grade']
    photo = request.files['photo']
    if photo and photo.filename != "":
+       filename="""
    filename = secure_filename(photo.filename)
      photo.save(
         os.path.join(
             app.config['UPLOAD_FOLDER'],
-            filename
+
         )
      )
     conn = get_db()
