@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 from datetime import datetime
+import os
+from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -14,7 +16,6 @@ def get_db():
 conn = get_db()
 c = conn.cursor()
 
-# USERS TABLE
 c.execute("""
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +24,6 @@ CREATE TABLE IF NOT EXISTS users(
 )
 """)
 
-# STUDENTS TABLE
 c.execute("""
 CREATE TABLE IF NOT EXISTS students(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS students(
 )
 """)
 
-# ATTENDANCE TABLE
 c.execute("""
 CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,7 +46,7 @@ conn.commit()
 conn.close()
 
 # LOGIN
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET','POST'])
 def login():
 
     if request.method == 'POST':
@@ -72,7 +71,7 @@ def login():
     return render_template('login.html')
 
 # REGISTER
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET','POST'])
 def register():
 
     if request.method == 'POST':
@@ -102,13 +101,8 @@ def dashboard():
     conn = get_db()
     c = conn.cursor()
 
-    students = c.execute(
-        "SELECT * FROM students"
-    ).fetchall()
-
-    attendance = c.execute(
-        "SELECT * FROM attendance"
-    ).fetchall()
+    students = c.execute("SELECT * FROM students").fetchall()
+    attendance = c.execute("SELECT * FROM attendance").fetchall()
 
     conn.close()
 
@@ -130,10 +124,7 @@ def add_student():
     c = conn.cursor()
 
     c.execute(
-        """
-        INSERT INTO students(name, age, grade)
-        VALUES(?,?,?)
-        """,
+        "INSERT INTO students(name,age,grade) VALUES(?,?,?)",
         (name, age, grade)
     )
 
@@ -152,10 +143,7 @@ def attendance(id, status):
     c = conn.cursor()
 
     c.execute(
-        """
-        INSERT INTO attendance(student_id,status,date)
-        VALUES(?,?,?)
-        """,
+        "INSERT INTO attendance(student_id,status,date) VALUES(?,?,?)",
         (id, status, date)
     )
 
@@ -171,26 +159,19 @@ def reports():
     conn = get_db()
     c = conn.cursor()
 
-    try:
-        students = c.execute("SELECT * FROM students").fetchall()
-    except:
-        students = []
-
-    try:
-        attendance = c.execute("SELECT * FROM attendance").fetchall()
-    except:
-        attendance = []
+    students = c.execute("SELECT * FROM students").fetchall()
+    attendance = c.execute("SELECT * FROM attendance").fetchall()
 
     conn.close()
 
     return render_template(
-        "reports.html",
+        'reports.html',
         students=students,
         attendance=attendance
     )
 
 # EDIT
-@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+@app.route('/edit/<int:id>', methods=['GET','POST'])
 def edit(id):
 
     conn = get_db()
@@ -203,11 +184,7 @@ def edit(id):
         grade = request.form['grade']
 
         c.execute(
-            """
-            UPDATE students
-            SET name=?, age=?, grade=?
-            WHERE id=?
-            """,
+            "UPDATE students SET name=?,age=?,grade=? WHERE id=?",
             (name, age, grade, id)
         )
 
@@ -223,10 +200,7 @@ def edit(id):
 
     conn.close()
 
-    return render_template(
-        'edit.html',
-        student=student
-    )
+    return render_template('edit.html', student=student)
 
 # DELETE
 @app.route('/delete/<int:id>')
@@ -235,10 +209,7 @@ def delete(id):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute(
-        "DELETE FROM students WHERE id=?",
-        (id,)
-    )
+    c.execute("DELETE FROM students WHERE id=?", (id,))
 
     conn.commit()
     conn.close()
@@ -255,13 +226,51 @@ def profile():
 def settings():
     return render_template('settings.html')
 
-# LOGOUT
-@app.route('/logout')
-def logout():
+# PDF DOWNLOAD
+@app.route('/download_pdf')
+def download_pdf():
 
-    session.clear()
+    conn = get_db()
+    c = conn.cursor()
 
-    return redirect('/')
+    students = c.execute("SELECT * FROM students").fetchall()
+    attendance = c.execute("SELECT * FROM attendance").fetchall()
 
+    conn.close()
+
+    file = "report.pdf"
+    p = canvas.Canvas(file)
+
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(200, 800, "School Report")
+
+    y = 760
+
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(50, y, "Students")
+    y -= 20
+
+    p.setFont("Helvetica", 10)
+
+    for s in students:
+        p.drawString(50, y, f"{s[0]} {s[1]} {s[2]} {s[3]}")
+        y -= 15
+
+    y -= 20
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(50, y, "Attendance")
+    y -= 20
+
+    p.setFont("Helvetica", 10)
+
+    for a in attendance:
+        p.drawString(50, y, f"{a[1]} {a[2]} {a[3]}")
+        y -= 15
+
+    p.save()
+
+    return send_file(file, as_attachment=True)
+
+# RUN
 if __name__ == '__main__':
     app.run(debug=True)
