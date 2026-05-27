@@ -33,18 +33,24 @@
 
         .btn{
             display:inline-block;
-            padding:10px 15px;
-            background:#0f172a;
-            color:white;
+            padding:8px 12px;
+            margin:2px;
             text-decoration:none;
+            color:white;
             border-radius:5px;
-            margin-bottom:10px;
+            font-size:12px;
         }
+
+        .edit{ background:green; }
+        .delete{ background:red; }
+        .present{ background:blue; }
+        .absent{ background:orange; }
+        .pdf{ background:#0f172a; }
 
         input{
             width:100%;
             padding:10px;
-            margin:10px 0;
+            margin-bottom:15px;
             border-radius:5px;
             border:1px solid #ccc;
         }
@@ -72,11 +78,11 @@
 
 <body>
 
-<h1>Dashboard</h1>
+<h1>School Dashboard</h1>
 
 <!-- PDF BUTTON -->
 <div style="text-align:center;">
-    <a class="btn" href="/download_pdf">⬇ Download PDF Report</a>
+    <a class="btn pdf" href="/download_pdf">⬇ Download PDF Report</a>
 </div>
 
 <!-- CARDS -->
@@ -109,16 +115,22 @@
 </tr>
 
 {% for s in students %}
+
 <tr>
     <td>{{ s[0] }}</td>
     <td>{{ s[1] }}</td>
     <td>{{ s[2] }}</td>
     <td>{{ s[3] }}</td>
     <td>
-        <a href="/edit/{{ s[0] }}">Edit</a>
-        <a href="/delete/{{ s[0] }}">Delete</a>
+
+        <a class="btn edit" href="/edit/{{ s[0] }}">Edit</a>
+        <a class="btn delete" href="/delete/{{ s[0] }}">Delete</a>
+        <a class="btn present" href="/attendance/{{ s[0] }}/present">Present</a>
+        <a class="btn absent" href="/attendance/{{ s[0] }}/absent">Absent</a>
+
     </td>
 </tr>
+
 {% endfor %}
 
 </table>
