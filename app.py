@@ -138,7 +138,20 @@ def add_student():
 
     photo = request.files['photo']
 
+  photo = request.files['photo']
+
+filename = ""
+
+if photo and photo.filename != "":
+
     filename = secure_filename(photo.filename)
+
+    photo.save(
+        os.path.join(
+            app.config['UPLOAD_FOLDER'],
+            filename
+        )
+    )  filename = secure_filename(photo.filename)
 
     photo.save(
         os.path.join(
