@@ -13,13 +13,29 @@ body{
     background:#eef2f7;
 }
 
+/* ================= BRAND HEADER ================= */
+.brand{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:10px;
+    background:white;
+}
+
+.brand img{
+    width:50px;
+    height:50px;
+    border-radius:10px;
+}
+
 /* ================= HEADER ================= */
 .header{
-    background:#0f172a;
+    background:linear-gradient(90deg,#0f172a,#1e3a8a);
     color:white;
-    padding:15px;
     text-align:center;
-    font-size:22px;
+    padding:18px;
+    font-size:20px;
     font-weight:bold;
 }
 
@@ -33,8 +49,8 @@ body{
     display:flex;
     gap:20px;
     justify-content:center;
-    margin-top:20px;
     flex-wrap:wrap;
+    margin-top:20px;
 }
 
 .card{
@@ -46,16 +62,7 @@ body{
     box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
-.card h2{
-    font-size:30px;
-    margin:0;
-}
-
-.card p{
-    color:gray;
-}
-
-/* ================= BUTTON ================= */
+/* ================= BUTTONS ================= */
 .btn{
     display:inline-block;
     padding:8px 12px;
@@ -81,7 +88,7 @@ body{
     box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
-input, select{
+input{
     width:100%;
     padding:10px;
     margin:5px 0;
@@ -127,8 +134,8 @@ th{
 }
 
 td{
-    text-align:center;
     padding:10px;
+    text-align:center;
     border-bottom:1px solid #ddd;
 }
 
@@ -146,13 +153,20 @@ td{
 
 <body>
 
+<!-- ================= BRAND LOGO ================= -->
+<div class="brand">
+    <img src="/static/logo.png">
+    <h2>School SaaS System</h2>
+</div>
+
+<!-- ================= HEADER ================= -->
 <div class="header">
-    SCHOOL MANAGEMENT DASHBOARD
+    🎓 SMART SCHOOL MANAGEMENT DASHBOARD
 </div>
 
 <div class="container">
 
-<!-- ================= PDF BUTTON ================= -->
+<!-- ================= PDF ================= -->
 <div style="text-align:center;">
     <a class="btn pdf" href="/download_pdf">⬇ Download PDF Report</a>
 </div>
@@ -172,20 +186,20 @@ td{
 
 </div>
 
-<!-- ================= ADD STUDENT FORM ================= -->
+<!-- ================= ADD STUDENT ================= -->
 <div class="form-box">
 
-    <h3>Add Student</h3>
+<h3>Add Student</h3>
 
-    <form action="/add_student" method="POST">
+<form action="/add_student" method="POST">
 
-        <input type="text" name="name" placeholder="Student Name" required>
-        <input type="number" name="age" placeholder="Age" required>
-        <input type="text" name="grade" placeholder="Grade" required>
+    <input type="text" name="name" placeholder="Student Name" required>
+    <input type="number" name="age" placeholder="Age" required>
+    <input type="text" name="grade" placeholder="Grade" required>
 
-        <button type="submit">Add Student</button>
+    <button type="submit">Add Student</button>
 
-    </form>
+</form>
 
 </div>
 
@@ -202,7 +216,7 @@ td{
     <th>Name</th>
     <th>Age</th>
     <th>Grade</th>
-    <th>Actions</th>
+    <th>Action</th>
 </tr>
 
 {% for s in students %}
@@ -230,7 +244,7 @@ td{
 
 <!-- ================= FOOTER ================= -->
 <div class="footer">
-    Powered by School SaaS System © 2026
+    © 2026 School SaaS System | Built with Flask
 </div>
 
 <!-- ================= SEARCH SCRIPT ================= -->
@@ -246,7 +260,6 @@ document.getElementById("search").addEventListener("keyup", function(){
         if(index === 0) return;
 
         let text = row.innerText.toLowerCase();
-
         row.style.display = text.includes(value) ? "" : "none";
 
     });
