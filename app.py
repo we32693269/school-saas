@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -37,7 +38,8 @@ c.execute("""
 CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id INTEGER,
-    status TEXT
+    status TEXT,
+    date TEXT
 )
 """)
 
@@ -140,16 +142,21 @@ def add_student():
 
     return redirect('/dashboard')
 
-# ATTENDANCE
+# ATTENDANCE WITH DATE
 @app.route('/attendance/<int:id>/<status>')
 def attendance(id, status):
+
+    date = datetime.now().strftime("%Y-%m-%d")
 
     conn = get_db()
     c = conn.cursor()
 
     c.execute(
-        "INSERT INTO attendance(student_id,status) VALUES(?,?)",
-        (id, status)
+        """
+        INSERT INTO attendance(student_id,status,date)
+        VALUES(?,?,?)
+        """,
+        (id, status, date)
     )
 
     conn.commit()
