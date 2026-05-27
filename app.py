@@ -145,14 +145,6 @@ def add_student():
             filename
         )
      )
-
-    photo.save(
-        os.path.join(
-            app.config['UPLOAD_FOLDER'],
-            filename
-        )
-    )
-
     conn = get_db()
     c = conn.cursor()
 
