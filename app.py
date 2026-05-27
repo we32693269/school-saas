@@ -103,12 +103,17 @@ def dashboard():
     students = c.execute("SELECT * FROM students").fetchall()
     attendance = c.execute("SELECT * FROM attendance").fetchall()
 
+    total_students = len(students)
+    total_attendance = len(attendance)
+
     conn.close()
 
     return render_template(
         'dashboard.html',
         students=students,
-        attendance=attendance
+        attendance=attendance,
+        total_students=total_students,
+        total_attendance=total_attendance
     )
 
 # ================= ADD STUDENT =================
