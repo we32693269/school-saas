@@ -1,321 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>School Dashboard</title>
+    <title>Dashboard</title>
 
     <style>
 
         body{
             font-family: Arial;
             background:#f1f5f9;
-            margin:0;
-            padding:0;
-        }
-
-        .navbar{
-            background:#0f172a;
-            color:white;
-            padding:15px;
-        }
-
-        .navbar a{
-            color:white;
-            text-decoration:none;
-            margin-right:15px;
-            font-weight:bold;
-        }
-
-        .container{
             padding:20px;
         }
 
+        h1{
+            text-align:center;
+        }
+
         .cards{
-            display:grid;
-            grid-template-columns: repeat(3,1fr);
+            display:flex;
             gap:20px;
-            margin-bottom:30px;
+            justify-content:center;
+            margin-bottom:20px;
         }
 
         .card{
             background:white;
             padding:20px;
             border-radius:10px;
+            width:200px;
             text-align:center;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .form-box{
-            background:white;
-            padding:20px;
-            border-radius:10px;
-            margin-bottom:20px;
             box-shadow:0 0 10px rgba(0,0,0,0.1);
         }
 
         input{
             width:100%;
             padding:10px;
-            margin-top:10px;
+            margin-bottom:20px;
+            border-radius:5px;
             border:1px solid #ccc;
-            border-radius:5px;
-        }
-
-        button{
-            padding:10px 15px;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-        }
-
-        .add-btn{
-            background:#2563eb;
-            color:white;
-            margin-top:10px;
         }
 
         table{
             width:100%;
-            border-collapse: collapse;
+            border-collapse:collapse;
             background:white;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
         }
 
         th{
-            background:#1e293b;
+            background:#0f172a;
             color:white;
-            padding:12px;
+            padding:10px;
         }
 
         td{
+            border:1px solid #ccc;
             padding:10px;
-            border:1px solid #ddd;
             text-align:center;
         }
 
-        .present{
-            background:green;
+        a{
+            text-decoration:none;
+            padding:5px 10px;
+            background:#0f172a;
             color:white;
-        }
-
-        .absent{
-            background:red;
-            color:white;
-        }
-
-        .edit{
-            background:orange;
-            color:white;
-        }
-
-        .delete{
-            background:black;
-            color:white;
-        }
-
-        .search-box{
-            margin-bottom:20px;
-        }
-
-        img{
-            border-radius:50%;
+            border-radius:5px;
         }
 
     </style>
-
 </head>
 
 <body>
 
-<div class="navbar">
+<h1>Dashboard</h1>
 
-    <a href="/dashboard">Dashboard</a>
-    <a href="/reports">Reports</a>
-    <a href="/profile">Profile</a>
-    <a href="/settings">Settings</a>
-    <a href="/logout">Logout</a>
+<!-- CARDS -->
+<div class="cards">
+
+    <div class="card">
+        <h2>{{ total_students }}</h2>
+        <p>Total Students</p>
+    </div>
+
+    <div class="card">
+        <h2>{{ total_attendance }}</h2>
+        <p>Total Attendance</p>
+    </div>
 
 </div>
 
-<div class="container">
+<!-- SEARCH -->
+<input type="text" id="search" placeholder="Search student...">
 
-    <!-- CARDS -->
+<!-- TABLE -->
+<table id="table">
 
-    <div class="cards">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Grade</th>
+    <th>Action</th>
+</tr>
 
-        <div class="card">
-            <h2>Total Students</h2>
-            <h1>{{ students|length }}</h1>
-        </div>
+{% for s in students %}
 
-        <div class="card">
-            <h2>Attendance</h2>
-            <h1>{{ attendance|length }}</h1>
-        </div>
+<tr>
+    <td>{{ s[0] }}</td>
+    <td>{{ s[1] }}</td>
+    <td>{{ s[2] }}</td>
+    <td>{{ s[3] }}</td>
+    <td>
+        <a href="/edit/{{ s[0] }}">Edit</a>
+        <a href="/delete/{{ s[0] }}">Delete</a>
+    </td>
+</tr>
 
-        <div class="card">
-            <h2>System</h2>
-            <h1>Active</h1>
-        </div>
+{% endfor %}
 
-    </div>
+</table>
 
-    <!-- ADD STUDENT -->
-
-    <div class="form-box">
-
-        <h2>Add Student</h2>
-
-        <form
-        method="POST"
-        action="/add_student"
-        enctype="multipart/form-data"
-        >
-
-            <input
-            type="text"
-            name="name"
-            placeholder="Student Name"
-            required
-            >
-
-            <input
-            type="text"
-            name="age"
-            placeholder="Age"
-            required
-            >
-
-            <input
-            type="text"
-            name="grade"
-            placeholder="Grade"
-            required
-            >
-
-            <input
-            type="file"
-            name="photo"
-            required 
-            >
-
-            <button class="add-btn" type="submit">
-                Add Student
-            </button>
-
-        </form>
-
-    </div>
-
-    <!-- SEARCH -->
-
-    <div class="search-box">
-
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search Student..."
-            onkeyup="searchStudent()"
-        >
-
-    </div>
-
-    <!-- STUDENTS TABLE -->
-
-    <table id="studentTable">
-
-        <tr>
-            <th>ID</th>
-            <th>Photo</th>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Grade</th>
-            <th>Actions</th>
-        </tr>
-
-        {% for student in students %}
-
-        <tr>
-
-            <td>{{ student[0] }}</td>
-
-            <td>
-                <img
-                src="/static/uploads/{{ student[4] }}"
-                width="60"
-                height="60"
-                >
-            </td>
-
-            <td>{{ student[1] }}</td>
-            <td>{{ student[2] }}</td>
-            <td>{{ student[3] }}</td>
-
-            <td>
-
-                <a href="/attendance/{{ student[0] }}/present">
-                    <button class="present">Present</button>
-                </a>
-
-                <a href="/attendance/{{ student[0] }}/absent">
-                    <button class="absent">Absent</button>
-                </a>
-
-                <a href="/edit/{{ student[0] }}">
-                    <button class="edit">Edit</button>
-                </a>
-
-                <a href="/delete/{{ student[0] }}">
-                    <button class="delete">Delete</button>
-                </a>
-
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </table>
-
-</div>
-
+<!-- SEARCH SCRIPT -->
 <script>
+document.getElementById("search").addEventListener("keyup", function(){
 
-function searchStudent() {
+    let value = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#table tr");
 
-    let input =
-    document.getElementById("searchInput")
-    .value.toLowerCase();
+    rows.forEach((row, index) => {
 
-    let table =
-    document.getElementById("studentTable");
+        if(index === 0) return;
 
-    let tr =
-    table.getElementsByTagName("tr");
+        let text = row.innerText.toLowerCase();
 
-    for (let i = 1; i < tr.length; i++) {
-
-        let td =
-        tr[i].getElementsByTagName("td")[2];
-
-        if (td) {
-
-            let text =
-            td.textContent || td.innerText;
-
-            if (
-                text.toLowerCase().indexOf(input) > -1
-            ) {
-
-                tr[i].style.display = "";
-
-            } else {
-
-                tr[i].style.display = "none";
-            }
+        if(text.includes(value)){
+            row.style.display = "";
+        }else{
+            row.style.display = "none";
         }
-    }
-}
 
+    });
+
+});
 </script>
 
 </body>
