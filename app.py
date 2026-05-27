@@ -138,8 +138,6 @@ def add_student():
 
     photo = request.files['photo']
 
-  photo = request.files['photo']
-
 filename = ""
 
 if photo and photo.filename != "":
