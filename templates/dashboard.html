@@ -116,6 +116,10 @@
             margin-bottom:20px;
         }
 
+        img{
+            border-radius:50%;
+        }
+
     </style>
 
 </head>
@@ -161,13 +165,38 @@
 
         <h2>Add Student</h2>
 
-        <form method="POST" action="/add_student">
+        <form
+        method="POST"
+        action="/add_student"
+        enctype="multipart/form-data"
+        >
 
-            <input type="text" name="name" placeholder="Student Name" required>
+            <input
+            type="text"
+            name="name"
+            placeholder="Student Name"
+            required
+            >
 
-            <input type="text" name="age" placeholder="Age" required>
+            <input
+            type="text"
+            name="age"
+            placeholder="Age"
+            required
+            >
 
-            <input type="text" name="grade" placeholder="Grade" required>
+            <input
+            type="text"
+            name="grade"
+            placeholder="Grade"
+            required
+            >
+
+            <input
+            type="file"
+            name="photo"
+            required
+            >
 
             <button class="add-btn" type="submit">
                 Add Student
@@ -196,6 +225,7 @@
 
         <tr>
             <th>ID</th>
+            <th>Photo</th>
             <th>Name</th>
             <th>Age</th>
             <th>Grade</th>
@@ -207,6 +237,15 @@
         <tr>
 
             <td>{{ student[0] }}</td>
+
+            <td>
+                <img
+                src="/static/uploads/{{ student[4] }}"
+                width="60"
+                height="60"
+                >
+            </td>
+
             <td>{{ student[1] }}</td>
             <td>{{ student[2] }}</td>
             <td>{{ student[3] }}</td>
@@ -256,7 +295,7 @@ function searchStudent() {
     for (let i = 1; i < tr.length; i++) {
 
         let td =
-        tr[i].getElementsByTagName("td")[1];
+        tr[i].getElementsByTagName("td")[2];
 
         if (td) {
 
