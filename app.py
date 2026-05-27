@@ -1,9 +1,14 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "secret"
 
+# PHOTO UPLOAD
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # DATABASE
 def get_db():
@@ -15,6 +20,7 @@ def get_db():
 conn = get_db()
 c = conn.cursor()
 
+# USERS
 c.execute("""
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,15 +29,18 @@ CREATE TABLE IF NOT EXISTS users(
 )
 """)
 
+# STUDENTS
 c.execute("""
 CREATE TABLE IF NOT EXISTS students(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     age TEXT,
-    grade TEXT
+    grade TEXT,
+    photo TEXT
 )
 """)
 
+# ATTENDANCE
 c.execute("""
 CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -127,12 +136,26 @@ def add_student():
     age = request.form['age']
     grade = request.form['grade']
 
+    photo = request.files['photo']
+
+    filename = secure_filename(photo.filename)
+
+    photo.save(
+        os.path.join(
+            app.config['UPLOAD_FOLDER'],
+            filename
+        )
+    )
+
     conn = get_db()
     c = conn.cursor()
 
     c.execute(
-        "INSERT INTO students(name,age,grade) VALUES(?,?,?)",
-        (name, age, grade)
+        """
+        INSERT INTO students(name, age, grade, photo)
+        VALUES(?,?,?,?)
+        """,
+        (name, age, grade, filename)
     )
 
     conn.commit()
@@ -183,7 +206,7 @@ def reports():
     )
 
 
-# EDIT
+# EDIT STUDENT
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
 
@@ -197,7 +220,11 @@ def edit(id):
         grade = request.form['grade']
 
         c.execute(
-            "UPDATE students SET name=?, age=?, grade=? WHERE id=?",
+            """
+            UPDATE students
+            SET name=?, age=?, grade=?
+            WHERE id=?
+            """,
             (name, age, grade, id)
         )
 
@@ -213,17 +240,23 @@ def edit(id):
 
     conn.close()
 
-    return render_template("edit.html", student=student)
+    return render_template(
+        "edit.html",
+        student=student
+    )
 
 
-# DELETE
+# DELETE STUDENT
 @app.route('/delete/<int:id>')
 def delete(id):
 
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("DELETE FROM students WHERE id=?", (id,))
+    c.execute(
+        "DELETE FROM students WHERE id=?",
+        (id,)
+    )
 
     conn.commit()
     conn.close()
@@ -253,4 +286,7 @@ def logout():
 
 
 if __name__ == '__main__':
+
+    os.makedirs('static/uploads', exist_ok=True)
+
     app.run(debug=True)
