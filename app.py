@@ -336,7 +336,19 @@ def download_pdf():
     p.save()
 
     return send_file(file, as_attachment=True)
+@app.route('/profile')
+def profile():
+    return render_template("profile.html")
 
+
+@app.route('/settings')
+def settings():
+    return render_template("settings.html")
+
+
+@app.route('/logout')
+def logout():
+    return redirect('/login')
 # ================= RUN =================
 if __name__ == '__main__':
     app.run(debug=True)
