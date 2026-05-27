@@ -171,18 +171,20 @@ def reports():
     conn = get_db()
     c = conn.cursor()
 
-    students = c.execute(
-        "SELECT * FROM students"
-    ).fetchall()
+    try:
+        students = c.execute("SELECT * FROM students").fetchall()
+    except:
+        students = []
 
-    attendance = c.execute(
-        "SELECT * FROM attendance"
-    ).fetchall()
+    try:
+        attendance = c.execute("SELECT * FROM attendance").fetchall()
+    except:
+        attendance = []
 
     conn.close()
 
     return render_template(
-        'reports.html',
+        "reports.html",
         students=students,
         attendance=attendance
     )
