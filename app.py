@@ -136,7 +136,6 @@ def add_student():
     age = request.form['age']
     grade = request.form['grade']
    photo = request.files['photo']
-   filename = ""
    if photo and photo.filename != "":
    filename = secure_filename(photo.filename)
      photo.save(
