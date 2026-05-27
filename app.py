@@ -348,7 +348,7 @@ def settings():
 
 @app.route('/logout')
 def logout():
-    return redirect('/login')
+    return redirect('/')
 # ================= RUN =================
 if __name__ == '__main__':
     app.run(debug=True)
