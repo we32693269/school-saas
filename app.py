@@ -10,17 +10,20 @@ app.secret_key = "secret"
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# CREATE uploads folder
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 # DATABASE
 def get_db():
     conn = sqlite3.connect("school.db")
     return conn
 
-
 # CREATE TABLES
 conn = get_db()
 c = conn.cursor()
 
-# USERS
+# USERS TABLE
 c.execute("""
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,7 +32,7 @@ CREATE TABLE IF NOT EXISTS users(
 )
 """)
 
-# STUDENTS
+# STUDENTS TABLE
 c.execute("""
 CREATE TABLE IF NOT EXISTS students(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,7 +43,7 @@ CREATE TABLE IF NOT EXISTS students(
 )
 """)
 
-# ATTENDANCE
+# ATTENDANCE TABLE
 c.execute("""
 CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,7 +54,6 @@ CREATE TABLE IF NOT EXISTS attendance(
 
 conn.commit()
 conn.close()
-
 
 # LOGIN
 @app.route('/', methods=['GET', 'POST'])
@@ -76,8 +78,7 @@ def login():
             session['user'] = username
             return redirect('/dashboard')
 
-    return render_template("login.html")
-
+    return render_template('login.html')
 
 # REGISTER
 @app.route('/register', methods=['GET', 'POST'])
@@ -101,8 +102,7 @@ def register():
 
         return redirect('/')
 
-    return render_template("register.html")
-
+    return render_template('register.html')
 
 # DASHBOARD
 @app.route('/dashboard')
@@ -115,18 +115,12 @@ def dashboard():
         "SELECT * FROM students"
     ).fetchall()
 
-    attendance = c.execute(
-        "SELECT * FROM attendance"
-    ).fetchall()
-
     conn.close()
 
     return render_template(
-        "dashboard.html",
-        students=students,
-        attendance=attendance
+        'dashboard.html',
+        students=students
     )
-
 
 # ADD STUDENT
 @app.route('/add_student', methods=['POST'])
@@ -135,16 +129,22 @@ def add_student():
     name = request.form['name']
     age = request.form['age']
     grade = request.form['grade']
-   photo = request.files['photo']
-   if photo and photo.filename != "":
-       filename="""
-   filename = secure_filename(photo.filename)
-     photo.save(
-        os.path.join(
-            app.config['UPLOAD_FOLDER'],
 
+    photo = request.files['photo']
+
+    filename = ""
+
+    if photo and photo.filename != "":
+
+        filename = secure_filename(photo.filename)
+
+        photo.save(
+            os.path.join(
+                app.config['UPLOAD_FOLDER'],
+                filename
+            )
         )
-     )
+
     conn = get_db()
     c = conn.cursor()
 
@@ -160,7 +160,6 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
-
 
 # ATTENDANCE
 @app.route('/attendance/<int:id>/<status>')
@@ -178,7 +177,6 @@ def attendance(id, status):
     conn.close()
 
     return redirect('/dashboard')
-
 
 # REPORTS
 @app.route('/reports')
@@ -198,13 +196,22 @@ def reports():
     conn.close()
 
     return render_template(
-        "reports.html",
+        'reports.html',
         students=students,
         attendance=attendance
     )
 
+# PROFILE
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
 
-# EDIT STUDENT
+# SETTINGS
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+# EDIT
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
 
@@ -239,12 +246,11 @@ def edit(id):
     conn.close()
 
     return render_template(
-        "edit.html",
+        'edit.html',
         student=student
     )
 
-
-# DELETE STUDENT
+# DELETE
 @app.route('/delete/<int:id>')
 def delete(id):
 
@@ -261,30 +267,5 @@ def delete(id):
 
     return redirect('/dashboard')
 
-
-# PROFILE
-@app.route('/profile')
-def profile():
-    return render_template("profile.html")
-
-
-# SETTINGS
-@app.route('/settings')
-def settings():
-    return render_template("settings.html")
-
-
-# LOGOUT
-@app.route('/logout')
-def logout():
-
-    session.clear()
-
-    return redirect('/')
-
-
 if __name__ == '__main__':
-
-    os.makedirs('static/uploads', exist_ok=True)
-
     app.run(debug=True)
