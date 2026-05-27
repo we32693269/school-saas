@@ -219,6 +219,8 @@ def delete(id):
 @app.route('/download_pdf')
 def download_pdf():
 
+    from datetime import datetime
+
     conn = get_db()
     c = conn.cursor()
 
@@ -230,30 +232,40 @@ def download_pdf():
     file = "report.pdf"
     p = canvas.Canvas(file)
 
-    width = 500
     date_today = datetime.now().strftime("%Y-%m-%d")
 
-    # HEADER
+    # ================= HEADER =================
+    p.setFillColorRGB(0, 0, 0.6)
+    p.rect(0, 780, 600, 50, fill=1)
+
+    p.setFillColorRGB(1, 1, 1)
     p.setFont("Helvetica-Bold", 20)
-    p.drawString(180, 800, "SCHOOL REPORT")
+    p.drawString(200, 800, "SCHOOL REPORT")
 
     p.setFont("Helvetica", 10)
-    p.drawString(200, 780, f"Date: {date_today}")
+    p.drawString(230, 785, f"Date: {date_today}")
 
-    p.line(50, 770, 550, 770)
+    # reset color
+    p.setFillColorRGB(0, 0, 0)
 
-    # STUDENTS
+    # ================= STUDENTS =================
     y = 740
+
     p.setFont("Helvetica-Bold", 14)
     p.drawString(50, y, "STUDENTS")
 
-    y -= 20
-    p.rect(50, y, width, 20)
+    y -= 25
 
+    # HEADER ROW (colored)
+    p.setFillColorRGB(0.9, 0.9, 0.9)
+    p.rect(50, y, 500, 20, fill=1)
+
+    p.setFillColorRGB(0, 0, 0)
+    p.setFont("Helvetica-Bold", 12)
     p.drawString(60, y+5, "ID")
     p.drawString(120, y+5, "NAME")
-    p.drawString(260, y+5, "AGE")
-    p.drawString(360, y+5, "GRADE")
+    p.drawString(280, y+5, "AGE")
+    p.drawString(400, y+5, "GRADE")
 
     y -= 20
     p.setFont("Helvetica", 11)
@@ -264,27 +276,36 @@ def download_pdf():
             p.showPage()
             y = 750
 
-        p.rect(50, y, width, 20)
+        p.rect(50, y, 500, 20)
 
         p.drawString(60, y+5, str(s[0]))
         p.drawString(120, y+5, str(s[1]))
-        p.drawString(260, y+5, str(s[2]))
-        p.drawString(360, y+5, str(s[3]))
+        p.drawString(280, y+5, str(s[2]))
+        p.drawString(400, y+5, str(s[3]))
 
         y -= 20
 
-    # ATTENDANCE
+    # ================= ATTENDANCE =================
     y -= 40
+
+    if y < 120:
+        p.showPage()
+        y = 750
 
     p.setFont("Helvetica-Bold", 14)
     p.drawString(50, y, "ATTENDANCE")
 
-    y -= 20
-    p.rect(50, y, width, 20)
+    y -= 25
 
+    # HEADER ROW (colored)
+    p.setFillColorRGB(0.9, 0.9, 0.9)
+    p.rect(50, y, 500, 20, fill=1)
+
+    p.setFillColorRGB(0, 0, 0)
+    p.setFont("Helvetica-Bold", 12)
     p.drawString(60, y+5, "STUDENT ID")
-    p.drawString(200, y+5, "STATUS")
-    p.drawString(350, y+5, "DATE")
+    p.drawString(220, y+5, "STATUS")
+    p.drawString(400, y+5, "DATE")
 
     y -= 20
     p.setFont("Helvetica", 11)
@@ -295,15 +316,15 @@ def download_pdf():
             p.showPage()
             y = 750
 
-        p.rect(50, y, width, 20)
+        p.rect(50, y, 500, 20)
 
         p.drawString(60, y+5, str(a[1]))
-        p.drawString(200, y+5, str(a[2]))
-        p.drawString(350, y+5, str(a[3]))
+        p.drawString(220, y+5, str(a[2]))
+        p.drawString(400, y+5, str(a[3]))
 
         y -= 20
 
-    # FOOTER
+    # ================= FOOTER =================
     p.setFont("Helvetica-Oblique", 9)
     p.drawString(200, 40, "Powered by School SaaS System")
 
