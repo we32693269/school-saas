@@ -2,252 +2,381 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>School Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>School SaaS Dashboard</title>
 
 <style>
 
-/* ================= BODY ================= */
-body{
+*{
     margin:0;
-    font-family: Arial;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
     background:#eef2f7;
 }
 
-/* ================= BRAND HEADER ================= */
-.brand{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    padding:10px;
-    background:white;
-}
+/* SIDEBAR */
 
-.brand img{
-    width:50px;
-    height:50px;
-    border-radius:10px;
-}
-
-/* ================= HEADER ================= */
-.header{
-    background:linear-gradient(90deg,#0f172a,#1e3a8a);
+.sidebar{
+    position:fixed;
+    width:240px;
+    height:100vh;
+    background:#0f172a;
     color:white;
-    text-align:center;
-    padding:18px;
-    font-size:20px;
-    font-weight:bold;
-}
-
-/* ================= CONTAINER ================= */
-.container{
     padding:20px;
 }
 
-/* ================= CARDS ================= */
-.cards{
+.sidebar h2{
+    margin-bottom:30px;
+    text-align:center;
+}
+
+.sidebar a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.sidebar a:hover{
+    background:#1e3a8a;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:240px;
+    padding:20px;
+}
+
+/* TOPBAR */
+
+.topbar{
+    background:white;
+    padding:15px 20px;
+    border-radius:12px;
     display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo img{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+}
+
+/* CARDS */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:20px;
-    justify-content:center;
-    flex-wrap:wrap;
-    margin-top:20px;
+    margin-bottom:25px;
 }
 
 .card{
     background:white;
-    padding:20px;
-    width:220px;
+    padding:30px;
+    border-radius:15px;
     text-align:center;
-    border-radius:10px;
     box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
-/* ================= BUTTONS ================= */
-.btn{
-    display:inline-block;
-    padding:8px 12px;
-    margin:2px;
-    border-radius:5px;
-    text-decoration:none;
-    color:white;
-    font-size:12px;
+.card h1{
+    color:#1e3a8a;
+    margin-bottom:10px;
 }
 
-.edit{ background:green; }
-.delete{ background:red; }
-.present{ background:blue; }
-.absent{ background:orange; }
-.pdf{ background:#111827; }
+/* PDF BUTTON */
 
-/* ================= FORM ================= */
+.pdf-btn{
+    display:inline-block;
+    background:#111827;
+    color:white;
+    padding:12px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    margin-bottom:20px;
+    transition:0.3s;
+}
+
+.pdf-btn:hover{
+    background:#1e3a8a;
+}
+
+/* FORM */
+
 .form-box{
     background:white;
-    padding:20px;
-    margin-top:20px;
-    border-radius:10px;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:25px;
     box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
-input{
-    width:100%;
-    padding:10px;
-    margin:5px 0;
-    border-radius:5px;
-    border:1px solid #ccc;
+.form-box h2{
+    margin-bottom:20px;
 }
 
-button{
+.form-box input{
     width:100%;
-    padding:10px;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.form-box button{
+    width:100%;
+    padding:12px;
     background:#0f172a;
     color:white;
     border:none;
-    border-radius:5px;
+    border-radius:8px;
+    cursor:pointer;
 }
 
-/* ================= SEARCH ================= */
+.form-box button:hover{
+    background:#1e3a8a;
+}
+
+/* SEARCH */
+
 .search-box{
-    margin-top:20px;
+    margin-bottom:20px;
 }
 
 .search-box input{
     width:100%;
-    padding:10px;
-    border-radius:5px;
+    padding:12px;
+    border-radius:8px;
     border:1px solid #ccc;
 }
 
-/* ================= TABLE ================= */
+/* TABLE */
+
+.table-box{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    overflow-x:auto;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
 table{
     width:100%;
-    margin-top:20px;
     border-collapse:collapse;
-    background:white;
-    border-radius:10px;
-    overflow:hidden;
 }
 
-th{
+table th{
     background:#0f172a;
     color:white;
-    padding:10px;
+    padding:14px;
 }
 
-td{
-    padding:10px;
-    text-align:center;
+table td{
+    padding:12px;
     border-bottom:1px solid #ddd;
 }
 
-/* ================= FOOTER ================= */
+/* BUTTONS */
+
+.btn{
+    padding:7px 12px;
+    border:none;
+    border-radius:6px;
+    color:white;
+    text-decoration:none;
+    font-size:13px;
+}
+
+.edit{
+    background:green;
+}
+
+.delete{
+    background:red;
+}
+
+.present{
+    background:blue;
+}
+
+.absent{
+    background:orange;
+}
+
+/* FOOTER */
+
 .footer{
-    text-align:center;
-    padding:15px;
     margin-top:30px;
     background:#0f172a;
     color:white;
+    text-align:center;
+    padding:15px;
+    border-radius:10px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+}
+
+.main{
+    margin-left:0;
+}
+
+.cards{
+    grid-template-columns:1fr;
+}
+
 }
 
 </style>
+
 </head>
 
 <body>
 
-<!-- ================= BRAND LOGO ================= -->
-<div class="brand">
-    <img src="/static/logo.png">
-    <h2>School SaaS System</h2>
-</div>
-<body>
+<!-- SIDEBAR -->
 
-<!-- 🔥 NAVBAR START -->
-<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#0f172a;color:white;">
+<div class="sidebar">
 
-    <div>🎓 School SaaS</div>
+<h2>🎓 School SaaS</h2>
 
-    <div style="display:flex;gap:10px;">
-        <a href="/profile">👤 Profile</a>
-        <a href="/settings">⚙ Settings</a>
-        <a href="/logout">🚪 Logout</a>
-    </div>
+<a href="#">🏠 Dashboard</a>
+<a href="#">👨 Students</a>
+<a href="#">📋 Attendance</a>
+<a href="/download_pdf">📄 Reports</a>
+<a href="/profile">👤 Profile</a>
+<a href="/settings">⚙ Settings</a>
+<a href="/logout">🚪 Logout</a>
 
 </div>
-<!-- 🔥 NAVBAR END -->
-<!-- ================= HEADER ================= -->
-<div class="header">
-    🎓 SMART SCHOOL MANAGEMENT DASHBOARD
+
+<!-- MAIN -->
+
+<div class="main">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<div class="logo">
+<img src="/static/logo.png">
+<h2>School SaaS System</h2>
 </div>
 
-<div class="container">
-
-<!-- ================= PDF ================= -->
-<div style="text-align:center;">
-    <a class="btn pdf" href="/download_pdf">⬇ Download PDF Report</a>
+<div>
+Admin Panel
 </div>
 
-<!-- ================= CARDS ================= -->
+</div>
+
+<!-- PDF BUTTON -->
+
+<a href="/download_pdf" class="pdf-btn">
+⬇ Download PDF Report
+</a>
+
+<!-- CARDS -->
+
 <div class="cards">
 
-    <div class="card">
-        <h2>{{ total_students }}</h2>
-        <p>Total Students</p>
-    </div>
+<div class="card">
+<h1>{{ students|length }}</h1>
+<p>Total Students</p>
+</div>
 
-    <div class="card">
-        <h2>{{ total_attendance }}</h2>
-        <p>Total Attendance</p>
-    </div>
+<div class="card">
+<h1>{{ attendance|length }}</h1>
+<p>Total Attendance</p>
+</div>
 
 </div>
 
-<!-- ================= ADD STUDENT ================= -->
+<!-- FORM -->
+
 <div class="form-box">
 
-<h3>Add Student</h3>
+<h2>Add Student</h2>
 
 <form action="/add_student" method="POST">
 
-    <input type="text" name="name" placeholder="Student Name" required>
-    <input type="number" name="age" placeholder="Age" required>
-    <input type="text" name="grade" placeholder="Grade" required>
+<input type="text" name="name" placeholder="Student Name" required>
 
-    <button type="submit">Add Student</button>
+<input type="text" name="age" placeholder="Age" required>
+
+<input type="text" name="grade" placeholder="Grade" required>
+
+<button type="submit">Add Student</button>
 
 </form>
 
 </div>
 
-<!-- ================= SEARCH ================= -->
+<!-- SEARCH -->
+
 <div class="search-box">
-    <input type="text" id="search" placeholder="Search student...">
+<input type="text" placeholder="Search student...">
 </div>
 
-<!-- ================= TABLE ================= -->
-<table id="table">
+<!-- TABLE -->
+
+<div class="table-box">
+
+<table>
 
 <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Age</th>
-    <th>Grade</th>
-    <th>Action</th>
+<th>ID</th>
+<th>Name</th>
+<th>Age</th>
+<th>Grade</th>
+<th>Action</th>
 </tr>
 
-{% for s in students %}
+{% for student in students %}
 
 <tr>
-    <td>{{ s[0] }}</td>
-    <td>{{ s[1] }}</td>
-    <td>{{ s[2] }}</td>
-    <td>{{ s[3] }}</td>
-    <td>
 
-        <a class="btn edit" href="/edit/{{ s[0] }}">Edit</a>
-        <a class="btn delete" href="/delete/{{ s[0] }}">Delete</a>
-        <a class="btn present" href="/attendance/{{ s[0] }}/present">Present</a>
-        <a class="btn absent" href="/attendance/{{ s[0] }}/absent">Absent</a>
+<td>{{ student[0] }}</td>
+<td>{{ student[1] }}</td>
+<td>{{ student[2] }}</td>
+<td>{{ student[3] }}</td>
 
-    </td>
+<td>
+
+<a href="/edit/{{ student[0] }}" class="btn edit">Edit</a>
+
+<a href="/delete/{{ student[0] }}" class="btn delete">Delete</a>
+
+<a href="/attendance/{{ student[0] }}/present" class="btn present">Present</a>
+
+<a href="/attendance/{{ student[0] }}/absent" class="btn absent">Absent</a>
+
+</td>
+
 </tr>
 
 {% endfor %}
@@ -256,31 +385,13 @@ td{
 
 </div>
 
-<!-- ================= FOOTER ================= -->
+<!-- FOOTER -->
+
 <div class="footer">
-    © 2026 School SaaS System | Built with Flask
+© 2026 School SaaS System | Built with Flask
 </div>
 
-<!-- ================= SEARCH SCRIPT ================= -->
-<script>
-
-document.getElementById("search").addEventListener("keyup", function(){
-
-    let value = this.value.toLowerCase();
-    let rows = document.querySelectorAll("#table tr");
-
-    rows.forEach((row, index) => {
-
-        if(index === 0) return;
-
-        let text = row.innerText.toLowerCase();
-        row.style.display = text.includes(value) ? "" : "none";
-
-    });
-
-});
-
-</script>
+</div>
 
 </body>
 </html>
