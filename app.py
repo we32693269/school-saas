@@ -1,18 +1,17 @@
 from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 from datetime import datetime
-import os
 from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 app.secret_key = "secret"
 
-# DATABASE
+# ================= DATABASE =================
 def get_db():
     conn = sqlite3.connect("school.db")
     return conn
 
-# CREATE TABLES
+# ================= CREATE TABLES =================
 conn = get_db()
 c = conn.cursor()
 
@@ -45,7 +44,7 @@ CREATE TABLE IF NOT EXISTS attendance(
 conn.commit()
 conn.close()
 
-# LOGIN
+# ================= LOGIN =================
 @app.route('/', methods=['GET','POST'])
 def login():
 
@@ -70,7 +69,7 @@ def login():
 
     return render_template('login.html')
 
-# REGISTER
+# ================= REGISTER =================
 @app.route('/register', methods=['GET','POST'])
 def register():
 
@@ -94,7 +93,7 @@ def register():
 
     return render_template('register.html')
 
-# DASHBOARD
+# ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
 
@@ -112,7 +111,7 @@ def dashboard():
         attendance=attendance
     )
 
-# ADD STUDENT
+# ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
 def add_student():
 
@@ -133,7 +132,7 @@ def add_student():
 
     return redirect('/dashboard')
 
-# ATTENDANCE WITH DATE
+# ================= ATTENDANCE =================
 @app.route('/attendance/<int:id>/<status>')
 def attendance(id, status):
 
@@ -152,7 +151,7 @@ def attendance(id, status):
 
     return redirect('/dashboard')
 
-# REPORTS
+# ================= REPORTS =================
 @app.route('/reports')
 def reports():
 
@@ -170,7 +169,7 @@ def reports():
         attendance=attendance
     )
 
-# EDIT
+# ================= EDIT =================
 @app.route('/edit/<int:id>', methods=['GET','POST'])
 def edit(id):
 
@@ -202,7 +201,7 @@ def edit(id):
 
     return render_template('edit.html', student=student)
 
-# DELETE
+# ================= DELETE =================
 @app.route('/delete/<int:id>')
 def delete(id):
 
@@ -216,17 +215,7 @@ def delete(id):
 
     return redirect('/dashboard')
 
-# PROFILE
-@app.route('/profile')
-def profile():
-    return render_template('profile.html')
-
-# SETTINGS
-@app.route('/settings')
-def settings():
-    return render_template('settings.html')
-
-# PDF DOWNLOAD
+# ================= PDF REPORT (PRO MAX) =================
 @app.route('/download_pdf')
 def download_pdf():
 
@@ -241,36 +230,87 @@ def download_pdf():
     file = "report.pdf"
     p = canvas.Canvas(file)
 
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(200, 800, "School Report")
+    width = 500
+    date_today = datetime.now().strftime("%Y-%m-%d")
 
-    y = 760
-
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(50, y, "Students")
-    y -= 20
+    # HEADER
+    p.setFont("Helvetica-Bold", 20)
+    p.drawString(180, 800, "SCHOOL REPORT")
 
     p.setFont("Helvetica", 10)
+    p.drawString(200, 780, f"Date: {date_today}")
+
+    p.line(50, 770, 550, 770)
+
+    # STUDENTS
+    y = 740
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(50, y, "STUDENTS")
+
+    y -= 20
+    p.rect(50, y, width, 20)
+
+    p.drawString(60, y+5, "ID")
+    p.drawString(120, y+5, "NAME")
+    p.drawString(260, y+5, "AGE")
+    p.drawString(360, y+5, "GRADE")
+
+    y -= 20
+    p.setFont("Helvetica", 11)
 
     for s in students:
-        p.drawString(50, y, f"{s[0]} {s[1]} {s[2]} {s[3]}")
-        y -= 15
+
+        if y < 120:
+            p.showPage()
+            y = 750
+
+        p.rect(50, y, width, 20)
+
+        p.drawString(60, y+5, str(s[0]))
+        p.drawString(120, y+5, str(s[1]))
+        p.drawString(260, y+5, str(s[2]))
+        p.drawString(360, y+5, str(s[3]))
+
+        y -= 20
+
+    # ATTENDANCE
+    y -= 40
+
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(50, y, "ATTENDANCE")
 
     y -= 20
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(50, y, "Attendance")
-    y -= 20
+    p.rect(50, y, width, 20)
 
-    p.setFont("Helvetica", 10)
+    p.drawString(60, y+5, "STUDENT ID")
+    p.drawString(200, y+5, "STATUS")
+    p.drawString(350, y+5, "DATE")
+
+    y -= 20
+    p.setFont("Helvetica", 11)
 
     for a in attendance:
-        p.drawString(50, y, f"{a[1]} {a[2]} {a[3]}")
-        y -= 15
+
+        if y < 120:
+            p.showPage()
+            y = 750
+
+        p.rect(50, y, width, 20)
+
+        p.drawString(60, y+5, str(a[1]))
+        p.drawString(200, y+5, str(a[2]))
+        p.drawString(350, y+5, str(a[3]))
+
+        y -= 20
+
+    # FOOTER
+    p.setFont("Helvetica-Oblique", 9)
+    p.drawString(200, 40, "Powered by School SaaS System")
 
     p.save()
 
     return send_file(file, as_attachment=True)
 
-# RUN
+# ================= RUN =================
 if __name__ == '__main__':
     app.run(debug=True)
