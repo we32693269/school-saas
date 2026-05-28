@@ -110,8 +110,7 @@ def upload_profile():
     return redirect('/dashboard')
 # ================= DASHBOARD =================
 @app.route('/dashboard')
-def dashboard():
-@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard(), methods=['GET', 'POST'])
 
     if request.method == 'POST':
         name = request.form['name']
