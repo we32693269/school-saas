@@ -95,7 +95,19 @@ def register():
         return redirect('/')
 
     return render_template('register.html')
+@app.route('/upload_profile', methods=['POST'])
+def upload_profile():
 
+    file = request.files['profile_pic']
+
+    if file:
+        filename = secure_filename(file.filename)
+
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        session['profile_pic'] = filename
+
+    return redirect('/dashboard')
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
@@ -118,7 +130,30 @@ def dashboard():
         total_students=total_students,
         total_attendance=total_attendance
     )
+# ================= FEES =================
+@app.route('/fees')
+def fees():
 
+    conn = get_db()
+    c = conn.cursor()
+
+    students = c.execute("SELECT * FROM students").fetchall()
+
+    conn.close()
+
+    return render_template('fees.html', students=students)
+ # ================= TIMETABLE =================
+@app.route('/timetable')
+def timetable():
+
+    conn = get_db()
+    c = conn.cursor()
+
+    timetable = c.execute("SELECT * FROM timetable").fetchall()
+
+    conn.close()
+
+    return render_template('timetable.html', timetable=timetable)
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
 def add_student():
