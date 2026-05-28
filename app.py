@@ -111,9 +111,23 @@ def upload_profile():
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
+@app.route('/dashboard', methods=['GET', 'POST'])
 
-    conn = get_db()
-    c = conn.cursor()
+    if request.method == 'POST':
+        name = request.form['name']
+        age = request.form['age']
+        grade = request.form['grade']
+
+        conn = get_db()
+        c = conn.cursor()
+
+        c.execute("INSERT INTO students (name, age, grade) VALUES (?, ?, ?)",
+                  (name, age, grade))
+
+        conn.commit()
+        conn.close()
+
+    return render_template('dashboard.html')
 
     students = c.execute("SELECT * FROM students").fetchall()
     attendance = c.execute("SELECT * FROM attendance").fetchall()
