@@ -305,8 +305,22 @@ Admin Panel
 <!-- CARDS -->
 <div class="card">
 <h2>Analytics</h2>
-
 <canvas id="myChart"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script>
+const ctx = document.getElementById('myChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Students', 'Attendance'],
+        datasets: [{
+            label: 'School Data',
+            data: [12, 19]
+        }]
+    }
+});
+</script>
 </div>
 <div class="cards">
 
