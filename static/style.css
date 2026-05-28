@@ -250,6 +250,11 @@ table td{
 
 .pdf-btn:hover{
     background:#1e293b;
+   body.dark .form-box input{
+    background:#374151;
+    color:white;
+    border:1px solid #555;
+}
 }
 
 /* FOOTER */
