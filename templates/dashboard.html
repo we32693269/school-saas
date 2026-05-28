@@ -9,14 +9,29 @@
 <link rel="stylesheet"
 href="{{ url_for('static', filename='style.css') }}">
 
+<style>
+
+/* extra safety fix for input visibility */
+input{
+    color:black !important;
+}
+
+/* DARK MODE INPUT FIX */
+body.dark input{
+    background:#1f2937 !important;
+    color:white !important;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
+<!-- ================= SIDEBAR ================= -->
 <div class="sidebar">
 
-    <h2>🎓 School SaaS</h2>
+    <h2>🎓 SCHOOL SAAS</h2>
 
     <a href="/dashboard">🏠 Dashboard</a>
     <a href="/profile">👤 Profile</a>
@@ -27,13 +42,13 @@ href="{{ url_for('static', filename='style.css') }}">
 
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- ================= MAIN ================= -->
 <div class="main">
 
-    <!-- TOP BAR -->
+    <!-- TOPBAR -->
     <div class="topbar">
 
-        <h1>📊 Dashboard</h1>
+        <h1>📊 Admin Dashboard</h1>
 
         <button class="dark-btn" onclick="darkMode()">
             🌙 Dark Mode
@@ -41,7 +56,7 @@ href="{{ url_for('static', filename='style.css') }}">
 
     </div>
 
-    <!-- CARDS -->
+    <!-- ================= CARDS ================= -->
     <div class="cards">
 
         <div class="card">
@@ -51,26 +66,26 @@ href="{{ url_for('static', filename='style.css') }}">
 
         <div class="card">
             <h1>85</h1>
-            <p>Present</p>
+            <p>Present Today</p>
         </div>
 
         <div class="card">
             <h1>35</h1>
-            <p>Absent</p>
+            <p>Absent Today</p>
         </div>
 
     </div>
 
-    <!-- ADD STUDENT FORM -->
+    <!-- ================= ADD STUDENT ================= -->
     <div class="form-box">
 
         <h2>➕ Add Student</h2>
 
         <form method="POST" action="/dashboard">
 
-            <input type="text" name="name" placeholder="Student Name" required>
-            <input type="text" name="age" placeholder="Age" required>
-            <input type="text" name="grade" placeholder="Grade" required>
+            <input type="text" name="name" placeholder="Enter Student Name" required>
+            <input type="text" name="age" placeholder="Enter Age" required>
+            <input type="text" name="grade" placeholder="Enter Grade" required>
 
             <button type="submit">Save Student</button>
 
@@ -78,12 +93,14 @@ href="{{ url_for('static', filename='style.css') }}">
 
     </div>
 
-    <!-- SEARCH -->
+    <!-- ================= SEARCH ================= -->
     <div class="search-box">
-        <input type="text" placeholder="Search students...">
+
+        <input type="text" placeholder="🔍 Search students...">
+
     </div>
 
-    <!-- TABLE -->
+    <!-- ================= TABLE ================= -->
     <div class="table-box">
 
         <table>
@@ -94,7 +111,7 @@ href="{{ url_for('static', filename='style.css') }}">
                 <th>Age</th>
                 <th>Grade</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
 
             <tr>
@@ -103,12 +120,13 @@ href="{{ url_for('static', filename='style.css') }}">
                 <td>15</td>
                 <td>10</td>
                 <td>Present</td>
-
                 <td>
-                    <a href="#" class="btn edit">Edit</a>
-                    <a href="#" class="btn delete">Delete</a>
-                    <a href="#" class="btn present">Present</a>
-                    <a href="#" class="btn absent">Absent</a>
+
+                    <a class="btn edit" href="#">Edit</a>
+                    <a class="btn delete" href="#">Delete</a>
+                    <a class="btn present" href="#">Present</a>
+                    <a class="btn absent" href="#">Absent</a>
+
                 </td>
             </tr>
 
@@ -116,20 +134,21 @@ href="{{ url_for('static', filename='style.css') }}">
 
     </div>
 
-    <!-- PDF DOWNLOAD -->
+    <!-- ================= PDF ================= -->
     <br>
-    <a href="/download_pdf" class="pdf-btn">
+
+    <a class="pdf-btn" href="/download_pdf">
         ⬇ Download PDF Report
     </a>
 
-    <!-- FOOTER -->
+    <!-- ================= FOOTER ================= -->
     <div class="footer">
-        © 2026 School SaaS System | Built with Flask
+        © 2026 School SaaS System | All Rights Reserved
     </div>
 
 </div>
 
-<!-- DARK MODE SCRIPT -->
+<!-- ================= DARK MODE SCRIPT ================= -->
 <script>
 
 function darkMode(){
