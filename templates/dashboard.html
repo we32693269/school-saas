@@ -264,7 +264,7 @@ table td{
 <div class="sidebar">
 
 <h2>🎓 School SaaS</h2>
-
+<button onclick="darkMode()">🌙</button>
 <a href="/">🏠 Dashboard</a>
 <a href="/profile">👤 Profile</a>
 <a href="/fees">💰 Fees</a>
@@ -391,6 +391,12 @@ Admin Panel
 </div>
 
 </div>
+<script>
 
+function darkMode(){
+    document.body.classList.toggle("dark");
+}
+
+</script>
 </body>
 </html>
