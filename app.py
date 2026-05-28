@@ -109,40 +109,41 @@ def upload_profile():
 
     return redirect('/dashboard')
 # ================= DASHBOARD =================
-@app.route('/dashboard')
-def dashboard(), methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard():
 
+    conn = get_db()
+    c = conn.cursor()
+
+    # create table if not exists
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS students (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            age TEXT,
+            grade TEXT
+        )
+    """)
+
+    # add student
     if request.method == 'POST':
         name = request.form['name']
         age = request.form['age']
         grade = request.form['grade']
 
-        conn = get_db()
-        c = conn.cursor()
-
         c.execute("INSERT INTO students (name, age, grade) VALUES (?, ?, ?)",
                   (name, age, grade))
 
         conn.commit()
-        conn.close()
+        return redirect('/dashboard')
 
-    return render_template('dashboard.html')
-
-    students = c.execute("SELECT * FROM students").fetchall()
-    attendance = c.execute("SELECT * FROM attendance").fetchall()
-
-    total_students = len(students)
-    total_attendance = len(attendance)
+    # get students
+    c.execute("SELECT * FROM students")
+    students = c.fetchall()
 
     conn.close()
 
-    return render_template(
-        'dashboard.html',
-        students=students,
-        attendance=attendance,
-        total_students=total_students,
-        total_attendance=total_attendance
-    )
+    return render_template('dashboard.html', students=students)
 # ================= FEES =================
 @app.route('/fees')
 def fees():
