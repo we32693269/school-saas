@@ -4,22 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>School SaaS Dashboard</title>
+<title>School SaaS Admin Dashboard</title>
 
 <link rel="stylesheet"
 href="{{ url_for('static', filename='style.css') }}">
 
 <style>
 
-/* extra safety fix for input visibility */
+/* ================= INPUT FIX ================= */
 input{
     color:black !important;
 }
 
-/* DARK MODE INPUT FIX */
 body.dark input{
     background:#1f2937 !important;
     color:white !important;
+}
+
+/* extra UI polish */
+.section-title{
+    margin:20px 0;
+    font-size:20px;
+    font-weight:bold;
 }
 
 </style>
@@ -45,106 +51,196 @@ body.dark input{
 <!-- ================= MAIN ================= -->
 <div class="main">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
+<!-- ================= TOPBAR ================= -->
+<div class="topbar">
 
-        <h1>📊 Admin Dashboard</h1>
+    <h1>📊 Admin Dashboard</h1>
 
-        <button class="dark-btn" onclick="darkMode()">
-            🌙 Dark Mode
-        </button>
+    <button class="dark-btn" onclick="darkMode()">
+        🌙 Dark Mode
+    </button>
 
+</div>
+
+<!-- ================= STATS CARDS ================= -->
+<div class="cards">
+
+    <div class="card">
+        <h1>{{ students|length if students else 0 }}</h1>
+        <p>Total Students</p>
     </div>
 
-    <!-- ================= CARDS ================= -->
-    <div class="cards">
-
-        <div class="card">
-            <h1>120</h1>
-            <p>Total Students</p>
-        </div>
-
-        <div class="card">
-            <h1>85</h1>
-            <p>Present Today</p>
-        </div>
-
-        <div class="card">
-            <h1>35</h1>
-            <p>Absent Today</p>
-        </div>
-
+    <div class="card">
+        <h1>85</h1>
+        <p>Present</p>
     </div>
 
-    <!-- ================= ADD STUDENT ================= -->
-    <div class="form-box">
-
-        <h2>➕ Add Student</h2>
-
-        <form method="POST" action="/dashboard">
-
-            <input type="text" name="name" placeholder="Enter Student Name" required>
-            <input type="text" name="age" placeholder="Enter Age" required>
-            <input type="text" name="grade" placeholder="Enter Grade" required>
-
-            <button type="submit">Save Student</button>
-
-        </form>
-
+    <div class="card">
+        <h1>15</h1>
+        <p>Absent</p>
     </div>
 
-    <!-- ================= SEARCH ================= -->
-    <div class="search-box">
+</div>
 
-        <input type="text" placeholder="🔍 Search students...">
+<!-- ================= ADD STUDENT ================= -->
+<div class="form-box">
 
-    </div>
+    <div class="section-title">➕ Add New Student</div>
 
-    <!-- ================= TABLE ================= -->
-    <div class="table-box">
+    <form method="POST" action="/dashboard">
 
-        <table>
+        <input type="text" name="name" placeholder="Enter Student Name" required>
+        <input type="text" name="age" placeholder="Enter Age" required>
+        <input type="text" name="grade" placeholder="Enter Grade" required>
 
+        <button type="submit">Save Student</button>
+
+    </form>
+
+</div>
+
+<!-- ================= SEARCH ================= -->
+<div class="search-box">
+
+    <input type="text" placeholder="🔍 Search students...">
+
+</div>
+
+<!-- ================= TABLE ================= -->
+<div class="table-box">
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Grade</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+
+        {% if students %}
+            {% for s in students %}
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-
-            <tr>
-                <td>1</td>
-                <td>Abel</td>
-                <td>15</td>
-                <td>10</td>
-                <td>Present</td>
+                <td>{{ s[0] }}</td>
+                <td>{{ s[1] }}</td>
+                <td>{{ s[2] }}</td>
+                <td>{{ s[3] }}</td>
+                <td>Active</td>
                 <td>
 
-                    <a class="btn edit" href="#">Edit</a>
-                    <a class="btn delete" href="#">Delete</a>
-                    <a class="btn present" href="#">Present</a>
-                    <a class="btn absent" href="#">Absent</a>
+                    <a href="#" class="btn edit">Edit</a>
+                    <a href="#" class="btn delete">Delete</a>
+                    <a href="#" class="btn present">Present</a>
+                    <a href="#" class="btn absent">Absent</a>
 
                 </td>
             </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">No students found</td>
+            </tr>
+        {% endif %}
 
-        </table>
+    </table>
 
+</div>
+
+<!-- ================= FEES SECTION ================= -->
+<div class="form-box">
+
+    <div class="section-title">💰 Quick Fees Entry</div>
+
+    <form method="POST" action="/fees">
+
+        <input type="text" name="name" placeholder="Student Name">
+        <input type="text" name="amount" placeholder="Amount">
+        <input type="text" name="status" placeholder="Paid / Unpaid">
+
+        <button type="submit">Save Fee</button>
+
+    </form>
+
+</div>
+
+<!-- ================= TIMETABLE PREVIEW ================= -->
+<div class="table-box">
+
+    <div class="section-title">📅 Weekly Timetable</div>
+
+    <table>
+
+        <tr>
+            <th>Day</th>
+            <th>Math</th>
+            <th>English</th>
+            <th>Science</th>
+            <th>ICT</th>
+        </tr>
+
+        <tr>
+            <td>Monday</td>
+            <td>✔</td>
+            <td>✔</td>
+            <td>✔</td>
+            <td>✔</td>
+        </tr>
+
+        <tr>
+            <td>Tuesday</td>
+            <td>✔</td>
+            <td>✔</td>
+            <td>✔</td>
+            <td>✔</td>
+        </tr>
+
+        <tr>
+            <td>Wednesday</td>
+            <td>✔</td>
+            <td>✔</td>
+            <td>✔</td>
+            <td>✔</td>
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- ================= PDF BUTTON ================= -->
+<br>
+
+<a href="/download_pdf" class="pdf-btn">
+    ⬇ Download Full Report PDF
+</a>
+
+<!-- ================= EXTRA INFO SECTION ================= -->
+<div class="cards">
+
+    <div class="card">
+        <h1>📈</h1>
+        <p>Analytics Coming Soon</p>
     </div>
 
-    <!-- ================= PDF ================= -->
-    <br>
-
-    <a class="pdf-btn" href="/download_pdf">
-        ⬇ Download PDF Report
-    </a>
-
-    <!-- ================= FOOTER ================= -->
-    <div class="footer">
-        © 2026 School SaaS System | All Rights Reserved
+    <div class="card">
+        <h1>🔔</h1>
+        <p>Notifications</p>
     </div>
+
+    <div class="card">
+        <h1>⚙</h1>
+        <p>System Settings</p>
+    </div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+<div class="footer">
+
+    © 2026 School SaaS System | Built with Flask 🚀
+
+</div>
 
 </div>
 
