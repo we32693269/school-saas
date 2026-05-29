@@ -145,17 +145,43 @@ def dashboard():
 
     return render_template('dashboard.html', students=students)
 # ================= FEES =================
-@app.route('/fees')
+@app.route('/fees', methods=['GET', 'POST'])
 def fees():
 
     conn = get_db()
     c = conn.cursor()
 
-    students = c.execute("SELECT * FROM students").fetchall()
+    # CREATE TABLE
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS fees(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_name TEXT,
+        amount TEXT,
+        status TEXT
+    )
+    """)
+
+    # ADD FEES
+    if request.method == 'POST':
+
+        student_name = request.form['student_name']
+        amount = request.form['amount']
+        status = request.form['status']
+
+        c.execute(
+            "INSERT INTO fees(student_name, amount, status) VALUES(?, ?, ?)",
+            (student_name, amount, status)
+        )
+
+        conn.commit()
+
+    # GET FEES
+    c.execute("SELECT * FROM fees")
+    fees = c.fetchall()
 
     conn.close()
 
-    return render_template('fees.html', students=students)
+    return render_template('fees.html', fees=fees)
  # ================= TIMETABLE =================
 @app.route('/timetable')
 def timetable():
