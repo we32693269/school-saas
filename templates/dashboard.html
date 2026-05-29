@@ -263,14 +263,14 @@ table td{
 ➕ Add New Student
 </div>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
 <input type="text" name="name" placeholder="Enter Student Name">
 
 <input type="number" name="age" placeholder="Enter Age">
 
 <input type="text" name="grade" placeholder="Enter Grade">
-
+<input type="file" name="photo">
 <button type="submit">
 Save Student
 </button>
@@ -293,6 +293,7 @@ Save Student
 
 <tr>
 <th>ID</th>
+<th>Photo</th>
 <th>Name</th>
 <th>Age</th>
 <th>Grade</th>
@@ -305,6 +306,9 @@ Save Student
 <tr>
 
 <td>{{ student[0] }}</td>
+<td>
+<img src="{{ url_for('static', filename='uploads/' + student[4]) }}" width="40" height="40" style="border-radius:50%;">
+</td>
 <td>{{ student[1] }}</td>
 <td>{{ student[2] }}</td>
 <td>{{ student[3] }}</td>
