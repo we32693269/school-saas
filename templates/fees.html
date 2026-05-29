@@ -11,7 +11,13 @@ body{
     background:#eef2f7;
     padding:30px;
 }
-
+.btn{
+    background:#2563eb;
+    color:white;
+    padding:8px 14px;
+    border-radius:8px;
+    text-decoration:none;
+}
 .card{
     background:white;
     padding:20px;
@@ -102,6 +108,7 @@ Save Fees
 <th>Name</th>
 <th>Amount</th>
 <th>Status</th>
+<th>Receipt</th>    
 </tr>
 
 {% for fee in fees %}
@@ -117,7 +124,13 @@ Save Fees
 <td>
 
 {% if fee[3] == "Paid" %}
+<td>
 
+<a href="/receipt/{{ fee[0] }}" class="btn">
+🧾 Receipt
+</a>
+
+</td>
 <span class="paid">
 ✅ Paid
 </span>
