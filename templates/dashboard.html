@@ -139,7 +139,14 @@ body.dark input{
                     <a href="#" class="btn present">Present</a>
                     <a href="#" class="btn absent">Absent</a>
 
-                </td>
+  td{
+    white-space: nowrap;
+}
+
+.btn{
+    display:inline-block;
+    margin:2px;
+}              </td>
             </tr>
             {% endfor %}
         {% else %}
