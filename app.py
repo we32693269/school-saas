@@ -24,19 +24,15 @@ CREATE TABLE IF NOT EXISTS users(
     username TEXT,
     password TEXT
 )
-""")
-
-c.execute("""
-CREATE TABLE IF NOT EXISTS students(
+c.execute('''
+CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     age TEXT,
     grade TEXT,
     photo TEXT
 )
-""")
-
-c.execute("""
+''')
 CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id INTEGER,
