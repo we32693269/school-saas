@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS students(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     age TEXT,
-    grade TEXT
+    grade TEXT,
+    photo TEXT
 )
 """)
 
@@ -137,9 +138,24 @@ def dashboard():
         name = request.form['name']
         age = request.form['age']
         grade = request.form['grade']
+        photo = request.files['photo']
 
-        c.execute("INSERT INTO students (name, age, grade) VALUES (?, ?, ?)",
-                  (name, age, grade))
+filename = ''
+
+if photo:
+    filename = secure_filename(photo.filename)
+
+    photo.save(
+        os.path.join(
+            app.config['UPLOAD_FOLDER'],
+            filename
+        )
+    )
+
+        c.execute(
+    "INSERT INTO students (name, age, grade, photo) VALUES (?, ?, ?, ?)",
+    (name, age, grade, filename)
+)
 
         conn.commit()
         return redirect('/dashboard')
