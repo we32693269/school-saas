@@ -307,9 +307,14 @@ Save Student
 
 <td>{{ student[0] }}</td>
 <td>
-<img 
-  src="{{ url_for('static', 
-  filename='uploads/' + student[4]) }}" width="40" height="40" style="border-radius:50%;">
+
+<img
+src="{{ url_for('static', filename='uploads/' + student[4]) }}"
+width="50"
+height="50"
+style="border-radius:50%; object-fit:cover;"
+>
+
 </td>
 <td>{{ student[1] }}</td>
 <td>{{ student[2] }}</td>
