@@ -134,22 +134,10 @@ body.dark input{
                 <td>Active</td>
                 <td class="actions">
 </td>
-<a href="/edit/{{ student[0] }}" class="btn edit-btn">
-Edit
-</a>
-
-<a href="/delete/{{ student[0] }}" class="btn delete-btn">
-Delete
-</a>
-
-<a href="/attendance/{{ student[0] }}/present" class="btn present-btn">
-Present
-</a>
-
-<a href="/attendance/{{ student[0] }}/absent" class="btn absent-btn">
-Absent
-</a>
-
+<a href="/edit/{{ student[0] }}" class="btn edit-btn">Edit</a>
+<a href="/delete/{{ student[0] }}" class="btn delete-btn">Delete</a>
+<a href="/attendance/{{ student[0] }}/present" class="btn present-btn">Present</a>
+<a href="/attendance/{{ student[0] }}/absent" class="btn absent-btn">Absent</a>
 </td>
             </tr>
             {% endfor %}
