@@ -1,160 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fees System</title>
 
-<title>Fees Management</title>
+<style>
 
-<link rel="stylesheet"
-href="{{ url_for('static', filename='style.css') }}">
+body{
+    font-family:Arial;
+    background:#eef2f7;
+    padding:30px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ddd;
+    border-radius:10px;
+}
+
+button{
+    background:#0f172a;
+    color:white;
+    padding:12px;
+    width:100%;
+    border:none;
+    border-radius:10px;
+}
+
+table{
+    width:100%;
+    background:white;
+    border-collapse:collapse;
+}
+
+th{
+    background:#0f172a;
+    color:white;
+    padding:15px;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
+
+.paid{
+    color:green;
+    font-weight:bold;
+}
+
+.unpaid{
+    color:red;
+    font-weight:bold;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+<div class="card">
 
-    <h2>🎓 SCHOOL SAAS</h2>
+<h2>💰 Add Fees</h2>
 
-    <a href="/dashboard">🏠 Dashboard</a>
-    <a href="/fees">💰 Fees</a>
-    <a href="/timetable">📅 Timetable</a>
-    <a href="/profile">👤 Profile</a>
-    <a href="/settings">⚙ Settings</a>
-    <a href="/logout">🚪 Logout</a>
+<form method="POST">
 
-</div>
+<input type="text" name="student_name" placeholder="Student Name" required>
 
-<!-- MAIN -->
-<div class="main">
+<input type="number" name="amount" placeholder="Amount" required>
 
-    <!-- TOPBAR -->
-    <div class="topbar">
+<select name="status">
 
-        <h1>💰 Fees Management</h1>
+<option value="Paid">Paid</option>
 
-        <button class="dark-btn"
-        onclick="darkMode()">
-        🌙 Dark
-        </button>
+<option value="Unpaid">Unpaid</option>
 
-    </div>
+</select>
 
-    <!-- CARDS -->
-    <div class="cards">
+<button type="submit">
+Save Fees
+</button>
 
-        <div class="card">
-            <h1>{{ fees|length }}</h1>
-            <p>Total Fees</p>
-        </div>
-
-        <div class="card">
-            <h1>Paid</h1>
-            <p>Student Payments</p>
-        </div>
-
-        <div class="card">
-            <h1>ETB</h1>
-            <p>Revenue</p>
-        </div>
-
-    </div>
-
-    <!-- ADD FEES -->
-    <div class="form-box">
-
-        <h2>➕ Add Fee</h2>
-
-        <form method="POST" action="/fees">
-
-            <input type="text"
-            name="student_name"
-            placeholder="Student Name"
-            required>
-
-            <input type="text"
-            name="amount"
-            placeholder="Amount"
-            required>
-
-            <input type="text"
-            name="status"
-            placeholder="Paid / Unpaid"
-            required>
-
-            <button type="submit">
-                Save Fee
-            </button>
-
-        </form>
-
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-box">
-
-        <table>
-
-            <tr>
-                <th>ID</th>
-                <th>Student</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-
-            {% for f in fees %}
-
-            <tr>
-
-                <td>{{ f[0] }}</td>
-                <td>{{ f[1] }}</td>
-                <td>{{ f[2] }}</td>
-                <td>{{ f[3] }}</td>
-
-                <td>
-
-                    <a href="#"
-                    class="btn edit">
-                    Edit
-                    </a>
-
-                    <a href="#"
-                    class="btn delete">
-                    Delete
-                    </a>
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </table>
-
-    </div>
-
-    <!-- FOOTER -->
-    <div class="footer">
-
-        © 2026 School SaaS Fees System
-
-    </div>
+</form>
 
 </div>
 
-<!-- DARK MODE -->
+<table>
 
-<script>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
 
-function darkMode(){
-    document.body.classList.toggle("dark");
-}
+{% for fee in fees %}
 
-</script>
+<tr>
+
+<td>{{ fee[0] }}</td>
+
+<td>{{ fee[1] }}</td>
+
+<td>{{ fee[2] }}</td>
+
+<td>
+
+{% if fee[3] == "Paid" %}
+
+<span class="paid">
+✅ Paid
+</span>
+
+{% else %}
+
+<span class="unpaid">
+❌ Unpaid
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
 
 </body>
 </html>
