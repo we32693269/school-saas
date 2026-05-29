@@ -152,7 +152,7 @@ if photo:
         )
     )
 
-        c.execute(
+ c.execute(
     "INSERT INTO students (name, age, grade, photo) VALUES (?, ?, ?, ?)",
     (name, age, grade, filename)
 )
