@@ -189,6 +189,45 @@ def fees():
     conn.close()
 
     return render_template('fees.html', fees=fees)
+#================ Receipt ==================
+from reportlab.pdfgen import canvas
+@app.route('/receipt/<int:id>')
+def receipt(id):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    fee = c.execute(
+        "SELECT * FROM fees WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    file = f"receipt_{id}.pdf"
+
+    p = canvas.Canvas(file)
+
+    # TITLE
+    p.setFont("Helvetica-Bold", 22)
+    p.drawString(180, 800, "FEE RECEIPT")
+
+    # SCHOOL
+    p.setFont("Helvetica", 14)
+    p.drawString(50, 760, "School SaaS System")
+
+    # RECEIPT INFO
+    p.drawString(50, 700, f"Receipt ID: {fee[0]}")
+    p.drawString(50, 670, f"Student Name: {fee[1]}")
+    p.drawString(50, 640, f"Amount Paid: {fee[2]} Birr")
+    p.drawString(50, 610, f"Status: {fee[3]}")
+
+    # FOOTER
+    p.drawString(50, 500, "Thank you for your payment!")
+
+    p.save()
+
+    return send_file(file, as_attachment=True)
  # ================= TIMETABLE =================
 @app.route('/timetable')
 def timetable():
