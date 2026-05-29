@@ -273,23 +273,67 @@ def delete(id):
     return redirect('/dashboard')
 
 # ================= PDF REPORT (PRO MAX) =================
+
+from flask import send_file
+from reportlab.pdfgen import canvas
+from datetime import datetime
+
 @app.route('/download_pdf')
 def download_pdf():
-
-    from datetime import datetime
 
     conn = get_db()
     c = conn.cursor()
 
     students = c.execute("SELECT * FROM students").fetchall()
-    attendance = c.execute("SELECT * FROM attendance").fetchall()
 
     conn.close()
 
     file = "report.pdf"
+
     p = canvas.Canvas(file)
 
-    date_today = datetime.now().strftime("%Y-%m-%d")
+    # TITLE
+    p.setFont("Helvetica-Bold", 20)
+    p.drawString(180, 800, "SCHOOL REPORT")
+
+    # DATE
+    p.setFont("Helvetica", 12)
+    p.drawString(50, 770, f"Generated: {datetime.now()}")
+
+    # TABLE HEADER
+    p.setFont("Helvetica-Bold", 13)
+
+    p.drawString(50, 730, "ID")
+    p.drawString(100, 730, "Name")
+    p.drawString(250, 730, "Age")
+    p.drawString(320, 730, "Grade")
+
+    y = 700
+
+    # STUDENTS DATA
+    p.setFont("Helvetica", 12)
+
+    for s in students:
+
+        p.drawString(50, y, str(s[0]))
+        p.drawString(100, y, str(s[1]))
+        p.drawString(250, y, str(s[2]))
+        p.drawString(320, y, str(s[3]))
+
+        y -= 25
+
+        # NEW PAGE
+        if y < 50:
+            p.showPage()
+            y = 800
+
+    # FOOTER
+    p.setFont("Helvetica-Bold", 11)
+    p.drawString(180, 30, "School SaaS System")
+
+    p.save()
+
+    return send_file(file, as_attachment=True)
 
     # ================= HEADER =================
     p.setFillColorRGB(0, 0, 0.6)
