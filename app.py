@@ -278,8 +278,8 @@ from flask import send_file
 from reportlab.pdfgen import canvas
 from datetime import datetime
 
-@app.route('/download_pdf')
-def download_pdf():
+@app.route('/download_report')
+def download_report():
 
     conn = get_db()
     c = conn.cursor()
