@@ -43,7 +43,14 @@ CREATE TABLE IF NOT EXISTS attendance(
     date TEXT
 )
 """)
-
+c.execute('''
+CREATE TABLE IF NOT EXISTS fees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_name TEXT,
+    amount TEXT,
+    status TEXT
+)
+''')
 conn.commit()
 conn.close()
 
