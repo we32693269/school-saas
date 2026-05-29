@@ -160,14 +160,7 @@ def fees():
 @app.route('/timetable')
 def timetable():
 
-    conn = get_db()
-    c = conn.cursor()
-
-    timetable = c.execute("SELECT * FROM timetable").fetchall()
-
-    conn.close()
-
-    return render_template('timetable.html', timetable=timetable)
+    return render_template('timetable.html')
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
 def add_student():
