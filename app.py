@@ -119,44 +119,46 @@ def dashboard():
     conn = get_db()
     c = conn.cursor()
 
-    # create table if not exists
+    # CREATE TABLE IF NOT EXISTS
     c.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             age TEXT,
-            grade TEXT
+            grade TEXT,
+            photo TEXT
         )
     """)
 
-    # add student
+    # ADD STUDENT
     if request.method == 'POST':
+
         name = request.form['name']
         age = request.form['age']
         grade = request.form['grade']
-        photo = request.files['photo']
 
-filename = ''
+        photo = request.files.get('photo')
 
-if photo:
-    filename = secure_filename(photo.filename)
+        filename = ""
 
-    photo.save(
-        os.path.join(
-            app.config['UPLOAD_FOLDER'],
-            filename
+        if photo and photo.filename != "":
+
+            filename = secure_filename(photo.filename)
+
+            photo.save(
+                os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            )
+
+        c.execute(
+            "INSERT INTO students (name, age, grade, photo) VALUES (?, ?, ?, ?)",
+            (name, age, grade, filename)
         )
-    )
-
- c.execute(
-    "INSERT INTO students (name, age, grade, photo) VALUES (?, ?, ?, ?)",
-    (name, age, grade, filename)
-)
 
         conn.commit()
+
         return redirect('/dashboard')
 
-    # get students
+    # GET STUDENTS
     c.execute("SELECT * FROM students")
     students = c.fetchall()
 
