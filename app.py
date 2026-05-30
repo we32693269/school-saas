@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request, redirect, send_file
+from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 import os
 from werkzeug.utils import secure_filename
 from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
+app.secret_key = "secret"
 
 UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
@@ -18,73 +20,102 @@ def get_db():
 
 
 # ================= CREATE TABLES =================
-conn = get_db()
-c = conn.cursor()
+def init_db():
+    conn = get_db()
+    c = conn.cursor()
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS students (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    age TEXT,
-    grade TEXT,
-    photo TEXT
-)
-""")
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        password TEXT
+    )
+    """)
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS attendance (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id TEXT,
-    status TEXT,
-    date TEXT
-)
-""")
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        age TEXT,
+        grade TEXT,
+        photo TEXT
+    )
+    """)
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS fees (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_name TEXT,
-    amount TEXT,
-    status TEXT
-)
-""")
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        status TEXT,
+        date TEXT
+    )
+    """)
 
-conn.commit()
-conn.close()
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS fees (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_name TEXT,
+        amount TEXT,
+        status TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 
 
-# ================= HOME =================
-@app.route('/')
-def home():
-    return redirect('/dashboard')
+init_db()
+
+
+# ================= LOGIN =================
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn = get_db()
+        user = conn.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        ).fetchone()
+        conn.close()
+
+        if user:
+            session["user"] = username
+            return redirect("/dashboard")
+
+    return render_template("login.html")
 
 
 # ================= DASHBOARD =================
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
+
+    if "user" not in session:
+        return redirect("/")
 
     conn = get_db()
     c = conn.cursor()
 
-    if request.method == 'POST':
+    if request.method == "POST":
+        name = request.form["name"]
+        age = request.form["age"]
+        grade = request.form["grade"]
+        photo = request.files["photo"]
 
-        name = request.form['name']
-        age = request.form['age']
-        grade = request.form['grade']
-
-        photo = request.files['photo']
         filename = ""
-
         if photo:
             filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
         c.execute("""
-            INSERT INTO students (name, age, grade, photo)
-            VALUES (?, ?, ?, ?)
+        INSERT INTO students (name, age, grade, photo)
+        VALUES (?, ?, ?, ?)
         """, (name, age, grade, filename))
 
         conn.commit()
+        return redirect("/dashboard")
 
     students = c.execute("SELECT * FROM students").fetchall()
     conn.close()
@@ -92,106 +123,58 @@ def dashboard():
     return render_template("dashboard.html", students=students)
 
 
-# ================= STUDENT PROFILE =================
-@app.route('/student/<int:id>')
-def student_profile(id):
-
+# ================= DELETE =================
+@app.route("/delete/<int:id>")
+def delete(id):
     conn = get_db()
-    c = conn.cursor()
-
-    student = c.execute("SELECT * FROM students WHERE id=?", (id,)).fetchone()
-
-    conn.close()
-
-    if not student:
-        return "Student not found"
-
-    return render_template("student_profile.html", student=student)
-
-
-# ================= DELETE STUDENT =================
-@app.route('/delete_student/<int:id>')
-def delete_student(id):
-
-    conn = get_db()
-    c = conn.cursor()
-
-    c.execute("DELETE FROM students WHERE id=?", (id,))
+    conn.execute("DELETE FROM students WHERE id=?", (id,))
     conn.commit()
     conn.close()
+    return redirect("/dashboard")
 
-    return redirect('/dashboard')
 
-
-# ================= FEES =================
-@app.route('/fees', methods=['GET', 'POST'])
-def fees():
-
+# ================= PROFILE =================
+@app.route("/student/<int:id>")
+def student_profile(id):
     conn = get_db()
-    c = conn.cursor()
-
-    if request.method == 'POST':
-
-        student_name = request.form['student_name']
-        amount = request.form['amount']
-        status = request.form['status']
-
-        c.execute("""
-        INSERT INTO fees (student_name, amount, status)
-        VALUES (?, ?, ?)
-        """, (student_name, amount, status))
-
-        conn.commit()
-
-    fees_data = c.execute("SELECT * FROM fees").fetchall()
-
+    student = conn.execute("SELECT * FROM students WHERE id=?", (id,)).fetchone()
     conn.close()
-
-    return render_template("fees.html", fees=fees_data)
+    return render_template("profile.html", student=student)
 
 
 # ================= ATTENDANCE =================
-@app.route('/attendance', methods=['GET', 'POST'])
+@app.route("/attendance", methods=["GET", "POST"])
 def attendance():
-
     conn = get_db()
-    c = conn.cursor()
 
-    if request.method == 'POST':
-
-        student_id = request.form['student_id']
-        status = request.form['status']
-        date = request.form['date']
-
-        c.execute("""
+    if request.method == "POST":
+        conn.execute("""
         INSERT INTO attendance (student_id, status, date)
         VALUES (?, ?, ?)
-        """, (student_id, status, date))
-
+        """, (
+            request.form["student_id"],
+            request.form["status"],
+            request.form["date"]
+        ))
         conn.commit()
 
-    data = c.execute("SELECT * FROM attendance").fetchall()
-
+    data = conn.execute("SELECT * FROM attendance").fetchall()
     conn.close()
 
     return render_template("attendance.html", data=data)
 
 
-# ================= FEE RECEIPT PDF =================
-@app.route('/fee_receipt/<int:id>')
+# ================= FEES PDF =================
+@app.route("/fee_receipt/<int:id>")
 def fee_receipt(id):
-
     conn = get_db()
-    c = conn.cursor()
-
-    fee = c.execute("SELECT * FROM fees WHERE id=?", (id,)).fetchone()
-
+    fee = conn.execute("SELECT * FROM fees WHERE id=?", (id,)).fetchone()
     conn.close()
 
-    file_path = "/tmp/receipt.pdf"
+    file_path = f"/tmp/receipt_{id}.pdf"
 
     p = canvas.Canvas(file_path)
-    p.drawString(100, 800, "SCHOOL FEE RECEIPT")
+    p.drawString(100, 800, "FEE RECEIPT")
     p.drawString(100, 760, f"Student: {fee['student_name']}")
     p.drawString(100, 740, f"Amount: {fee['amount']}")
     p.drawString(100, 720, f"Status: {fee['status']}")
@@ -200,6 +183,12 @@ def fee_receipt(id):
     return send_file(file_path, as_attachment=True)
 
 
-# ================= RUN =================
+# ================= LOGOUT =================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
