@@ -165,7 +165,7 @@ def dashboard():
     conn.close()
 
     return render_template('dashboard.html', students=students)
-#==========student profile =============
+#==========STUDENT PROFILE =============
 @app.route('/student/<int:id>')
 def student_profile(id):
 
