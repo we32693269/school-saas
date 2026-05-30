@@ -59,7 +59,11 @@
 <div class="card">
 
     <!-- PHOTO -->
+    {% if student[4] %}
     <img src="{{ url_for('static', filename='uploads/' + student[4]) }}">
+{% else %}
+    <img src="https://via.placeholder.com/120">
+{% endif %}
 
     <!-- NAME -->
     <h2>{{ student[1] }}</h2>
