@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Profile</title>
-</head>
-<body>
+<h2>Student Profile</h2>
 
-<h1>Profile Page</h1>
+<p>Name: {{student.name}}</p>
+<p>Age: {{student.age}}</p>
+<p>Grade: {{student.grade}}</p>
 
-<a href="/dashboard">Back Dashboard</a>
+{% if student.photo %}
+<img src="/static/uploads/{{student.photo}}" width="120">
+{% endif %}
 
-</body>
-</html>
+<a href="/dashboard">Back</a>
