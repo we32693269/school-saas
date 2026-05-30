@@ -75,17 +75,16 @@ def dashboard():
         photo = request.files['photo']
         filename = ""
 
-        if photo and photo.filename != "":
+        if photo:
             filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         c.execute("""
-        INSERT INTO students (name, age, grade, photo)
-        VALUES (?, ?, ?, ?)
+            INSERT INTO students (name, age, grade, photo)
+            VALUES (?, ?, ?, ?)
         """, (name, age, grade, filename))
 
         conn.commit()
-        return redirect('/dashboard')
 
     students = c.execute("SELECT * FROM students").fetchall()
     conn.close()
