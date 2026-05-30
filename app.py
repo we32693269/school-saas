@@ -36,8 +36,7 @@ CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     age TEXT,
-    grade TEXT,
-    photo TEXT
+    grade TEXT
 )
 """)
 
