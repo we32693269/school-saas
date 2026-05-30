@@ -1,395 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Dashboard</title>
 
-    <title>School Dashboard</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-
-body{
-    font-family:Arial;
-    background:#f4f6f8;
-}
-
-.card{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    margin:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-.btn{
-    background:#2563eb;
-    color:white;
-    padding:8px 12px;
-    border-radius:8px;
-    text-decoration:none;
-}
-
-.btn-danger{
-    background:red;
-}
-
-.sidebar{
-    width:200px;
-    position:fixed;
-    height:100%;
-    background:#111827;
-    color:white;
-    padding:20px;
-}
-
-.main{
-    margin-left:220px;
-}
-</style>
     <style>
-
-        body{
-            margin:0;
-            font-family:Arial;
-            background:#f1f5f9;
-        }
-
-        .sidebar{
-            width:220px;
-            height:100vh;
-            background:#0f172a;
-            position:fixed;
-            left:0;
-            top:0;
-            padding-top:20px;
-        }
-
-        .sidebar h2{
-            color:white;
-            text-align:center;
-        }
-
-        .sidebar a{
-            display:block;
-            color:white;
-            padding:15px;
-            text-decoration:none;
-            transition:0.3s;
-        }
-
-        .sidebar a:hover{
-            background:#2563eb;
-        }
-
-        .main{
-            margin-left:230px;
-            padding:20px;
-        }
-
-        .topbar{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:20px;
-        }
-
-        .card{
-            background:white;
-            padding:20px;
-            border-radius:15px;
-            box-shadow:0px 0px 10px rgba(0,0,0,0.1);
-            margin-bottom:20px;
-        }
-
-        .stats{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-            gap:20px;
-        }
-
-        .stat-box{
-            background:white;
-            padding:20px;
-            border-radius:15px;
-            text-align:center;
-            box-shadow:0px 0px 10px rgba(0,0,0,0.1);
-        }
-
-        .stat-box h2{
-            margin:0;
-            color:#2563eb;
-        }
-
-        form input{
-            width:100%;
-            padding:12px;
-            margin-top:10px;
-            border:1px solid #ddd;
-            border-radius:8px;
-        }
-
-        form button{
-            margin-top:15px;
-            padding:12px;
-            width:100%;
-            border:none;
-            background:#2563eb;
-            color:white;
-            border-radius:8px;
-            cursor:pointer;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-        }
-
-        table th,
-        table td{
-            padding:12px;
-            border-bottom:1px solid #ddd;
-            text-align:left;
-        }
-
-        table th{
-            background:#eff6ff;
-        }
-
-        img{
-            border-radius:50%;
-            object-fit:cover;
-        }
-
-        .dark{
-            background:#111827;
-            color:white;
-        }
-
+        body{font-family:Arial;background:#f4f6f8;}
+        .card{background:white;padding:20px;margin:10px;border-radius:10px;}
+        .btn{background:#2563eb;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;}
+        .btn-danger{background:red;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{padding:10px;border:1px solid #ddd;text-align:center;}
     </style>
-
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+<div class="card">
 
-    <h2>School SaaS</h2>
+<h2>Add Student</h2>
 
-    <a href="/dashboard">🏠 Dashboard</a>
-    <a href="/fees">💰 Fees</a>
-    <a href="/timetable">📅 Timetable</a>
-
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-    <!-- TOPBAR -->
-    <div class="topbar">
-
-        <h1>Dashboard</h1>
-
-        <button onclick="darkMode()">
-            🌙 Dark Mode
-        </button>
-
-    </div>
-
-    <!-- STATS -->
-    <div class="stats">
-
-        <div class="stat-box">
-            <h2>{{ students|length }}</h2>
-            <p>Total Students</p>
-        </div>
-
-        <div class="stat-box">
-            <h2>85%</h2>
-            <p>Attendance</p>
-        </div>
-
-        <div class="stat-box">
-            <h2>15%</h2>
-            <p>Absent</p>
-        </div>
-
-    </div>
-
-    <!-- CHART -->
-    <div class="card">
-
-        <h2>Analytics</h2>
-
-        <canvas id="myChart"></canvas>
-
-    </div>
-
-    <!-- ADD STUDENT -->
-    <div class="card">
-
-        <h2>Add Student</h2>
-
-        <form method="POST" enctype="multipart/form-data">
-
-            <input
-                type="text"
-                name="name"
-                placeholder="Student Name"
-                required
-            >
-
-            <input
-                type="text"
-                name="age"
-                placeholder="Age"
-                required
-            >
-
-            <input
-                type="text"
-                name="grade"
-                placeholder="Grade"
-                required
-            >
-
-            <input
-                type="file"
-                name="photo"
-            >
-
-            <button type="submit">
-                Save Student
-            </button>
-
-        </form>
-
-    </div>
-
-    <!-- STUDENTS TABLE -->
-    <div class="card">
-
-        <h2>Students List</h2>
-
-        <table>
-           <!-- DOWNLOAD REPORT -->
-<div style="margin-top:20px; text-align:center;">
-    <a href="/download_report" class="download-btn">
-        ⬇ Download Full Report PDF
-    </a>
-</div> 
-
-            <tr>
-                <th>ID</th>
-                <th>Photo</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Status</th>
-            </tr>
-
-            {% for student in students %}
-
-            <tr>
-
-                <td>{{ student[0] }}</td>
-
-                <td>
-
-                    {% if student[4] %}
-
-                    <img
-                        src="{{ url_for('static', filename='uploads/' + student[4]) }}"
-                        width="50"
-                        height="50"
-                    >
-
-                    {% else %}
-
-                    No Photo
-
-                    {% endif %}
-
-                </td>
-
-                <td>
-
-                    <a href="/student/{{ student[0] }}">
-
-                        {{ student[1] }}
-
-                    </a>
-
-                </td>
-
-                <td>{{ student[2] }}</td>
-
-                <td>{{ student[3] }}</td>
-
-                <td>Active</td>
-                <td>
-    <a href="/student/{{ student[0] }}" class="btn">
-        Profile
-    </a>
-</td>
-
-            </tr>
-
-            {% endfor %}
-
-        </table>
-
-    </div>
+<form method="POST" enctype="multipart/form-data">
+    <input name="name" placeholder="Name" required><br><br>
+    <input name="age" placeholder="Age" required><br><br>
+    <input name="grade" placeholder="Grade" required><br><br>
+    <input type="file" name="photo"><br><br>
+    <button type="submit">Add</button>
+</form>
 
 </div>
 
-<!-- CHART -->
-<script>
 
-const ctx = document.getElementById('myChart');
+<div class="card">
 
-new Chart(ctx, {
+<h2>Students List</h2>
 
-    type: 'bar',
+<table>
+<tr>
+    <th>ID</th>
+    <th>Photo</th>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Grade</th>
+    <th>Actions</th>
+</tr>
 
-    data: {
+{% for student in students %}
+<tr>
 
-        labels: [
-            'Students',
-            'Present',
-            'Absent'
-        ],
+    <td>{{ student[0] }}</td>
 
-        datasets: [{
+    <td>
+        {% if student[4] %}
+        <img src="{{ url_for('static', filename='uploads/' + student[4]) }}" width="40">
+        {% endif %}
+    </td>
 
-            label: 'School Analytics',
+    <td>{{ student[1] }}</td>
+    <td>{{ student[2] }}</td>
+    <td>{{ student[3] }}</td>
 
-            data: [
-                {{ students|length }},
-                85,
-                15
-            ],
+    <td>
+        <a href="/student/{{ student[0] }}" class="btn">Profile</a>
+        <a href="/delete_student/{{ student[0] }}" class="btn btn-danger">Delete</a>
+    </td>
 
-            borderWidth: 1
+</tr>
+{% endfor %}
 
-        }]
-    }
+</table>
 
-});
-
-</script>
-
-<!-- DARK MODE -->
-<script>
-
-function darkMode(){
-
-    document.body.classList.toggle("dark");
-
-}
-
-</script>
+</div>
 
 </body>
 </html>
