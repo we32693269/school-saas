@@ -165,6 +165,19 @@ def dashboard():
     conn.close()
 
     return render_template('dashboard.html', students=students)
+#==========student profile =============
+@app.route('/student/<int:id>')
+def student_profile(id):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template("student_profile.html", student=student)
 # ================= FEES =================
 @app.route('/fees', methods=['GET', 'POST'])
 def fees():
