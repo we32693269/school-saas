@@ -304,9 +304,11 @@ Save Student
 {% for student in students %}
 
 <tr>
-
-<td>{{ student[0] }}</td>
 <td>
+<a href="/student/{{ student[0] }}">
+    {{ student[1] }}
+</a>
+</td>
 
 <img
 src="{{ url_for('static', filename='uploads/' + student[4]) }}"
