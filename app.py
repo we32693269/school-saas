@@ -85,8 +85,37 @@ def login():
         return "Invalid Login"
 
     return render_template("login.html")
+#=============Register==========
+@app.route("/register", methods=["GET", "POST"])
+def register():
 
+    if request.method == "POST":
 
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn = get_db()
+
+        existing = conn.execute(
+            "SELECT * FROM users WHERE username=?",
+            (username,)
+        ).fetchone()
+
+        if existing:
+            conn.close()
+            return "❌ Username already exists"
+
+        conn.execute(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            (username, password)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/")
+
+    return render_template("register.html")
 # ================= DASHBOARD =================
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
