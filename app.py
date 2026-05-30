@@ -10,22 +10,27 @@ app.secret_key = "secret"
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # ================= DATABASE =================
+
 def get_db():
     conn = sqlite3.connect("school.db")
     return conn
 
+
 # ================= CREATE TABLES =================
+
 conn = get_db()
 c = conn.cursor()
 
+# USERS
 c.execute("""
-CREATE TABLE IF NOT EXISTS users(
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT,
     password TEXT
 )
 """)
 
+# STUDENTS
 c.execute("""
 CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,22 +41,26 @@ CREATE TABLE IF NOT EXISTS students (
 )
 """)
 
+# ATTENDANCE
 c.execute("""
-CREATE TABLE IF NOT EXISTS attendance(
+CREATE TABLE IF NOT EXISTS attendance (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id INTEGER,
     status TEXT,
     date TEXT
 )
 """)
-c.execute('''
+
+# FEES
+c.execute("""
 CREATE TABLE IF NOT EXISTS fees (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_name TEXT,
     amount TEXT,
     status TEXT
 )
-''')
+""")
+
 conn.commit()
 conn.close()
 
