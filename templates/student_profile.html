@@ -5,19 +5,19 @@
 
     <style>
         body{
-            background:#f1f5f9;
-            font-family:Arial;
+            font-family: Arial;
+            background:#f4f6f8;
+            padding:20px;
         }
 
         .card{
-            width:400px;
-            margin:auto;
-            margin-top:50px;
             background:white;
             padding:20px;
-            border-radius:15px;
+            border-radius:12px;
+            width:400px;
+            margin:auto;
             text-align:center;
-            box-shadow:0 0 10px rgba(0,0,0,.1);
+            box-shadow:0 5px 20px rgba(0,0,0,0.1);
         }
 
         img{
@@ -25,14 +25,31 @@
             height:120px;
             border-radius:50%;
             object-fit:cover;
+            border:3px solid #2563eb;
         }
 
-        .btn{
+        h2{
+            margin-top:10px;
+        }
+
+        .info{
+            text-align:left;
+            margin-top:20px;
+        }
+
+        .info p{
+            padding:8px;
+            border-bottom:1px solid #eee;
+        }
+
+        .back{
+            display:inline-block;
+            margin-top:15px;
+            padding:10px 15px;
             background:#2563eb;
             color:white;
-            padding:10px 15px;
-            border-radius:8px;
             text-decoration:none;
+            border-radius:8px;
         }
     </style>
 </head>
@@ -41,21 +58,20 @@
 
 <div class="card">
 
-    {% if student[4] %}
+    <!-- PHOTO -->
     <img src="{{ url_for('static', filename='uploads/' + student[4]) }}">
-    {% endif %}
 
+    <!-- NAME -->
     <h2>{{ student[1] }}</h2>
 
-    <p><strong>Age:</strong> {{ student[2] }}</p>
+    <div class="info">
+        <p><b>ID:</b> {{ student[0] }}</p>
+        <p><b>Age:</b> {{ student[2] }}</p>
+        <p><b>Grade:</b> {{ student[3] }}</p>
+        <p><b>Status:</b> Active</p>
+    </div>
 
-    <p><strong>Grade:</strong> {{ student[3] }}</p>
-
-    <br>
-
-    <a href="/dashboard" class="btn">
-        ⬅ Back Dashboard
-    </a>
+    <a href="/dashboard" class="back">⬅ Back to Dashboard</a>
 
 </div>
 
