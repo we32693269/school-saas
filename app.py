@@ -95,7 +95,17 @@ def dashboard():
 
     return render_template("dashboard.html", students=students)
 
+@app.route('/delete_student/<int:id>')
+def delete_student(id):
 
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("DELETE FROM students WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect('/dashboard')
 # ================= STUDENT PROFILE =================
 @app.route('/student/<int:id>')
 def student_profile(id):
@@ -141,8 +151,54 @@ def fees():
     conn.close()
 
     return render_template("fees.html", fees=fees_data)
+#==========FEE RECEIPT PDF =========
+@app.route('/fee_receipt/<int:id>')
+def fee_receipt(id):
 
+    conn = get_db()
+    c = conn.cursor()
 
+    fee = c.execute(
+        "SELECT * FROM fees WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    file_path = "/tmp/receipt.pdf"
+
+    p = canvas.Canvas(file_path)
+    p.drawString(100, 800, "FEE RECEIPT")
+    p.drawString(100, 760, f"Student: {fee['student_name']}")
+    p.drawString(100, 740, f"Amount: {fee['amount']}")
+    p.drawString(100, 720, f"Status: {fee['status']}")
+    p.save()
+
+    return send_file(file_path, as_attachment=True)
+@app.route('/attendance', methods=['GET', 'POST'])
+def attendance():
+
+    conn = get_db()
+    c = conn.cursor()
+
+    if request.method == 'POST':
+
+        student_id = request.form['student_id']
+        status = request.form['status']
+        date = request.form['date']
+
+        c.execute("""
+        INSERT INTO attendance (student_id, status, date)
+        VALUES (?, ?, ?)
+        """, (student_id, status, date))
+
+        conn.commit()
+
+    data = c.execute("SELECT * FROM attendance").fetchall()
+
+    conn.close()
+
+    return render_template("attendance.html", data=data)
 # ================= TIMETABLE =================
 @app.route('/timetable')
 def timetable():
