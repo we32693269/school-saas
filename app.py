@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS students (
     photo TEXT
 )
 ''')
+c.execute("""
 CREATE TABLE IF NOT EXISTS attendance(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id INTEGER,
