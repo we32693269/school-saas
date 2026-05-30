@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, redirect, session, send_file
-import sqlite3
 import os
+import sqlite3
+from flask import Flask, render_template, request, redirect, session, send_file
 from werkzeug.utils import secure_filename
 from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
-app.secret_key = "secret"
+app.secret_key = "secret123"
 
+# ================= UPLOAD FOLDER =================
 UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -20,51 +21,47 @@ def get_db():
 
 
 # ================= CREATE TABLES =================
-def init_db():
-    conn = get_db()
-    c = conn.cursor()
+conn = get_db()
+c = conn.cursor()
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        password TEXT
-    )
-    """)
+c.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    password TEXT
+)
+""")
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS students (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        age TEXT,
-        grade TEXT,
-        photo TEXT
-    )
-    """)
+c.execute("""
+CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    age TEXT,
+    grade TEXT,
+    photo TEXT
+)
+""")
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS attendance (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        status TEXT,
-        date TEXT
-    )
-    """)
+c.execute("""
+CREATE TABLE IF NOT EXISTS attendance (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    status TEXT,
+    date TEXT
+)
+""")
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS fees (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_name TEXT,
-        amount TEXT,
-        status TEXT
-    )
-    """)
+c.execute("""
+CREATE TABLE IF NOT EXISTS fees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_name TEXT,
+    amount TEXT,
+    status TEXT
+)
+""")
 
-    conn.commit()
-    conn.close()
-
-
-init_db()
+conn.commit()
+conn.close()
 
 
 # ================= LOGIN =================
@@ -85,6 +82,8 @@ def login():
             session["user"] = username
             return redirect("/dashboard")
 
+        return "Invalid Login"
+
     return render_template("login.html")
 
 
@@ -99,12 +98,14 @@ def dashboard():
     c = conn.cursor()
 
     if request.method == "POST":
+
         name = request.form["name"]
         age = request.form["age"]
         grade = request.form["grade"]
         photo = request.files["photo"]
 
         filename = ""
+
         if photo:
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
@@ -123,9 +124,9 @@ def dashboard():
     return render_template("dashboard.html", students=students)
 
 
-# ================= DELETE =================
-@app.route("/delete/<int:id>")
-def delete(id):
+# ================= DELETE STUDENT =================
+@app.route("/delete_student/<int:id>")
+def delete_student(id):
     conn = get_db()
     conn.execute("DELETE FROM students WHERE id=?", (id,))
     conn.commit()
@@ -133,29 +134,51 @@ def delete(id):
     return redirect("/dashboard")
 
 
-# ================= PROFILE =================
-@app.route("/student/<int:id>")
-def student_profile(id):
+# ================= EDIT STUDENT =================
+@app.route("/edit_student/<int:id>", methods=["GET", "POST"])
+def edit_student(id):
+
     conn = get_db()
-    student = conn.execute("SELECT * FROM students WHERE id=?", (id,)).fetchone()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        age = request.form["age"]
+        grade = request.form["grade"]
+
+        conn.execute("""
+        UPDATE students SET name=?, age=?, grade=?
+        WHERE id=?
+        """, (name, age, grade, id))
+
+        conn.commit()
+        conn.close()
+        return redirect("/dashboard")
+
+    student = conn.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    ).fetchone()
+
     conn.close()
-    return render_template("profile.html", student=student)
+    return render_template("edit_student.html", student=student)
 
 
 # ================= ATTENDANCE =================
 @app.route("/attendance", methods=["GET", "POST"])
 def attendance():
+
     conn = get_db()
 
     if request.method == "POST":
+        student_id = request.form["student_id"]
+        status = request.form["status"]
+        date = request.form["date"]
+
         conn.execute("""
         INSERT INTO attendance (student_id, status, date)
         VALUES (?, ?, ?)
-        """, (
-            request.form["student_id"],
-            request.form["status"],
-            request.form["date"]
-        ))
+        """, (student_id, status, date))
+
         conn.commit()
 
     data = conn.execute("SELECT * FROM attendance").fetchall()
@@ -164,7 +187,31 @@ def attendance():
     return render_template("attendance.html", data=data)
 
 
-# ================= FEES PDF =============
+# ================= FEES ENTRY =================
+@app.route("/fees", methods=["GET", "POST"])
+def fees():
+
+    conn = get_db()
+
+    if request.method == "POST":
+        name = request.form["student_name"]
+        amount = request.form["amount"]
+        status = request.form["status"]
+
+        conn.execute("""
+        INSERT INTO fees (student_name, amount, status)
+        VALUES (?, ?, ?)
+        """, (name, amount, status))
+
+        conn.commit()
+
+    fees = conn.execute("SELECT * FROM fees").fetchall()
+    conn.close()
+
+    return render_template("fees.html", fees=fees)
+
+
+# ================= PDF RECEIPT =================
 @app.route('/fee_receipt/<int:id>')
 def fee_receipt(id):
 
@@ -178,9 +225,9 @@ def fee_receipt(id):
     conn.close()
 
     if not fee:
-        return "Fee not found"
+        return "No fee found"
 
-    file_path = f"/tmp/receipt_{id}.pdf"
+    file_path = f"receipt_{id}.pdf"
 
     p = canvas.Canvas(file_path)
     p.drawString(100, 800, "FEE RECEIPT")
@@ -191,6 +238,7 @@ def fee_receipt(id):
 
     return send_file(file_path, as_attachment=True)
 
+
 # ================= LOGOUT =================
 @app.route("/logout")
 def logout():
@@ -198,5 +246,6 @@ def logout():
     return redirect("/")
 
 
+# ================= RUN =================
 if __name__ == "__main__":
     app.run(debug=True)
