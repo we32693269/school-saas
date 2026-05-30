@@ -164,12 +164,21 @@ def attendance():
     return render_template("attendance.html", data=data)
 
 
-# ================= FEES PDF =================
-@app.route("/fee_receipt/<int:id>")
+# ================= FEES PDF =============
+@app.route('/fee_receipt/<int:id>')
 def fee_receipt(id):
+
     conn = get_db()
-    fee = conn.execute("SELECT * FROM fees WHERE id=?", (id,)).fetchone()
+
+    fee = conn.execute(
+        "SELECT * FROM fees WHERE id=?",
+        (id,)
+    ).fetchone()
+
     conn.close()
+
+    if not fee:
+        return "Fee not found"
 
     file_path = f"/tmp/receipt_{id}.pdf"
 
@@ -181,7 +190,6 @@ def fee_receipt(id):
     p.save()
 
     return send_file(file_path, as_attachment=True)
-
 
 # ================= LOGOUT =================
 @app.route("/logout")
