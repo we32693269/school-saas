@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users(
 )
 """)
 
-c.execute('''
+c.execute("""
 CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS students (
     grade TEXT,
     photo TEXT
 )
-''')
+""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS attendance(
