@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users(
     password TEXT
 )
 """)
+
 c.execute('''
 CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
