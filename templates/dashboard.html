@@ -1,81 +1,50 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
-<title>Dashboard</title>
-
-<style>
-body{font-family:Arial;background:#f4f6f8;}
-.card{background:white;padding:20px;border-radius:12px;margin:15px;}
-.btn{background:#2563eb;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;}
-.btn-danger{background:red;}
-.sidebar{width:200px;position:fixed;height:100%;background:#111827;color:white;padding:20px;}
-.main{margin-left:220px;}
-</style>
-
+    <title>Dashboard</title>
 </head>
+<body><h1>School Dashboard</h1><a href="/logout">Logout</a>
 
-<body>
+<hr><h2>Add Student</h2><form method="POST"><input
+    type="text"
+    name="name"
+    placeholder="Student Name"
+    required
+>
 
-<div class="sidebar">
-<h2>School SaaS</h2>
-<a href="/dashboard">Dashboard</a><br>
-<a href="/attendance">Attendance</a><br>
-<a href="/logout">Logout</a>
-</div>
+<input
+    type="text"
+    name="age"
+    placeholder="Age"
+    required
+>
 
-<div class="main">
+<input
+    type="text"
+    name="grade"
+    placeholder="Grade"
+    required
+>
 
-<div class="card">
-<h2>Add Student</h2>
+<button type="submit">
+    Add Student
+</button>
 
-<form method="POST" enctype="multipart/form-data">
-<input type="text" name="name" placeholder="Name" required><br>
-<input type="text" name="age" placeholder="Age" required><br>
-<input type="text" name="grade" placeholder="Grade" required><br>
-<input type="file" name="photo"><br><br>
+</form><hr><h2>Students</h2><table border="1" cellpadding="10"><tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Grade</th>
+    <th>Action</th>
+</tr>{% for student in students %}
 
-<button type="submit" class="btn">Add</button>
-</form>
-</div>
+<tr><td>{{ student.id }}</td>
+<td>{{ student.name }}</td>
+<td>{{ student.age }}</td>
+<td>{{ student.grade }}</td><td>
+    <a href="/delete_student/{{ student.id }}">
+        Delete
+    </a>
+</td></tr>{% endfor %}
 
-<div class="card">
-<h2>Students List</h2>
-
-<table border="1" width="100%">
-<tr>
-<th>ID</th>
-<th>Photo</th>
-<th>Name</th>
-<th>Age</th>
-<th>Grade</th>
-<th>Actions</th>
-</tr>
-
-{% for s in students %}
-<tr>
-<td>{{s.id}}</td>
-<td>
-{% if s.photo %}
-<img src="/static/uploads/{{s.photo}}" width="50">
-{% endif %}
-</td>
-<td>{{s.name}}</td>
-<td>{{s.age}}</td>
-<td>{{s.grade}}</td>
-
-<td>
-<a class="btn" href="/student/{{s.id}}">Profile</a>
-<a class="btn btn-danger" href="/delete/{{s.id}}">Delete</a>
-</td>
-
-</tr>
-{% endfor %}
-
-</table>
-
-</div>
-
-</div>
-
-</body>
+</table></body>
 </html>
