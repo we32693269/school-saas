@@ -120,8 +120,38 @@ def register():
         return redirect("/")
 
     return render_template("register.html")
+#============== FORGOT PASSWORD ==============
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
 
+    if request.method == "POST":
 
+        username = request.form["username"]
+        new_password = request.form["new_password"]
+
+        conn = get_db()
+
+        user = conn.execute(
+            "SELECT * FROM users WHERE username=?",
+            (username,)
+        ).fetchone()
+
+        if not user:
+            conn.close()
+            return "User not found"
+
+        conn.execute("""
+            UPDATE users
+            SET password=?
+            WHERE username=?
+        """, (new_password, username))
+
+        conn.commit()
+        conn.close()
+
+        return "Password updated successfully"
+
+    return render_template("forgot_password.html")
 # ================= DASHBOARD =================
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
