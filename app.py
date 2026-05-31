@@ -33,7 +33,14 @@ CREATE TABLE IF NOT EXISTS students (
     grade TEXT
 )
 """)
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS fees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_name TEXT,
+    amount TEXT,
+    status TEXT
+)
+""")
 conn.commit()
 conn.close()
 
@@ -120,8 +127,64 @@ def dashboard():
     conn.close()
 
     return render_template("dashboard.html", students=students)
+#============== FEES ================
+@app.route("/fees", methods=["GET", "POST"])
+def fees():
 
+    if "user" not in session:
+        return redirect("/")
 
+    conn = get_db()
+
+    if request.method == "POST":
+
+        student_name = request.form["student_name"]
+        amount = request.form["amount"]
+        status = request.form["status"]
+
+        conn.execute("""
+            INSERT INTO fees (student_name, amount, status)
+            VALUES (?, ?, ?)
+        """, (student_name, amount, status))
+
+        conn.commit()
+
+    fees = conn.execute("SELECT * FROM fees").fetchall()
+    conn.close()
+
+    return render_template("fees.html", fees=fees)
+#================= RECEIPT ===============
+from reportlab.pdfgen import canvas
+from flask import send_file
+import os
+
+@app.route("/receipt/<int:id>")
+def receipt(id):
+
+    conn = get_db()
+
+    fee = conn.execute(
+        "SELECT * FROM fees WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    file_path = f"receipt_{id}.pdf"
+
+    p = canvas.Canvas(file_path)
+
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(200, 800, "FEE RECEIPT")
+
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 750, f"Student: {fee['student_name']}")
+    p.drawString(100, 730, f"Amount: {fee['amount']}")
+    p.drawString(100, 710, f"Status: {fee['status']}")
+
+    p.save()
+
+    return send_file(file_path, as_attachment=True)
 # ================= EDIT =================
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
