@@ -11,7 +11,7 @@ def get_db():
     return conn
 
 
-# ---------- CREATE TABLES ----------
+# ---------------- CREATE TABLES ----------------
 conn = get_db()
 c = conn.cursor()
 
@@ -36,7 +36,7 @@ conn.commit()
 conn.close()
 
 
-# ---------- LOGIN ----------
+# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -59,7 +59,7 @@ def login():
     return render_template("login.html")
 
 
-# ---------- REGISTER ----------
+# ---------------- REGISTER ----------------
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -90,7 +90,7 @@ def register():
     return render_template("register.html")
 
 
-# ---------- DASHBOARD ----------
+# ---------------- DASHBOARD ----------------
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     if "user" not in session:
@@ -115,27 +115,51 @@ def dashboard():
     return render_template("dashboard.html", students=students)
 
 
-# ---------- DELETE STUDENT ----------
-@app.route("/delete_student/<int:id>")
-def delete_student(id):
-    if "user" not in session:
-        return redirect("/")
-
+# ---------------- DELETE ----------------
+@app.route("/delete/<int:id>")
+def delete(id):
     conn = get_db()
     conn.execute("DELETE FROM students WHERE id=?", (id,))
     conn.commit()
     conn.close()
-
     return redirect("/dashboard")
 
 
-# ---------- LOGOUT ----------
+# ---------------- EDIT PAGE ----------------
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit(id):
+    conn = get_db()
+
+    student = conn.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        age = request.form["age"]
+        grade = request.form["grade"]
+
+        conn.execute("""
+            UPDATE students
+            SET name=?, age=?, grade=?
+            WHERE id=?
+        """, (name, age, grade, id))
+
+        conn.commit()
+        conn.close()
+        return redirect("/dashboard")
+
+    conn.close()
+    return render_template("edit.html", student=student)
+
+
+# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
 
-# ---------- RUN ----------
 if __name__ == "__main__":
     app.run(debug=True)
