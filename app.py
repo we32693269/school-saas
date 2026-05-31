@@ -34,7 +34,14 @@ CREATE TABLE IF NOT EXISTS students (
     grade TEXT
 )
 """)
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS fees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_name TEXT,
+    amount TEXT,
+    status TEXT
+)
+""")
 conn.commit()
 conn.close()
 
@@ -134,8 +141,55 @@ def dashboard():
         students=students,
         role=session.get("role")
     )
+#============ FEES ================
+from reportlab.pdfgen import canvas
+from flask import send_file
+import os
 
+@app.route("/fees", methods=["GET", "POST"])
+def fees():
 
+    conn = get_db()
+
+    if request.method == "POST":
+        student_name = request.form["student_name"]
+        amount = request.form["amount"]
+        status = request.form["status"]
+
+        conn.execute("""
+            INSERT INTO fees (student_name, amount, status)
+            VALUES (?, ?, ?)
+        """, (student_name, amount, status))
+
+        conn.commit()
+
+    fees = conn.execute("SELECT * FROM fees").fetchall()
+    conn.close()
+
+    return render_template("fees.html", fees=fees)
+#============FEE RECEIPT =============
+@app.route("/fee_receipt/<int:id>")
+def fee_receipt(id):
+
+    conn = get_db()
+
+    fee = conn.execute(
+        "SELECT * FROM fees WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    file_path = f"receipt_{id}.pdf"
+
+    p = canvas.Canvas(file_path)
+    p.drawString(100, 800, "FEE RECEIPT")
+    p.drawString(100, 760, f"Student: {fee['student_name']}")
+    p.drawString(100, 740, f"Amount: {fee['amount']}")
+    p.drawString(100, 720, f"Status: {fee['status']}")
+    p.save()
+
+    return send_file(file_path, as_attachment=True)
 # ---------------- DELETE ----------------
 @app.route("/delete/<int:id>")
 def delete(id):
