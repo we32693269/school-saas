@@ -236,39 +236,45 @@ def attendance():
     return render_template("attendance.html", records=records)
 
 
-# ================= FEES (ADMIN ONLY) =================
+# ================= FEES =================
 @app.route("/fees", methods=["GET", "POST"])
 def fees():
 
     if "user" not in session:
         return redirect("/")
 
-    if not is_admin():
+    if session.get("role") != "admin":
         return "Access Denied (Admin Only)"
 
     conn = get_db()
 
+    # GET students for dropdown
+    students = conn.execute("SELECT * FROM students").fetchall()
+
     if request.method == "POST":
 
-        student_name = request.form["student_name"]
+        student_id = request.form["student_id"]
         amount = request.form["amount"]
         status = request.form["status"]
         date = request.form["date"]
 
         conn.execute("""
-            INSERT INTO fees (student_name, amount, status, date)
+            INSERT INTO fees (student_id, amount, status, date)
             VALUES (?, ?, ?, ?)
-        """, (student_name, amount, status, date))
+        """, (student_id, amount, status, date))
 
         conn.commit()
 
-    fees = conn.execute("SELECT * FROM fees").fetchall()
+    fees = conn.execute("""
+        SELECT fees.id, students.name, fees.amount, fees.status, fees.date
+        FROM fees
+        JOIN students ON students.id = fees.student_id
+        ORDER BY fees.id DESC
+    """).fetchall()
 
     conn.close()
 
-    return render_template("fees.html", fees=fees)
-
-
+    return render_template("fees.html", fees=fees, students=students)
 # ================= LOGOUT =================
 @app.route("/logout")
 def logout():
