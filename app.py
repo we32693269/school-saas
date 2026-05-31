@@ -24,7 +24,14 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT
 )
 """)
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS attendance (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_name TEXT,
+    status TEXT,
+    date TEXT
+)
+""")
 c.execute("""
 CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -185,6 +192,59 @@ def receipt(id):
     p.save()
 
     return send_file(file_path, as_attachment=True)
+#============== ATTENDANCE =================
+@app.route("/attendance", methods=["GET", "POST"])
+def attendance():
+
+    if "user" not in session:
+        return redirect("/")
+
+    conn = get_db()
+
+    if request.method == "POST":
+
+        student_name = request.form["student_name"]
+        status = request.form["status"]
+        date = request.form["date"]
+
+        conn.execute("""
+            INSERT INTO attendance (student_name, status, date)
+            VALUES (?, ?, ?)
+        """, (student_name, status, date))
+
+        conn.commit()
+
+    data = conn.execute("SELECT * FROM attendance ORDER BY id DESC").fetchall()
+    conn.close()
+
+    return render_template("attendance.html", data=data)
+#============ ATTENDANCE REPORT ===============
+@app.route("/attendance_report")
+def attendance_report():
+
+    if "user" not in session:
+        return redirect("/")
+
+    conn = get_db()
+
+    total = conn.execute("SELECT COUNT(*) as total FROM attendance").fetchone()
+
+    present = conn.execute(
+        "SELECT COUNT(*) as p FROM attendance WHERE status='Present'"
+    ).fetchone()
+
+    absent = conn.execute(
+        "SELECT COUNT(*) as a FROM attendance WHERE status='Absent'"
+    ).fetchone()
+
+    conn.close()
+
+    return render_template(
+        "attendance_report.html",
+        total=total["total"],
+        present=present["p"],
+        absent=absent["a"]
+    )
 # ================= EDIT =================
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
