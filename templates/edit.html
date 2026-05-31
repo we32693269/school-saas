@@ -5,26 +5,36 @@
 </head>
 <body>
 
-<h1>Edit Student</h1>
+<h2>Edit Student</h2>
 
 <form method="POST">
 
-<input type="text" name="name" value="{{ student[1] }}">
-<br><br>
+    <input
+        type="text"
+        name="name"
+        value="{{ student.name }}"
+        required
+    >
 
-<input type="text" name="age" value="{{ student[2] }}">
-<br><br>
+    <input
+        type="text"
+        name="age"
+        value="{{ student.age }}"
+        required
+    >
 
-<input type="text" name="grade" value="{{ student[3] }}">
-<br><br>
+    <input
+        type="text"
+        name="grade"
+        value="{{ student.grade }}"
+        required
+    >
 
-<button type="submit">Update</button>
+    <button type="submit">
+        Update
+    </button>
 
 </form>
-
-<br>
-
-<a href="/dashboard">Back Dashboard</a>
 
 </body>
 </html>
