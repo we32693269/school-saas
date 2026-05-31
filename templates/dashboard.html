@@ -35,16 +35,6 @@
     <th>Age</th>
     <th>Grade</th>
     <th>Action</th>
-</tr>{% for student in students %}
-
-<tr><td>{{ student.id }}</td>
-<td>{{ student.name }}</td>
-<td>{{ student.age }}</td>
-<td>{{ student.grade }}</td><td>
-    <a href="/delete_student/{{ student.id }}">
-        Delete
-    </a>
-</td></tr>{% endfor %}
 {% for s in students %}
 <tr>
     <td>{{ s.id }}</td>
