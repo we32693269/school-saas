@@ -275,6 +275,49 @@ def fees():
     conn.close()
 
     return render_template("fees.html", fees=fees, students=students)
+#============= FEE RECEIPT ================
+from reportlab.pdfgen import canvas
+from flask import send_file
+import os
+@app.route("/fee_receipt/<int:id>")
+def fee_receipt(id):
+
+    if "user" not in session:
+        return redirect("/")
+
+    conn = get_db()
+
+    fee = conn.execute("""
+        SELECT fees.id, students.name, fees.amount, fees.status, fees.date
+        FROM fees
+        JOIN students ON students.id = fees.student_id
+        WHERE fees.id=?
+    """, (id,)).fetchone()
+
+    conn.close()
+
+    if not fee:
+        return "Receipt Not Found"
+
+    file_name = f"receipt_{id}.pdf"
+
+    pdf = canvas.Canvas(file_name)
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(180, 800, "SCHOOL FEE RECEIPT")
+
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(100, 750, f"Receipt ID: {fee['id']}")
+    pdf.drawString(100, 730, f"Student Name: {fee['name']}")
+    pdf.drawString(100, 710, f"Amount Paid: {fee['amount']}")
+    pdf.drawString(100, 690, f"Status: {fee['status']}")
+    pdf.drawString(100, 670, f"Date: {fee['date']}")
+
+    pdf.drawString(100, 630, "Thank you for your payment!")
+
+    pdf.save()
+
+    return send_file(file_name, as_attachment=True)
 # ================= LOGOUT =================
 @app.route("/logout")
 def logout():
