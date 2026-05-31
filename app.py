@@ -212,6 +212,10 @@ def edit(id):
         (id,)
     ).fetchone()
 
+    if not student:
+        conn.close()
+        return "Student Not Found"
+
     if request.method == "POST":
 
         name = request.form["name"]
@@ -235,9 +239,9 @@ def edit(id):
     conn.close()
 
     return render_template(
-        "edit_student.html",
+        "edit.html",
         student=student
-    )
+    )     
 # ---------------- DELETE ----------------
 @app.route("/delete/<int:id>")
 def delete(id):
