@@ -140,6 +140,13 @@
                 <td>{{ f.amount }}</td>
                 <td>{{ f.status }}</td>
                 <td>{{ f.date }}</td>
+                <td>
+                    <a href="/fee_receipt/{{ f.id }}"
+                  style="background:green;color:white;padding:
+                  5px 10px;border-radius:5px;text-decoration:none;">
+                     PDF
+                  </a>
+               </td>
             </tr>
             {% endfor %}
 
