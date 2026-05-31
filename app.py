@@ -11,7 +11,7 @@ def get_db():
     return conn
 
 
-# Create tables
+# ---------- CREATE TABLES ----------
 conn = get_db()
 c = conn.cursor()
 
@@ -36,21 +36,18 @@ conn.commit()
 conn.close()
 
 
+# ---------- LOGIN ----------
 @app.route("/", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
-
         username = request.form["username"]
         password = request.form["password"]
 
         conn = get_db()
-
         user = conn.execute(
             "SELECT * FROM users WHERE username=? AND password=?",
             (username, password)
         ).fetchone()
-
         conn.close()
 
         if user:
@@ -62,11 +59,10 @@ def login():
     return render_template("login.html")
 
 
+# ---------- REGISTER ----------
 @app.route("/register", methods=["GET", "POST"])
 def register():
-
     if request.method == "POST":
-
         username = request.form["username"]
         password = request.form["password"]
 
@@ -92,40 +88,54 @@ def register():
         return redirect("/")
 
     return render_template("register.html")
-    conn.close()
-
-    return render_template(
-        "dashboard.html",
-        students=students
-    )
 
 
-@app.route("/delete_student/<int:id>")
-def delete_student(id):
-
+# ---------- DASHBOARD ----------
+@app.route("/dashboard", methods=["GET", "POST"])
+def dashboard():
     if "user" not in session:
         return redirect("/")
 
     conn = get_db()
 
-    conn.execute(
-        "DELETE FROM students WHERE id=?",
-        (id,)
-    )
+    if request.method == "POST":
+        name = request.form["name"]
+        age = request.form["age"]
+        grade = request.form["grade"]
 
+        conn.execute(
+            "INSERT INTO students (name, age, grade) VALUES (?, ?, ?)",
+            (name, age, grade)
+        )
+        conn.commit()
+
+    students = conn.execute("SELECT * FROM students").fetchall()
+    conn.close()
+
+    return render_template("dashboard.html", students=students)
+
+
+# ---------- DELETE STUDENT ----------
+@app.route("/delete_student/<int:id>")
+def delete_student(id):
+    if "user" not in session:
+        return redirect("/")
+
+    conn = get_db()
+    conn.execute("DELETE FROM students WHERE id=?", (id,))
     conn.commit()
     conn.close()
 
     return redirect("/dashboard")
 
 
+# ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect("/")
 
 
+# ---------- RUN ----------
 if __name__ == "__main__":
     app.run(debug=True)
