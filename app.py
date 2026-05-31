@@ -17,17 +17,17 @@ c = conn.cursor()
 c.execute("""
 CREATE TABLE IF NOT EXISTS users (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-username TEXT,
-password TEXT
+username TEXT NOT NULL,
+password TEXT NOT NULL
 )
 """)
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS students (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-name TEXT,
-age TEXT,
-grade TEXT
+name TEXT NOT NULL,
+age TEXT NOT NULL,
+grade TEXT NOT NULL
 )
 """)
 
@@ -55,7 +55,7 @@ if request.method == "POST":
         session["user"] = username
         return redirect("/dashboard")
 
-    return "Invalid Login"
+    return "Invalid username or password"
 
 return render_template("login.html")
 
@@ -124,6 +124,9 @@ return render_template(
 
 @app.route("/delete_student/"int:id" (int:id)")
 def delete_student(id):
+
+if "user" not in session:
+    return redirect("/")
 
 conn = get_db()
 
