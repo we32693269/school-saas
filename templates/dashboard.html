@@ -1,52 +1,172 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
     <title>Dashboard</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            margin:0;
+            background:#f4f6f8;
+        }
+
+        .sidebar{
+            width:220px;
+            height:100vh;
+            position:fixed;
+            background:#111827;
+            color:white;
+            padding:20px;
+        }
+
+        .sidebar h2{
+            color:#fff;
+            margin-bottom:20px;
+        }
+
+        .sidebar a{
+            display:block;
+            color:white;
+            padding:10px;
+            text-decoration:none;
+            margin:5px 0;
+            border-radius:6px;
+        }
+
+        .sidebar a:hover{
+            background:#2563eb;
+        }
+
+        .main{
+            margin-left:240px;
+            padding:20px;
+        }
+
+        .card{
+            background:white;
+            padding:20px;
+            border-radius:12px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom:20px;
+        }
+
+        input{
+            padding:10px;
+            margin:5px;
+            width:200px;
+        }
+
+        button{
+            padding:10px 15px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th, td{
+            padding:12px;
+            border-bottom:1px solid #ddd;
+            text-align:left;
+        }
+
+        .btn{
+            padding:6px 10px;
+            border-radius:6px;
+            text-decoration:none;
+            color:white;
+            font-size:13px;
+        }
+
+        .edit{
+            background:green;
+        }
+
+        .delete{
+            background:red;
+        }
+
+        .topbar{
+            background:white;
+            padding:15px;
+            margin-bottom:20px;
+            border-radius:10px;
+        }
+    </style>
 </head>
-<body><h1>School Dashboard</h1><a href="/logout">Logout</a>
 
-<hr><h2>Add Student</h2><form method="POST"><input
-    type="text"
-    name="name"
-    placeholder="Student Name"
-    required
->
+<body>
 
-<input
-    type="text"
-    name="age"
-    placeholder="Age"
-    required
->
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>School System</h2>
 
-<input
-    type="text"
-    name="grade"
-    placeholder="Grade"
-    required
->
+    <a href="/dashboard">Dashboard</a>
+    <a href="/logout">Logout</a>
+</div>
 
-<button type="submit">
-    Add Student
-</button>
 
-</form><hr><h2>Students</h2><table border="1" cellpadding="10"><tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Age</th>
-    <th>Grade</th>
-    <th>Action</th>
-{% for s in students %}
-<tr>
-    <td>{{ s.id }}</td>
-    <td>{{ s.name }}</td>
-    <td>{{ s.age }}</td>
-    <td>{{ s.grade }}</td>
+<!-- MAIN -->
+<div class="main">
 
-    <td>
-        <a href="/edit/{{ s.id }}">Edit</a>
-        <a href="/delete/{{ s.id }}">Delete</a>
-    </td>
-</tr>
-{% endfor %}
-</table></body>
+    <div class="topbar">
+        <h3>Welcome, Admin</h3>
+    </div>
+
+
+    <!-- ADD STUDENT -->
+    <div class="card">
+        <h3>Add Student</h3>
+
+        <form method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="age" placeholder="Age" required>
+            <input type="text" name="grade" placeholder="Grade" required>
+
+            <button type="submit">Add</button>
+        </form>
+    </div>
+
+
+    <!-- STUDENT TABLE -->
+    <div class="card">
+        <h3>Students List</h3>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Grade</th>
+                <th>Action</th>
+            </tr>
+
+            {% for s in students %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.age }}</td>
+                <td>{{ s.grade }}</td>
+                <td>
+
+                    <a class="btn edit" href="/edit/{{ s.id }}">Edit</a>
+
+                    <a class="btn delete" href="/delete/{{ s.id }}">Delete</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+</div>
+
+</body>
 </html>
