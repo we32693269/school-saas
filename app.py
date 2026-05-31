@@ -1,24 +1,26 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "secret123"
 
 
+# ================= DB =================
 def get_db():
     conn = sqlite3.connect("school.db")
     conn.row_factory = sqlite3.Row
     return conn
 
 
-# ---------------- CREATE TABLES ----------------
+# ================= CREATE TABLES =================
 conn = get_db()
 c = conn.cursor()
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
+    username TEXT UNIQUE,
     password TEXT
 )
 """)
@@ -36,35 +38,39 @@ conn.commit()
 conn.close()
 
 
-# ---------------- LOGIN ----------------
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+
         username = request.form["username"]
         password = request.form["password"]
 
         conn = get_db()
+
         user = conn.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
-            (username, password)
+            "SELECT * FROM users WHERE username=?",
+            (username,)
         ).fetchone()
+
         conn.close()
 
-        if user:
+        if user and check_password_hash(user["password"], password):
             session["user"] = username
             return redirect("/dashboard")
 
-        return "Invalid Login"
+        return "Invalid login"
 
     return render_template("login.html")
 
 
-# ---------------- REGISTER ----------------
+# ================= REGISTER =================
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+
         username = request.form["username"]
-        password = request.form["password"]
+        password = generate_password_hash(request.form["password"])
 
         conn = get_db()
 
@@ -90,9 +96,10 @@ def register():
     return render_template("register.html")
 
 
-# ---------------- DASHBOARD ----------------
+# ================= DASHBOARD =================
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
+
     if "user" not in session:
         return redirect("/")
 
@@ -115,19 +122,13 @@ def dashboard():
     return render_template("dashboard.html", students=students)
 
 
-# ---------------- DELETE ----------------
-@app.route("/delete/<int:id>")
-def delete(id):
-    conn = get_db()
-    conn.execute("DELETE FROM students WHERE id=?", (id,))
-    conn.commit()
-    conn.close()
-    return redirect("/dashboard")
-
-
-# ---------------- EDIT PAGE ----------------
+# ================= EDIT =================
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
+
+    if "user" not in session:
+        return redirect("/")
+
     conn = get_db()
 
     student = conn.execute(
@@ -136,6 +137,7 @@ def edit(id):
     ).fetchone()
 
     if request.method == "POST":
+
         name = request.form["name"]
         age = request.form["age"]
         grade = request.form["grade"]
@@ -148,18 +150,36 @@ def edit(id):
 
         conn.commit()
         conn.close()
+
         return redirect("/dashboard")
 
     conn.close()
+
     return render_template("edit.html", student=student)
 
 
-# ---------------- LOGOUT ----------------
+# ================= DELETE =================
+@app.route("/delete/<int:id>")
+def delete(id):
+
+    if "user" not in session:
+        return redirect("/")
+
+    conn = get_db()
+    conn.execute("DELETE FROM students WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/dashboard")
+
+
+# ================= LOGOUT =================
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
 
+# ================= RUN =================
 if __name__ == "__main__":
     app.run(debug=True)
