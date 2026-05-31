@@ -5,117 +5,123 @@
 
     <style>
         body{
-            font-family:Arial;
+            font-family: Arial;
             background:#f4f6f9;
             margin:0;
         }
 
         .container{
             padding:20px;
+            max-width:900px;
+            margin:auto;
         }
 
         .card{
             background:white;
             padding:20px;
-            border-radius:12px;
-            margin-bottom:20px;
+            border-radius:10px;
             box-shadow:0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom:20px;
         }
 
         input, select{
             padding:10px;
-            margin:5px;
-            border:1px solid #ddd;
-            border-radius:6px;
+            margin:5px 0;
+            width:100%;
+            border:1px solid #ccc;
+            border-radius:5px;
         }
 
         button{
-            padding:10px 15px;
+            padding:10px;
             background:#2563eb;
             color:white;
             border:none;
-            border-radius:6px;
+            width:100%;
+            border-radius:5px;
             cursor:pointer;
         }
 
         table{
             width:100%;
             border-collapse:collapse;
-            background:white;
+        }
+
+        th, td{
+            padding:10px;
+            border:1px solid #ddd;
+            text-align:center;
         }
 
         th{
             background:#2563eb;
             color:white;
-            padding:12px;
         }
 
-        td{
-            padding:10px;
-            border-bottom:1px solid #ddd;
+        .top{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
         }
 
-        .pdf{
+        a{
+            text-decoration:none;
+            color:white;
             background:green;
-            color:white;
-            padding:6px 10px;
-            text-decoration:none;
+            padding:8px 12px;
             border-radius:5px;
         }
 
-        .back{
-            background:#111827;
-            color:white;
-            padding:8px 12px;
-            text-decoration:none;
-            border-radius:5px;
-        }
     </style>
 </head>
+
 <body>
 
 <div class="container">
 
-    <a href="/dashboard" class="back">
-        ← Dashboard
-    </a>
-
     <div class="card">
 
-        <h2>💰 Fee Payment</h2>
+        <div class="top">
+            <h2>💰 Fees System</h2>
+            <a href="/dashboard">Back</a>
+        </div>
 
+        <!-- FORM -->
         <form method="POST">
 
-            <input
-                type="text"
-                name="student_name"
-                placeholder="Student Name"
-                required
-            >
+            <label>Select Student</label>
+            <select name="student_id" required>
 
-            <input
-                type="number"
-                name="amount"
-                placeholder="Amount"
-                required
-            >
+                {% for s in students %}
+                <option value="{{ s.id }}">
+                    {{ s.name }}
+                </option>
+                {% endfor %}
 
-            <select name="status">
+            </select>
+
+            <label>Amount</label>
+            <input type="number" name="amount" placeholder="Enter amount" required>
+
+            <label>Status</label>
+            <select name="status" required>
                 <option value="Paid">Paid</option>
                 <option value="Pending">Pending</option>
             </select>
 
-            <button type="submit">
-                Save Payment
-            </button>
+            <label>Date</label>
+            <input type="date" name="date" required>
+
+            <button type="submit">💾 Save Fee</button>
 
         </form>
 
     </div>
 
+    <!-- TABLE -->
     <div class="card">
 
-        <h2>📊 Fee Records</h2>
+        <h3>📊 Fee Records</h3>
 
         <table>
 
@@ -124,25 +130,16 @@
                 <th>Student</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>Receipt</th>
+                <th>Date</th>
             </tr>
 
             {% for f in fees %}
             <tr>
-
                 <td>{{ f.id }}</td>
-                <td>{{ f.student_name }}</td>
+                <td>{{ f.name }}</td>
                 <td>{{ f.amount }}</td>
                 <td>{{ f.status }}</td>
-
-                <td>
-                    <a
-                        href="/fee_receipt/{{ f.id }}"
-                        class="pdf">
-                        PDF Receipt
-                    </a>
-                </td>
-
+                <td>{{ f.date }}</td>
             </tr>
             {% endfor %}
 
