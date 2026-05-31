@@ -195,7 +195,10 @@
                 <th>Grade</th>
                 <th>Actions</th>
             </tr>
-
+            {% if role == "admin" %}
+               <a href="/edit/{{ s.id }}">Edit</a>
+               <a href="/delete/{{ s.id }}">Delete</a>
+           {% endif %}
             {% for s in students %}
             <tr>
                 <td>{{ s.id }}</td>
