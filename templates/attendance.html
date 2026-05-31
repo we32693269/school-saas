@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance</title>
+</head>
+<body>
+
+<h2>Attendance System</h2>
+
+<form method="POST">
+    <input type="text" name="student_name" placeholder="Student Name" required>
+
+    <select name="status">
+        <option>Present</option>
+        <option>Absent</option>
+    </select>
+
+    <input type="date" name="date" required>
+
+    <button type="submit">Save</button>
+</form>
+
+<hr>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>ID</th>
+        <th>Student</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+
+    {% for a in data %}
+    <tr>
+        <td>{{ a.id }}</td>
+        <td>{{ a.student_name }}</td>
+        <td>{{ a.status }}</td>
+        <td>{{ a.date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
