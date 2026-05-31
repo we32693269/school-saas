@@ -33,7 +33,15 @@ CREATE TABLE IF NOT EXISTS students (
     grade TEXT
 )
 """)
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS fees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    amount TEXT,
+    status TEXT,
+    date TEXT
+)
+""")
 c.execute("""
 CREATE TABLE IF NOT EXISTS attendance (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
