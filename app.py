@@ -190,6 +190,54 @@ def fee_receipt(id):
     p.save()
 
     return send_file(file_path, as_attachment=True)
+#============== ATTENDANCE ===============
+@app.route("/attendance")
+def attendance():
+
+    if "user" not in session:
+        return redirect("/")
+
+    return render_template("attendance.html")
+#=============== EDIT ================
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit(id):
+
+    if "user" not in session:
+        return redirect("/")
+
+    conn = get_db()
+
+    student = conn.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    if request.method == "POST":
+
+        name = request.form["name"]
+        age = request.form["age"]
+        grade = request.form["grade"]
+
+        conn.execute(
+            """
+            UPDATE students
+            SET name=?, age=?, grade=?
+            WHERE id=?
+            """,
+            (name, age, grade, id)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/dashboard")
+
+    conn.close()
+
+    return render_template(
+        "edit_student.html",
+        student=student
+    )
 # ---------------- DELETE ----------------
 @app.route("/delete/<int:id>")
 def delete(id):
