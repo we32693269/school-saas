@@ -1,155 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Fees System</title>
 
-<title>Fees System</title>
+    <style>
+        body {font-family:Arial; background:#f4f6fb; margin:0;}
 
-<style>
+        .container {
+            margin-left:240px;
+            padding:20px;
+        }
 
-body{
-    font-family:Arial;
-    background:#eef2f7;
-    padding:30px;
-}
-.btn{
-    background:#2563eb;
-    color:white;
-    padding:8px 14px;
-    border-radius:8px;
-    text-decoration:none;
-}
-.card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:20px;
-}
+        .card {
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:20px;
+        }
 
-input, select{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:1px solid #ddd;
-    border-radius:10px;
-}
+        input, select {
+            padding:10px;
+            margin:5px;
+            width:200px;
+        }
 
-button{
-    background:#0f172a;
-    color:white;
-    padding:12px;
-    width:100%;
-    border:none;
-    border-radius:10px;
-}
+        button {
+            padding:10px 15px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:6px;
+        }
 
-table{
-    width:100%;
-    background:white;
-    border-collapse:collapse;
-}
+        table {
+            width:100%;
+            background:white;
+            border-collapse:collapse;
+        }
 
-th{
-    background:#0f172a;
-    color:white;
-    padding:15px;
-}
+        th, td {
+            padding:10px;
+            border-bottom:1px solid #ddd;
+        }
 
-td{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-}
-
-.paid{
-    color:green;
-    font-weight:bold;
-}
-
-.unpaid{
-    color:red;
-    font-weight:bold;
-}
-
-</style>
-
+        .btn {
+            padding:5px 10px;
+            background:green;
+            color:white;
+            text-decoration:none;
+            border-radius:5px;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="container">
 
-<h2>💰 Add Fees</h2>
+    <div class="card">
+        <h2>💰 Fee Payment</h2>
 
-<form method="POST">
+        <form method="POST">
+            <input name="student_name" placeholder="Student Name" required>
+            <input name="amount" placeholder="Amount" required>
 
-<input type="text" name="student_name" placeholder="Student Name" required>
+            <select name="status">
+                <option>Paid</option>
+                <option>Pending</option>
+            </select>
 
-<input type="number" name="amount" placeholder="Amount" required>
+            <button type="submit">Save</button>
+        </form>
+    </div>
 
-<select name="status">
+    <div class="card">
+        <h2>📊 Fees List</h2>
 
-<option value="Paid">Paid</option>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
 
-<option value="Unpaid">Unpaid</option>
+            {% for f in fees %}
+            <tr>
+                <td>{{ f.id }}</td>
+                <td>{{ f.student_name }}</td>
+                <td>{{ f.amount }}</td>
+                <td>{{ f.status }}</td>
+                <td>
+                    <a class="btn" href="/fee_receipt/{{ f.id }}">
+                        📄 PDF
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
 
-</select>
-
-<button type="submit">
-Save Fees
-</button>
-
-</form>
+        </table>
+    </div>
 
 </div>
-
-<table>
-
-<tr>
-<th>ID</th>
-<th>Name</th>
-<th>Amount</th>
-<th>Status</th>
-<th>Receipt</th>    
-</tr>
-
-{% for fee in fees %}
-
-<tr>
-
-<td>{{ fee[0] }}</td>
-
-<td>{{ fee[1] }}</td>
-
-<td>{{ fee[2] }}</td>
-
-<td>
-
-{% if fee[3] == "Paid" %}
-<td>
-
-<a href="/receipt/{{ fee[0] }}" class="btn">
-🧾 Receipt
-</a>
-
-</td>
-<span class="paid">
-✅ Paid
-</span>
-
-{% else %}
-
-<span class="unpaid">
-❌ Unpaid
-</span>
-
-{% endif %}
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
 
 </body>
 </html>
