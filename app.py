@@ -16,7 +16,14 @@ def get_db():
 # ================= CREATE TABLES =================
 conn = get_db()
 c = conn.cursor()
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT,
+    role TEXT DEFAULT 'user'
+)
+""")
 c.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,6 +78,7 @@ def login():
 
         if user and check_password_hash(user["password"], password):
             session["user"] = username
+            session["user"] = role
             return redirect("/dashboard")
 
         return "Invalid login"
@@ -101,7 +109,10 @@ def register():
             "INSERT INTO users (username, password) VALUES (?, ?)",
             (username, password)
         )
-
+        conn.execute(
+            "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+            (username, password, "user")
+        )
         conn.commit()
         conn.close()
 
@@ -116,7 +127,7 @@ def dashboard():
 
     if "user" not in session:
         return redirect("/")
-
+    role = session.get("role")
     conn = get_db()
 
     if request.method == "POST":
@@ -133,7 +144,7 @@ def dashboard():
     students = conn.execute("SELECT * FROM students").fetchall()
     conn.close()
 
-    return render_template("dashboard.html", students=students)
+    return render_template("dashboard.html", students=students, role=role )
 #============== FEES ================
 @app.route("/fees", methods=["GET", "POST"])
 def fees():
