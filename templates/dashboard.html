@@ -3,217 +3,179 @@
 <head>
     <title>School Dashboard</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
     <style>
-        body{
-            margin:0;
-            font-family: 'Inter', sans-serif;
-            background:#f5f7fb;
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f4f6fb;
         }
 
         /* SIDEBAR */
-        .sidebar{
-            width:240px;
-            height:100vh;
-            position:fixed;
-            background:#0f172a;
-            color:white;
-            padding:20px;
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            position: fixed;
+            padding: 20px;
         }
 
-        .sidebar h2{
-            font-size:20px;
-            margin-bottom:30px;
-            color:#38bdf8;
+        .sidebar h2 {
+            color: #60a5fa;
         }
 
-        .sidebar a{
-            display:block;
-            color:white;
-            text-decoration:none;
-            padding:12px;
-            margin:6px 0;
-            border-radius:8px;
-            transition:0.3s;
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
         }
 
-        .sidebar a:hover{
-            background:#2563eb;
+        .sidebar a:hover {
+            background: #2563eb;
         }
 
         /* MAIN */
-        .main{
-            margin-left:260px;
-            padding:25px;
-        }
-
-        /* TOP BAR */
-        .topbar{
-            background:white;
-            padding:15px;
-            border-radius:12px;
-            box-shadow:0 3px 10px rgba(0,0,0,0.08);
-            margin-bottom:20px;
+        .main {
+            margin-left: 240px;
+            padding: 20px;
         }
 
         /* CARDS */
-        .grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
-            gap:15px;
+        .cards {
+            display: flex;
+            gap: 20px;
         }
 
-        .card{
-            background:white;
-            padding:20px;
-            border-radius:12px;
-            box-shadow:0 3px 10px rgba(0,0,0,0.08);
-        }
-
-        /* FORM */
-        input{
-            padding:10px;
-            margin:5px;
-            width:200px;
-            border:1px solid #ddd;
-            border-radius:8px;
-        }
-
-        button{
-            padding:10px 15px;
-            background:#2563eb;
-            color:white;
-            border:none;
-            border-radius:8px;
-            cursor:pointer;
-        }
-
-        button:hover{
-            background:#1d4ed8;
+        .card {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         /* TABLE */
-        table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:10px;
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        th, td{
-            padding:12px;
-            border-bottom:1px solid #eee;
-            text-align:left;
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
         }
 
-        th{
-            background:#f1f5f9;
+        th {
+            background: #2563eb;
+            color: white;
         }
 
-        .btn{
-            padding:6px 10px;
-            border-radius:6px;
-            color:white;
-            text-decoration:none;
-            font-size:13px;
+        /* BUTTONS */
+        .btn {
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
         }
 
-        .edit{ background:green; }
-        .delete{ background:red; }
+        .edit {
+            background: #22c55e;
+        }
 
+        .delete {
+            background: #ef4444;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>🎓 School System</h2>
+    <h2>🎓 School SaaS</h2>
 
-    <a href="/dashboard">🏠 Dashboard</a>
-    <a href="/fees">💰 Fees</a>
-    <a href="/attendance">📅 Attendance</a>
-    <a href="/attendance_report">📊 Report</a>
-    <a href="/logout">🚪 Logout</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="#">Students</a>
+    <a href="#">Fees</a>
+    <a href="#">Attendance</a>
+    <a href="/logout">Logout</a>
 </div>
 
-
-<!-- MAIN -->
 <div class="main">
 
-    <!-- TOP BAR -->
     <div class="topbar">
-        <h2>Welcome, Admin 👋</h2>
-        <p>Manage students, fees, and attendance easily</p>
+        <h3>Welcome, {{ session['user'] }}</h3>
     </div>
 
-
-    <!-- STATS CARDS -->
-    <div class="grid">
-
+    <!-- CARDS -->
+    <div class="cards">
         <div class="card">
-            <h3>Students</h3>
-            <p>Total system records</p>
+            <h3>Total Students</h3>
+            <p>{{ students|length }}</p>
         </div>
 
         <div class="card">
-            <h3>Fees</h3>
-            <p>Payment tracking system</p>
+            <h3>System Status</h3>
+            <p>Active</p>
         </div>
-
-        <div class="card">
-            <h3>Attendance</h3>
-            <p>Daily student tracking</p>
-        </div>
-
     </div>
 
-
-    <!-- ADD STUDENT -->
+    <!-- ADD STUDENT FORM -->
     <div class="card" style="margin-top:20px;">
         <h3>Add Student</h3>
 
         <form method="POST">
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="text" name="age" placeholder="Age" required>
-            <input type="text" name="grade" placeholder="Grade" required>
-
-            <button type="submit">Add Student</button>
+            <input name="name" placeholder="Name" required>
+            <input name="age" placeholder="Age" required>
+            <input name="grade" placeholder="Grade" required>
+            <button type="submit">Add</button>
         </form>
     </div>
 
-
     <!-- TABLE -->
-    <div class="card">
-        <h3>Students List</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Grade</th>
+            <th>Action</th>
+        </tr>
 
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Actions</th>
-            </tr>
-            {% if role == "admin" %}
-               <a href="/edit/{{ s.id }}">Edit</a>
-               <a href="/delete/{{ s.id }}">Delete</a>
-           {% endif %}
-            {% for s in students %}
-            <tr>
-                <td>{{ s.id }}</td>
-                <td>{{ s.name }}</td>
-                <td>{{ s.age }}</td>
-                <td>{{ s.grade }}</td>
-                <td>
-                    <a class="btn edit" href="/edit/{{ s.id }}">Edit</a>
-                    <a class="btn delete" href="/delete/{{ s.id }}">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
+        {% for s in students %}
+        <tr>
+            <td>{{ s.id }}</td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.age }}</td>
+            <td>{{ s.grade }}</td>
+            <td>
 
-        </table>
-    </div>
+                {% if role == "admin" %}
+                <a class="btn edit" href="/edit/{{ s.id }}">Edit</a>
+                <a class="btn delete" href="/delete/{{ s.id }}">Delete</a>
+                {% endif %}
+
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
 
 </div>
 
