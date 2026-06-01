@@ -8,10 +8,12 @@ app = Flask(__name__)
 # =========================
 # STRIPE SETUP
 # =========================
-stripe.api_key = "YOUR_SECRET_KEY"  # 🔴 REPLACE THIS
+stripe.api_key = "sk_test_51TdYS9AreGUdagSrq6ERvY9DSUYfdtqWbVWQKU1e1D5UIZ9o6VH9DIVZW7CxTIBk0IX52hQCR7Sm3reu4kWJPiQY00SCNIQviB"
+
+PUBLIC_KEY = "pk_test_51TdYS9AreGUdagSr8AWr9h9RWdzAFAkDlKttY2cAm6m6QFXatVh3pfb0Bm4szC1C1tW3dnLcz6SZhv77V5gydYUn00aWKvBvdV"
 
 # =========================
-# DATABASE INIT
+# DATABASE
 # =========================
 def init_db():
     conn = sqlite3.connect("school.db")
@@ -64,23 +66,17 @@ def check_user(username, password):
     return user
 
 # =========================
-# HOME (LOGIN PAGE)
+# HOME
 # =========================
 @app.route("/")
 def home():
     return """
-    <html>
-    <body style="font-family:Arial;text-align:center;background:#f2f2f2;">
-        <div style="background:white;width:300px;margin:auto;margin-top:100px;padding:20px;border-radius:10px;">
-            <h2>🏫 School SaaS Login</h2>
-            <form action="/login" method="post">
-                <input name="username" placeholder="Username" style="width:90%;padding:8px;"><br><br>
-                <input name="password" type="password" placeholder="Password" style="width:90%;padding:8px;"><br><br>
-                <button style="padding:10px;background:blue;color:white;">Login</button>
-            </form>
-        </div>
-    </body>
-    </html>
+    <h2>🏫 School SaaS Login</h2>
+    <form action="/login" method="post">
+        <input name="username" placeholder="Username"><br><br>
+        <input name="password" type="password" placeholder="Password"><br><br>
+        <button>Login</button>
+    </form>
     """
 
 # =========================
@@ -88,15 +84,12 @@ def home():
 # =========================
 @app.route("/login", methods=["POST"])
 def login():
-    username = request.form["username"]
-    password = request.form["password"]
+    u = request.form["username"]
+    p = request.form["password"]
 
-    user = check_user(username, password)
-
-    if user:
+    if check_user(u, p):
         return redirect("/dashboard")
-    else:
-        return "❌ Login Failed"
+    return "❌ Wrong login"
 
 # =========================
 # DASHBOARD
@@ -113,9 +106,8 @@ def dashboard():
     </form>
 
     <br>
-    <a href="/list">📋 View Students</a><br><br>
-    <a href="/pay">💳 Upgrade to Premium ($5)</a><br><br>
-    <a href="/">Logout</a>
+    <a href="/list">📋 Students</a><br><br>
+    <a href="/pay">💳 Upgrade ($5)</a>
     """
 
 # =========================
@@ -129,10 +121,7 @@ def add():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
-    cursor.execute(
-        "INSERT INTO students (name, grade) VALUES (?, ?)",
-        (name, grade)
-    )
+    cursor.execute("INSERT INTO students (name, grade) VALUES (?, ?)", (name, grade))
 
     conn.commit()
     conn.close()
@@ -148,23 +137,19 @@ def list_students():
     cursor = conn.cursor()
 
     cursor.execute("SELECT name, grade FROM students")
-    students = cursor.fetchall()
+    data = cursor.fetchall()
 
     conn.close()
 
-    html = "<h1>📋 Students List</h1>"
-
-    if not students:
-        html += "<p>No students yet</p>"
-    else:
-        for s in students:
-            html += f"<p>{s[0]} - {s[1]}</p>"
+    html = "<h2>📋 Students</h2>"
+    for s in data:
+        html += f"<p>{s[0]} - {s[1]}</p>"
 
     html += "<br><a href='/dashboard'>Back</a>"
     return html
 
 # =========================
-# STRIPE PAYMENT
+# STRIPE PAYMENT (FIXED WITH YOUR LINK)
 # =========================
 @app.route("/pay")
 def pay():
@@ -181,28 +166,25 @@ def pay():
             "quantity": 1,
         }],
         mode="payment",
-        success_url="https://YOUR-RENDER-LINK.onrender.com/success",
-        cancel_url="https://YOUR-RENDER-LINK.onrender.com/cancel",
+        success_url="https://school-saas-veqm.onrender.com/success",
+        cancel_url="https://school-saas-veqm.onrender.com/cancel",
     )
 
     return redirect(session.url)
 
 # =========================
-# SUCCESS
+# SUCCESS / CANCEL
 # =========================
 @app.route("/success")
 def success():
-    return "<h1>🎉 Payment Successful! Premium Activated</h1>"
+    return "🎉 Payment Successful! Premium Activated"
 
-# =========================
-# CANCEL
-# =========================
 @app.route("/cancel")
 def cancel():
-    return "<h1>❌ Payment Cancelled</h1>"
+    return "❌ Payment Cancelled"
 
 # =========================
-# RUN SERVER
+# RUN
 # =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
