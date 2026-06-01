@@ -153,7 +153,7 @@ def forgot_password()
 # ================= DASHBOARD =================
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
-    print(session)
+    
     if "user" not in session:
         return redirect("/")
 
