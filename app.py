@@ -121,8 +121,7 @@ def register():
     return render_template("register.html")
 #============== FORGOT PASSWORD ==============
 @app.route("/forgot_password", methods=["GET", "POST"])
-def forgot_password():
-
+def forgot_password()
     if request.method == "POST":
 
         username = request.form["username"]
@@ -154,7 +153,7 @@ def forgot_password():
 # ================= DASHBOARD =================
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
-
+    print(session)
     if "user" not in session:
         return redirect("/")
 
@@ -268,8 +267,7 @@ def attendance():
 # ================= FEES (only admin =================
 @app.route("/fees", methods=["GET", "POST"])
 def fees():
-    print(session)
-    return str(session)
+
     if "user" not in session:
         return redirect("/")
 
