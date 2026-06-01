@@ -269,7 +269,7 @@ def attendance():
 # ================= FEES =================
 @app.route("/fees", methods=["GET", "POST"])
 def fees():
-
+    print(session)
     if "user" not in session:
         return redirect("/")
 
