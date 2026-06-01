@@ -1,8 +1,14 @@
 from flask import Flask, request, redirect
 import sqlite3
 import os
+import stripe
 
 app = Flask(__name__)
+
+# =========================
+# STRIPE SETUP
+# =========================
+stripe.api_key = "YOUR_SECRET_KEY"  # 🔴 REPLACE THIS
 
 # =========================
 # DATABASE INIT
@@ -28,7 +34,7 @@ def init_db():
     )
     """)
 
-    # default admin user
+    # default admin
     cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
     if not cursor.fetchone():
         cursor.execute(
@@ -58,32 +64,19 @@ def check_user(username, password):
     return user
 
 # =========================
-# GET PLAN
-# =========================
-def get_plan(username):
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT plan FROM users WHERE username=?", (username,))
-    result = cursor.fetchone()
-
-    conn.close()
-    return result[0] if result else "free"
-
-# =========================
-# LOGIN PAGE (UI)
+# HOME (LOGIN PAGE)
 # =========================
 @app.route("/")
 def home():
     return """
     <html>
     <body style="font-family:Arial;text-align:center;background:#f2f2f2;">
-        <div style="background:white;width:300px;margin:auto;margin-top:100px;padding:20px;border-radius:10px;box-shadow:0 0 10px gray;">
-            <h2>🏫 SaaS Login</h2>
+        <div style="background:white;width:300px;margin:auto;margin-top:100px;padding:20px;border-radius:10px;">
+            <h2>🏫 School SaaS Login</h2>
             <form action="/login" method="post">
                 <input name="username" placeholder="Username" style="width:90%;padding:8px;"><br><br>
                 <input name="password" type="password" placeholder="Password" style="width:90%;padding:8px;"><br><br>
-                <button style="padding:10px 20px;background:blue;color:white;border:none;">Login</button>
+                <button style="padding:10px;background:blue;color:white;">Login</button>
             </form>
         </div>
     </body>
@@ -111,33 +104,18 @@ def login():
 @app.route("/dashboard")
 def dashboard():
     return """
-    <html>
-    <body style="font-family:Arial;text-align:center;background:#eef2ff;">
+    <h1>🏫 Dashboard</h1>
 
-        <h1>🏫 Dashboard</h1>
+    <form action="/add" method="post">
+        <input name="name" placeholder="Student Name"><br><br>
+        <input name="grade" placeholder="Grade"><br><br>
+        <button>Add Student</button>
+    </form>
 
-        <p>💡 Free Plan users have limited access</p>
-
-        <div style="background:white;width:350px;margin:auto;padding:20px;border-radius:10px;box-shadow:0 0 10px gray;">
-
-            <h3>Add Student</h3>
-
-            <form action="/add" method="post">
-                <input name="name" placeholder="Name" style="width:90%;padding:8px;"><br><br>
-                <input name="grade" placeholder="Grade" style="width:90%;padding:8px;"><br><br>
-                <button style="padding:10px;background:green;color:white;">Add</button>
-            </form>
-
-            <br>
-
-            <a href="/list">📋 View Students</a><br>
-            <a href="/upgrade">💰 Upgrade Plan</a><br>
-            <a href="/">🚪 Logout</a>
-
-        </div>
-
-    </body>
-    </html>
+    <br>
+    <a href="/list">📋 View Students</a><br><br>
+    <a href="/pay">💳 Upgrade to Premium ($5)</a><br><br>
+    <a href="/">Logout</a>
     """
 
 # =========================
@@ -186,40 +164,45 @@ def list_students():
     return html
 
 # =========================
-# UPGRADE PAGE (MONEY SYSTEM)
+# STRIPE PAYMENT
 # =========================
-@app.route("/upgrade")
-def upgrade():
-    return """
-    <html>
-    <body style="font-family:Arial;text-align:center;background:#fff7ed;">
+@app.route("/pay")
+def pay():
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": "School SaaS Premium"
+                },
+                "unit_amount": 500,
+            },
+            "quantity": 1,
+        }],
+        mode="payment",
+        success_url="https://YOUR-RENDER-LINK.onrender.com/success",
+        cancel_url="https://YOUR-RENDER-LINK.onrender.com/cancel",
+    )
 
-        <h1>💰 Upgrade to Premium</h1>
-
-        <div style="background:white;width:350px;margin:auto;padding:20px;border-radius:10px;box-shadow:0 0 10px gray;">
-
-            <p>🔥 Premium Features:</p>
-            <p>✔ Unlimited students</p>
-            <p>✔ Advanced dashboard</p>
-            <p>✔ Priority support</p>
-
-            <h3>💳 Payment (Demo)</h3>
-            <button onclick="alert('Payment system coming soon!')" 
-            style="padding:10px 20px;background:orange;color:white;border:none;">
-                Pay $5
-            </button>
-
-            <br><br>
-            <a href="/dashboard">Back</a>
-
-        </div>
-
-    </body>
-    </html>
-    """
+    return redirect(session.url)
 
 # =========================
-# RUN (DEPLOY READY)
+# SUCCESS
+# =========================
+@app.route("/success")
+def success():
+    return "<h1>🎉 Payment Successful! Premium Activated</h1>"
+
+# =========================
+# CANCEL
+# =========================
+@app.route("/cancel")
+def cancel():
+    return "<h1>❌ Payment Cancelled</h1>"
+
+# =========================
+# RUN SERVER
 # =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
