@@ -72,8 +72,7 @@ def is_admin():
 # ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
-
-    if request.method == "POST":
+  if request.method == "POST":
 
         username = request.form["username"]
         password = request.form["password"]
@@ -264,7 +263,7 @@ def attendance():
     return render_template("attendance.html", records=records)
 
 
-# ================= FEES (only admin =================
+# ================= FEES (only admin)=================
 @app.route("/fees", methods=["GET", "POST"])
 def fees():
 
