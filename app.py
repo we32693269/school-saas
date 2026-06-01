@@ -15,7 +15,15 @@ def get_db():
 # ================= TABLES =================
 conn = get_db()
 c = conn.cursor()
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS fees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    amount TEXT,
+    status TEXT,
+    date TEXT
+)
+""")
 c.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
