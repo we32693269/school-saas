@@ -15,7 +15,8 @@ def init_db():
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
-        password TEXT
+        password TEXT,
+        plan TEXT DEFAULT 'free'
     )
     """)
 
@@ -27,11 +28,13 @@ def init_db():
     )
     """)
 
-    # default admin
+    # default admin user
     cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
     if not cursor.fetchone():
-        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)",
-                       ("admin", "1234"))
+        cursor.execute(
+            "INSERT INTO users (username, password, plan) VALUES (?, ?, ?)",
+            ("admin", "1234", "premium")
+        )
 
     conn.commit()
     conn.close()
@@ -55,31 +58,34 @@ def check_user(username, password):
     return user
 
 # =========================
+# GET PLAN
+# =========================
+def get_plan(username):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT plan FROM users WHERE username=?", (username,))
+    result = cursor.fetchone()
+
+    conn.close()
+    return result[0] if result else "free"
+
+# =========================
 # LOGIN PAGE (UI)
 # =========================
 @app.route("/")
 def home():
     return """
     <html>
-    <head>
-    <style>
-        body { font-family:Arial; background:#f2f2f2; text-align:center; }
-        .box { background:white; padding:30px; width:320px; margin:auto; margin-top:100px; border-radius:10px; box-shadow:0 0 15px gray; }
-        input { width:90%; padding:10px; margin:5px; }
-        button { padding:10px 20px; background:blue; color:white; border:none; border-radius:5px; }
-    </style>
-    </head>
-    <body>
-
-    <div class="box">
-        <h2>🏫 School SaaS Login</h2>
-        <form action="/login" method="post">
-            <input name="username" placeholder="Username"><br>
-            <input name="password" type="password" placeholder="Password"><br><br>
-            <button type="submit">Login</button>
-        </form>
-    </div>
-
+    <body style="font-family:Arial;text-align:center;background:#f2f2f2;">
+        <div style="background:white;width:300px;margin:auto;margin-top:100px;padding:20px;border-radius:10px;box-shadow:0 0 10px gray;">
+            <h2>🏫 SaaS Login</h2>
+            <form action="/login" method="post">
+                <input name="username" placeholder="Username" style="width:90%;padding:8px;"><br><br>
+                <input name="password" type="password" placeholder="Password" style="width:90%;padding:8px;"><br><br>
+                <button style="padding:10px 20px;background:blue;color:white;border:none;">Login</button>
+            </form>
+        </div>
     </body>
     </html>
     """
@@ -97,39 +103,38 @@ def login():
     if user:
         return redirect("/dashboard")
     else:
-        return "<h1>❌ Login Failed</h1><a href='/'>Back</a>"
+        return "❌ Login Failed"
 
 # =========================
-# DASHBOARD (UI)
+# DASHBOARD
 # =========================
 @app.route("/dashboard")
 def dashboard():
     return """
     <html>
-    <head>
-    <style>
-        body { font-family:Arial; background:#eef2ff; text-align:center; }
-        .card { background:white; padding:25px; width:350px; margin:auto; margin-top:50px; border-radius:10px; box-shadow:0 0 15px gray; }
-        input { width:90%; padding:10px; margin:5px; }
-        button { padding:10px 20px; background:green; color:white; border:none; border-radius:5px; }
-        a { display:block; margin-top:10px; }
-    </style>
-    </head>
-    <body>
+    <body style="font-family:Arial;text-align:center;background:#eef2ff;">
 
-    <h1>🏫 Dashboard</h1>
+        <h1>🏫 Dashboard</h1>
 
-    <div class="card">
-        <h3>Add Student</h3>
-        <form action="/add" method="post">
-            <input name="name" placeholder="Name"><br>
-            <input name="grade" placeholder="Grade"><br><br>
-            <button type="submit">Add</button>
-        </form>
+        <p>💡 Free Plan users have limited access</p>
 
-        <a href="/list">📋 View Students</a>
-        <a href="/">🚪 Logout</a>
-    </div>
+        <div style="background:white;width:350px;margin:auto;padding:20px;border-radius:10px;box-shadow:0 0 10px gray;">
+
+            <h3>Add Student</h3>
+
+            <form action="/add" method="post">
+                <input name="name" placeholder="Name" style="width:90%;padding:8px;"><br><br>
+                <input name="grade" placeholder="Grade" style="width:90%;padding:8px;"><br><br>
+                <button style="padding:10px;background:green;color:white;">Add</button>
+            </form>
+
+            <br>
+
+            <a href="/list">📋 View Students</a><br>
+            <a href="/upgrade">💰 Upgrade Plan</a><br>
+            <a href="/">🚪 Logout</a>
+
+        </div>
 
     </body>
     </html>
@@ -169,36 +174,52 @@ def list_students():
 
     conn.close()
 
-    output = """
-    <html>
-    <head>
-    <style>
-        body { font-family:Arial; background:#f9fafb; text-align:center; }
-        .box { background:white; width:400px; margin:auto; margin-top:50px; padding:20px; border-radius:10px; box-shadow:0 0 10px gray; }
-    </style>
-    </head>
-    <body>
-    <div class="box">
-        <h2>📋 Students List</h2>
-    """
+    html = "<h1>📋 Students List</h1>"
 
     if not students:
-        output += "<p>No students yet</p>"
+        html += "<p>No students yet</p>"
     else:
         for s in students:
-            output += f"<p>{s[0]} - {s[1]}</p>"
+            html += f"<p>{s[0]} - {s[1]}</p>"
 
-    output += """
-        <br><a href="/dashboard">⬅ Back</a>
-    </div>
+    html += "<br><a href='/dashboard'>Back</a>"
+    return html
+
+# =========================
+# UPGRADE PAGE (MONEY SYSTEM)
+# =========================
+@app.route("/upgrade")
+def upgrade():
+    return """
+    <html>
+    <body style="font-family:Arial;text-align:center;background:#fff7ed;">
+
+        <h1>💰 Upgrade to Premium</h1>
+
+        <div style="background:white;width:350px;margin:auto;padding:20px;border-radius:10px;box-shadow:0 0 10px gray;">
+
+            <p>🔥 Premium Features:</p>
+            <p>✔ Unlimited students</p>
+            <p>✔ Advanced dashboard</p>
+            <p>✔ Priority support</p>
+
+            <h3>💳 Payment (Demo)</h3>
+            <button onclick="alert('Payment system coming soon!')" 
+            style="padding:10px 20px;background:orange;color:white;border:none;">
+                Pay $5
+            </button>
+
+            <br><br>
+            <a href="/dashboard">Back</a>
+
+        </div>
+
     </body>
     </html>
     """
 
-    return output
-
 # =========================
-# DEPLOY READY
+# RUN (DEPLOY READY)
 # =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
