@@ -63,7 +63,6 @@ def is_admin():
 
 # ================= LOGIN =================
 from werkzeug.security import check_password_hash
-
 @app.route("/", methods=["GET", "POST"])
 def login():
 
@@ -257,7 +256,7 @@ def attendance():
     return render_template("attendance.html", records=records)
 
 
-# ================= FEES (only admin)=================
+# ================= FEES =================
 @app.route("/fees", methods=["GET", "POST"])
 def fees():
 
