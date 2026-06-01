@@ -265,10 +265,10 @@ def attendance():
     return render_template("attendance.html", records=records)
 
 
-# ================= FEES =================
+# ================= FEES (only admin =================
 @app.route("/fees", methods=["GET", "POST"])
 def fees():
-    print(session)
+    return str(session)
     if "user" not in session:
         return redirect("/")
 
