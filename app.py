@@ -62,9 +62,12 @@ def is_admin():
 
 
 # ================= LOGIN =================
+from werkzeug.security import check_password_hash
+
 @app.route("/", methods=["GET", "POST"])
 def login():
-  if request.method == "POST":
+
+    if request.method == "POST":
 
         username = request.form["username"]
         password = request.form["password"]
@@ -72,13 +75,13 @@ def login():
         conn = get_db()
 
         user = conn.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
-            (username, password)
+            "SELECT * FROM users WHERE username=?",
+            (username,)
         ).fetchone()
 
         conn.close()
 
-        if user:
+        if user and check_password_hash(user["password"], password):
             session["user"] = user["username"]
             session["role"] = user["role"]
             return redirect("/dashboard")
@@ -86,7 +89,6 @@ def login():
         return "Invalid Login"
 
     return render_template("login.html")
-
 
 # ================= REGISTER =================
 @app.route("/register", methods=["GET", "POST"])
