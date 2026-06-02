@@ -142,6 +142,23 @@ def search():
 
     data = cursor.fetchall()
     conn.close()
+
+    html = f"<h2>🔍 Search Result: {q}</h2>"
+
+    if not data:
+        html += "<p>No student found.</p>"
+
+    for s in data:
+        html += f"""
+        <p>
+            {s[1]} - {s[2]}
+            <a href="/edit/{s[0]}">✏️ Edit</a>
+            <a href="/delete/{s[0]}">🗑️ Delete</a>
+        </p>
+        """
+
+    html += "<br><a href='/list'>Back to List</a>"
+    return html
 #=============== LIST STUDENTS ==================
 @app.route("/list")
 def list_students():
@@ -154,11 +171,6 @@ def list_students():
     conn.close()
 
     html = "<h2>📋 Students</h2>"
-<form action="/search" method="get">
-    <input name="q" placeholder="Search student">
-    <button>Search</button>
-</form>
-<hr>
     for s in data:
         html += f"""
         <p>
