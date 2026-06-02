@@ -156,7 +156,15 @@ def dashboard():
     <p>❌ Absent Records: {total_absent}</p>
 
     <hr>
+    <h2>➕ Add Student</h2>
 
+    <form action="/add" method="post">
+        <input name="name" placeholder="Student Name"><br><br>
+        <input name="grade" placeholder="Grade"><br><br>
+        <button>Add Student</button>
+    </form>
+
+    <hr>
     <h2>⚡ Quick Menu</h2>
 
     <p><a href="/list">📋 Student Management</a></p>
