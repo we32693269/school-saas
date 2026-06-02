@@ -189,23 +189,7 @@ def dashboard():
     """
    
     from datetime import datetime
-#========= PAY FEE =============
-@app.route("/pay_fee/<int:student_id>/<status>")
-def pay_fee(student_id, status):
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
 
-    date = datetime.now().strftime("%Y-%m-%d")
-
-    cursor.execute(
-        "INSERT INTO fees (student_id, amount, status, date) VALUES (?, ?, ?, ?)",
-        (student_id, 1000, status, date)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/fees_report")
 #========== ADD MARK ===========
 @app.route("/add_mark/<int:student_id>", methods=["GET", "POST"])
 def add_mark(student_id):
@@ -630,7 +614,23 @@ def pay():
     )
 
     return redirect(session.url)
+#========= PAY FEE =============
+@app.route("/pay_fee/<int:student_id>/<status>")
+def pay_fee(student_id, status):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
 
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    cursor.execute(
+        "INSERT INTO fees (student_id, amount, status, date) VALUES (?, ?, ?, ?)",
+        (student_id, 1000, status, date)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/fees_report")
 # =========================
 # SUCCESS / CANCEL
 # =========================
