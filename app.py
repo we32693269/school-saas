@@ -123,19 +123,49 @@ def login():
 def dashboard():
     if "user" not in session:
         return redirect("/login")
-    return """
-    <h1>🏫 Dashboard</h1>
 
-    <form action="/add" method="post">
-        <input name="name" placeholder="Student Name"><br><br>
-        <input name="grade" placeholder="Grade"><br><br>
-        <button>Add Student</button>
-    </form>
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
 
-    <br>
-    <a href="/list">📋 Students</a><br><br>
-    <a href="/pay">💳 Upgrade ($5)</a>
+    cursor.execute("SELECT COUNT(*) FROM students")
+    total_students = cursor.fetchone()[0]
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM attendance WHERE status='Present'"
+    )
+    total_present = cursor.fetchone()[0]
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM attendance WHERE status='Absent'"
+    )
+    total_absent = cursor.fetchone()[0]
+
+    conn.close()
+
+    return f"""
+    <h1>🏫 School Dashboard</h1>
+
+    <hr>
+
+    <h2>📊 Statistics</h2>
+
+    <p>👨‍🎓 Total Students: {total_students}</p>
+
+    <p>✅ Present Records: {total_present}</p>
+
+    <p>❌ Absent Records: {total_absent}</p>
+
+    <hr>
+
+    <h2>⚡ Quick Menu</h2>
+
+    <p><a href="/list">📋 Student Management</a></p>
+
+    <p><a href="/attendance_report">📅 Attendance Report</a></p>
+
+    <p><a href="/logout">🚪 Logout</a></p>
     """
+
 
 # =========================
 # ADD STUDENT
