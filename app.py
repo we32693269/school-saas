@@ -363,7 +363,11 @@ def success():
 @app.route("/cancel")
 def cancel():
     return "❌ Payment Cancelled"
-
+#========= LOGOUT =========== 
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect("/login")
 # =========================
 # RUN
 # =========================
