@@ -188,7 +188,34 @@ def dashboard():
 
     <p><a href="/logout">🚪 Logout</a></p>
     """
+#========== ADD MARK ===========
+@app.route("/add_mark/<int:student_id>", methods=["GET", "POST"])
+def add_mark(student_id):
+    if request.method == "POST":
+        subject = request.form["subject"]
+        score = request.form["score"]
 
+        conn = sqlite3.connect("school.db")
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "INSERT INTO marks (student_id, subject, score) VALUES (?, ?, ?)",
+            (student_id, subject, score)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect(f"/marks/{student_id}")
+
+    return """
+    <h2>📝 Add Mark</h2>
+    <form method="post">
+        <input name="subject" placeholder="Subject"><br><br>
+        <input name="score" placeholder="Score"><br><br>
+        <button>Add Mark</button>
+    </form>
+    """
 
 # =========================
 # ADD STUDENT
