@@ -1,6 +1,5 @@
 from flask import Flask, request, redirect
-from flask import session
-app.secret_key = "school_secret_key"
+
 import sqlite3
 import os
 import stripe
@@ -98,15 +97,26 @@ def home():
 # =========================
 # LOGIN
 # =========================
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    u = request.form["username"]
-    p = request.form["password"]
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
 
-    if check_user(u, p):
-        return redirect("/dashboard")
-    return "❌ Wrong login"
+        if username == "admin" and password == "1234":
+            session["user"] = "admin"
+            return redirect("/list")
+        else:
+            return "❌ Wrong username or password"
 
+    return """
+    <h2>🔐 Login</h2>
+    <form method="post">
+        <input name="username" placeholder="Username"><br><br>
+        <input name="password" type="password" placeholder="Password"><br><br>
+        <button>Login</button>
+    </form>
+    """
 # =========================
 # DASHBOARD
 # =========================
