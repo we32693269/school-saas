@@ -330,7 +330,7 @@ def attendance_report():
 
     html += "<br><a href='/list'>Back</a>"
     return html
-s#=========== ADD TEACHER ==============
+#=========== ADD TEACHER ==============
 @app.route("/add_teacher", methods=["POST"])
 def add_teacher():
     name = request.form["name"]
