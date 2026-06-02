@@ -330,6 +330,43 @@ def attendance_report():
 
     html += "<br><a href='/list'>Back</a>"
     return html
+#============= EDIT TEACHER =============
+@app.route("/edit_teacher/<int:id>", methods=["GET", "POST"])
+def edit_teacher(id):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        subject = request.form["subject"]
+
+        cursor.execute(
+            "UPDATE teachers SET name=?, subject=? WHERE id=?",
+            (name, subject, id)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/teachers")
+
+    cursor.execute(
+        "SELECT name, subject FROM teachers WHERE id=?",
+        (id,)
+    )
+
+    teacher = cursor.fetchone()
+    conn.close()
+
+    return f"""
+    <h2>✏️ Edit Teacher</h2>
+
+    <form method="post">
+        <input name="name" value="{teacher[0]}"><br><br>
+        <input name="subject" value="{teacher[1]}"><br><br>
+        <button>Update</button>
+    </form>
+    """
 #========== DELETE TEACHER ============
 @app.route("/delete_teacher/<int:id>")
 def delete_teacher(id):
