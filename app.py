@@ -56,15 +56,7 @@ def init_db():
         subject TEXT
     )
     """)
-   cursor.execute("""
-   CREATE TABLE IF NOT EXISTS fees (
-       id INTEGER PRIMARY KEY AUTOINCREMENT,
-       student_id INTEGER,
-       amount INTEGER,
-       status TEXT,
-       date TEXT
-  )
-  """)
+   
     
     # default admin
     cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
