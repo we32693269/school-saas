@@ -188,6 +188,8 @@ def search():
 #=============== LIST STUDENTS ==================
 @app.route("/list")
 def list_students():
+    if "user" not in session:
+    return redirect("/login")
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
