@@ -330,6 +330,43 @@ def attendance_report():
 
     html += "<br><a href='/list'>Back</a>"
     return html
+#============= TEACHERS ============
+@app.route("/teachers")
+def teachers():
+    if "user" not in session:
+        return redirect("/login")
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, name, subject FROM teachers")
+    data = cursor.fetchall()
+
+    conn.close()
+
+    html = """
+    <h2>👨‍🏫 Teachers</h2>
+
+    <form action="/add_teacher" method="post">
+        <input name="name" placeholder="Teacher Name">
+        <input name="subject" placeholder="Subject">
+        <button>Add Teacher</button>
+    </form>
+
+    <hr>
+    """
+
+    for t in data:
+        html += f"""
+        <p>
+            {t[1]} - {t[2]}
+            <a href="/edit_teacher/{t[0]}">✏️ Edit</a>
+            <a href="/delete_teacher/{t[0]}">🗑️ Delete</a>
+        </p>
+        """
+
+    html += "<br><a href='/dashboard'>Back</a>"
+    return html
 #=========== ADD TEACHER ==============
 @app.route("/add_teacher", methods=["POST"])
 def add_teacher():
