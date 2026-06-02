@@ -6,16 +6,27 @@ import stripe
 app = Flask(__name__)
 
 # =========================
-# STRIPE
+# STRIPE SETUP
 # =========================
 stripe.api_key = "sk_test_51TdYS9AreGUdagSrq6ERvY9DSUYfdtqWbVWQKU1e1D5UIZ9o6VH9DIVZW7CxTIBk0IX52hQCR7Sm3reu4kWJPiQY00SCNIQviB"
 
+PUBLIC_KEY = "pk_test_51TdYS9AreGUdagSr8AWr9h9RWdzAFAkDlKttY2cAm6m6QFXatVh3pfb0Bm4szC1C1tW3dnLcz6SZhv77V5gydYUn00aWKvBvdV"
+
 # =========================
-# DB INIT
+# DATABASE
 # =========================
 def init_db():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        password TEXT,
+        plan TEXT DEFAULT 'free'
+    )
+    """)
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS students (
@@ -25,17 +36,79 @@ def init_db():
     )
     """)
 
+    # default admin
+    cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
+    if not cursor.fetchone():
+        cursor.execute(
+            "INSERT INTO users (username, password, plan) VALUES (?, ?, ?)",
+            ("admin", "1234", "premium")
+        )
+
     conn.commit()
     conn.close()
 
 init_db()
 
 # =========================
+# LOGIN CHECK
+# =========================
+def check_user(username, password):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM users WHERE username=? AND password=?",
+        (username, password)
+    )
+
+    user = cursor.fetchone()
+    conn.close()
+    return user
+
+# =========================
 # HOME
 # =========================
 @app.route("/")
 def home():
-    return "<h1>🏫 School SaaS</h1><a href='/list'>Go to Students</a>"
+    return """
+    <h2>🏫 School SaaS Login</h2>
+    <form action="/login" method="post">
+        <input name="username" placeholder="Username"><br><br>
+        <input name="password" type="password" placeholder="Password"><br><br>
+        <button>Login</button>
+    </form>
+    """
+
+# =========================
+# LOGIN
+# =========================
+@app.route("/login", methods=["POST"])
+def login():
+    u = request.form["username"]
+    p = request.form["password"]
+
+    if check_user(u, p):
+        return redirect("/dashboard")
+    return "❌ Wrong login"
+
+# =========================
+# DASHBOARD
+# =========================
+@app.route("/dashboard")
+def dashboard():
+    return """
+    <h1>🏫 Dashboard</h1>
+
+    <form action="/add" method="post">
+        <input name="name" placeholder="Student Name"><br><br>
+        <input name="grade" placeholder="Grade"><br><br>
+        <button>Add Student</button>
+    </form>
+
+    <br>
+    <a href="/list">📋 Students</a><br><br>
+    <a href="/pay">💳 Upgrade ($5)</a>
+    """
 
 # =========================
 # ADD STUDENT
@@ -56,43 +129,25 @@ def add():
     return redirect("/list")
 
 # =========================
-# LIST STUDENTS (EDIT + DELETE)
+# LIST STUDENTS
 # =========================
 @app.route("/list")
 def list_students():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id, name, grade FROM students")
+    cursor.execute("SELECT name, grade FROM students")
     data = cursor.fetchall()
 
     conn.close()
 
-    html = """
-    <h2>📋 Students List</h2>
-
-    <form action="/add" method="post">
-        <input name="name" placeholder="Name">
-        <input name="grade" placeholder="Grade">
-        <button>Add</button>
-    </form>
-    <hr>
-    """
-
+    html = "<h2>📋 Students</h2>"
     for s in data:
-        html += f"""
-        <p>
-            {s[1]} - {s[2]}
-            <a href="/edit/{s[0]}">✏️ Edit</a>
-            <a href="/delete/{s[0]}">🗑️ Delete</a>
-        </p>
-        """
+        html += f"<p>{s[0]} - {s[1]}</p>"
 
+    html += "<br><a href='/dashboard'>Back</a>"
     return html
-
-# =========================
-# EDIT STUDENT
-# =========================
+#============== EDIT ==============
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
     conn = sqlite3.connect("school.db")
@@ -109,7 +164,6 @@ def edit(id):
 
         conn.commit()
         conn.close()
-
         return redirect("/list")
 
     cursor.execute("SELECT name, grade FROM students WHERE id=?", (id,))
@@ -118,17 +172,13 @@ def edit(id):
 
     return f"""
     <h2>✏️ Edit Student</h2>
-
     <form method="post">
         <input name="name" value="{student[0]}"><br><br>
         <input name="grade" value="{student[1]}"><br><br>
         <button>Update</button>
     </form>
     """
-
-# =========================
-# DELETE STUDENT
-# =========================
+#============ DELETE ===============
 @app.route("/delete/<int:id>")
 def delete(id):
     conn = sqlite3.connect("school.db")
@@ -140,6 +190,64 @@ def delete(id):
     conn.close()
 
     return redirect("/list")
+#=========== LIST STUDENT ===========
+@app.route("/list")
+def list_students():
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, name, grade FROM students")
+    data = cursor.fetchall()
+
+    conn.close()
+
+    html = "<h2>📋 Students</h2>"
+
+    for s in data:
+        html += f"""
+        <p>
+            {s[1]} - {s[2]}
+            <a href="/edit/{s[0]}">✏️ Edit</a>
+            <a href="/delete/{s[0]}">🗑️ Delete</a>
+        </p>
+        """
+
+    html += "<br><a href='/dashboard'>Back</a>"
+    return html
+# =========================
+# STRIPE PAYMENT (FIXED WITH YOUR LINK)
+# =========================
+@app.route("/pay")
+def pay():
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": "School SaaS Premium"
+                },
+                "unit_amount": 500,
+            },
+            "quantity": 1,
+        }],
+        mode="payment",
+        success_url="https://school-saas-veqm.onrender.com/success",
+        cancel_url="https://school-saas-veqm.onrender.com/cancel",
+    )
+
+    return redirect(session.url)
+
+# =========================
+# SUCCESS / CANCEL
+# =========================
+@app.route("/success")
+def success():
+    return "🎉 Payment Successful! Premium Activated"
+
+@app.route("/cancel")
+def cancel():
+    return "❌ Payment Cancelled"
 
 # =========================
 # RUN
