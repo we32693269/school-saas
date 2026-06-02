@@ -171,11 +171,7 @@ def list_students():
     conn.close()
 
     html = "<h2>📋 Students</h2>"
-    <form action="/search" method="get">
-    <input name="q" placeholder="Search student">
-    <button>Search</button>
-</form>
-<hr>
+    
     for s in data:
         html += f"""
         <p>
