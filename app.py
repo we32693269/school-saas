@@ -216,7 +216,40 @@ def add_mark(student_id):
         <button>Add Mark</button>
     </form>
     """
+#========== MARKS ==========
+@app.route("/marks/<int:student_id>")
+def marks(student_id):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
 
+    cursor.execute(
+        "SELECT subject, score FROM marks WHERE student_id=?",
+        (student_id,)
+    )
+
+    data = cursor.fetchall()
+    conn.close()
+
+    html = f"<h2>📝 Student Marks</h2>"
+
+    html += f"""
+    <a href="/add_mark/{student_id}">➕ Add Mark</a>
+    <hr>
+    """
+
+    total = 0
+
+    for m in data:
+        total += int(m[1])
+        html += f"<p>{m[0]} : {m[1]}</p>"
+
+    if len(data) > 0:
+        average = total / len(data)
+        html += f"<h3>📊 Average: {average:.2f}</h3>"
+
+    html += "<br><a href='/list'>Back</a>"
+
+    return html
 # =========================
 # ADD STUDENT
 # =========================
