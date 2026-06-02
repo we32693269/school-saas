@@ -27,7 +27,14 @@ def init_db():
         plan TEXT DEFAULT 'free'
     )
     """)
-    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        status TEXT,
+        date TEXT
+    )
+    """)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS attendance (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -204,14 +211,18 @@ def list_students():
 
     return html
 #============ ATTENDANCE ==============
+from datetime import datetime
+
 @app.route("/attendance/<int:id>/<status>")
 def attendance(id, status):
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
+    date = datetime.now().strftime("%Y-%m-%d")
+
     cursor.execute(
-        "INSERT INTO attendance (student_id, status) VALUES (?, ?)",
-        (id, status)
+        "INSERT INTO attendance (student_id, status, date) VALUES (?, ?, ?)",
+        (id, status, date)
     )
 
     conn.commit()
@@ -225,19 +236,37 @@ def attendance_report():
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT students.name, attendance.status
+    SELECT students.name, attendance.status, attendance.date
     FROM attendance
-    JOIN students
-    ON students.id = attendance.student_id
+    JOIN students ON students.id = attendance.student_id
+    ORDER BY attendance.date DESC
     """)
 
     records = cursor.fetchall()
+
+    # COUNT
+    cursor.execute("""
+    SELECT students.name,
+    SUM(CASE WHEN attendance.status='Present' THEN 1 ELSE 0 END),
+    SUM(CASE WHEN attendance.status='Absent' THEN 1 ELSE 0 END)
+    FROM attendance
+    JOIN students ON students.id = attendance.student_id
+    GROUP BY students.name
+    """)
+
+    summary = cursor.fetchall()
     conn.close()
 
-    html = "<h2>📅 Attendance Report</h2>"
+    html = "<h2>📊 Attendance Report (PRO)</h2>"
+
+    html += "<h3>📈 Summary</h3>"
+    for s in summary:
+        html += f"<p>{s[0]} → ✅ Present: {s[1]} | ❌ Absent: {s[2]}</p>"
+
+    html += "<hr><h3>📅 Details</h3>"
 
     for r in records:
-        html += f"<p>{r[0]} : {r[1]}</p>"
+        html += f"<p>{r[0]} - {r[1]} - {r[2]}</p>"
 
     html += "<br><a href='/list'>Back</a>"
     return html
