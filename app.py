@@ -1,11 +1,10 @@
-from flask import Flask, request, redirect from flask import session
-app.secret_key = "school_secret_key"
+from flask import Flask, request, redirect session
 import sqlite3
 import os
 import stripe
 
 app = Flask(__name__)
-
+app.secret_key = "school_secret_key"
 # =========================
 # STRIPE SETUP
 # =========================
