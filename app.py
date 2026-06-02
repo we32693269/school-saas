@@ -136,14 +136,21 @@ def list_students():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT name, grade FROM students")
+    cursor.execute("SELECT id, name, grade FROM students")
     data = cursor.fetchall()
 
     conn.close()
 
     html = "<h2>📋 Students</h2>"
+
     for s in data:
-        html += f"<p>{s[0]} - {s[1]}</p>"
+        html += f"""
+        <p>
+            {s[1]} - {s[2]}
+            <a href="/edit/{s[0]}">✏️ Edit</a>
+            <a href="/delete/{s[0]}">🗑️ Delete</a>
+        </p>
+        """
 
     html += "<br><a href='/dashboard'>Back</a>"
     return html
@@ -190,30 +197,6 @@ def delete(id):
     conn.close()
 
     return redirect("/list")
-#=========== LIST STUDENT ===========
-@app.route("/list")
-def list_students():
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id, name, grade FROM students")
-    data = cursor.fetchall()
-
-    conn.close()
-
-    html = "<h2>📋 Students</h2>"
-
-    for s in data:
-        html += f"""
-        <p>
-            {s[1]} - {s[2]}
-            <a href="/edit/{s[0]}">✏️ Edit</a>
-            <a href="/delete/{s[0]}">🗑️ Delete</a>
-        </p>
-        """
-
-    html += "<br><a href='/dashboard'>Back</a>"
-    return html
 # =========================
 # STRIPE PAYMENT (FIXED WITH YOUR LINK)
 # =========================
