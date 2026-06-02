@@ -143,52 +143,43 @@ def dashboard():
     cursor = conn.cursor()
 
     cursor.execute("SELECT COUNT(*) FROM students")
-    total_students = cursor.fetchone()[0]
+    students = cursor.fetchone()[0]
 
-    cursor.execute(
-        "SELECT COUNT(*) FROM attendance WHERE status='Present'"
-    )
-    total_present = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM teachers")
+    teachers = cursor.fetchone()[0]
 
-    cursor.execute(
-        "SELECT COUNT(*) FROM attendance WHERE status='Absent'"
-    )
-    total_absent = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM attendance")
+    attendance = cursor.fetchone()[0]
 
     conn.close()
 
     return f"""
-    <h1>🏫 School Dashboard</h1>
+    <h1>🏫 School Management Dashboard</h1>
 
     <hr>
 
-    <h2>📊 Statistics</h2>
+    <h2>📊 Overview</h2>
 
-    <p>👨‍🎓 Total Students: {total_students}</p>
-
-    <p>✅ Present Records: {total_present}</p>
-
-    <p>❌ Absent Records: {total_absent}</p>
-    <p><a href="/teachers">👨‍🏫 Teacher Management</a></p>
-    <p><a href="/ranking">🏆 Top Students Ranking</a></p>
-    <hr>
-    <h2>➕ Add Student</h2>
-
-    <form action="/add" method="post">
-        <input name="name" placeholder="Student Name"><br><br>
-        <input name="grade" placeholder="Grade"><br><br>
-        <button>Add Student</button>
-    </form>
+    <div style="display:flex; gap:20px;">
+        <div>👨‍🎓 Students: {students}</div>
+        <div>👨‍🏫 Teachers: {teachers}</div>
+        <div>📅 Attendance Records: {attendance}</div>
+    </div>
 
     <hr>
-    <h2>⚡ Quick Menu</h2>
 
-    <p><a href="/list">📋 Student Management</a></p>
+    <h2>📌 Menu</h2>
 
-    <p><a href="/attendance_report">📅 Attendance Report</a></p>
+    <p><a href="/list">👨‍🎓 Students</a></p>
+    <p><a href="/teachers">👨‍🏫 Teachers</a></p>
+    <p><a href="/attendance_report">📅 Attendance</a></p>
+    <p><a href="/ranking">🏆 Ranking</a></p>
+
+    <hr>
 
     <p><a href="/logout">🚪 Logout</a></p>
     """
+    
 #========== ADD MARK ===========
 @app.route("/add_mark/<int:student_id>", methods=["GET", "POST"])
 def add_mark(student_id):
