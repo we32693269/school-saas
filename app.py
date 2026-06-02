@@ -56,14 +56,6 @@ def init_db():
         subject TEXT
     )
     """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS marks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        subject TEXT,
-        score INTEGER
-   )
-   """)
    cursor.execute("""
    CREATE TABLE IF NOT EXISTS fees (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
