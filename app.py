@@ -220,9 +220,9 @@ def list_students():
             <a href="/attendance/{s[0]}/Absent">❌ Absent</a>
         </p>
         """
-
     html += "<br><a href='/attendance_report'>📅 Attendance Report</a>"
     html += "<br><a href='/dashboard'>Back</a>"
+    html += "<br><a href='/logout'>🚪 Logout</a>"
 
     return html
 #============ ATTENDANCE ==============
