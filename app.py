@@ -250,6 +250,49 @@ def marks(student_id):
     html += "<br><a href='/list'>Back</a>"
 
     return html
+#========== RANKING ==============
+@app.route("/ranking")
+def ranking():
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT students.name, AVG(marks.score) as avg_score
+    FROM students
+    JOIN marks ON students.id = marks.student_id
+    GROUP BY students.id
+    ORDER BY avg_score DESC
+    """)
+
+    data = cursor.fetchall()
+    conn.close()
+
+    html = "<h2>🏆 Top Students Ranking</h2><hr>"
+
+    rank = 1
+
+    for student in data:
+        medal = ""
+
+        if rank == 1:
+            medal = "🥇"
+        elif rank == 2:
+            medal = "🥈"
+        elif rank == 3:
+            medal = "🥉"
+
+        html += f"""
+        <p>
+            {medal} #{rank} - {student[0]}
+            (Average: {student[1]:.2f})
+        </p>
+        """
+
+        rank += 1
+
+    html += "<br><a href='/dashboard'>🏠 Dashboard</a>"
+
+    return html
 # =========================
 # ADD STUDENT
 # =========================
