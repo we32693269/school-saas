@@ -33,8 +33,8 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER,
         status TEXT
-   )
-   """)
+    )
+    """)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
