@@ -64,7 +64,15 @@ def init_db():
         score INTEGER
   )
   """)
-
+   cursor.execute("""
+   CREATE TABLE IF NOT EXISTS fees (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       student_id INTEGER,
+       amount INTEGER,
+       status TEXT,
+       date TEXT
+ )
+ """)
     # default admin
     cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
     if not cursor.fetchone():
@@ -179,7 +187,25 @@ def dashboard():
 
     <p><a href="/logout">🚪 Logout</a></p>
     """
-    
+   
+    from datetime import datetime
+#========= PAY FEE =============
+@app.route("/pay_fee/<int:student_id>/<status>")
+def pay_fee(student_id, status):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    cursor.execute(
+        "INSERT INTO fees (student_id, amount, status, date) VALUES (?, ?, ?, ?)",
+        (student_id, 1000, status, date)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/fees_report")
 #========== ADD MARK ===========
 @app.route("/add_mark/<int:student_id>", methods=["GET", "POST"])
 def add_mark(student_id):
