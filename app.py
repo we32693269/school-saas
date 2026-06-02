@@ -27,7 +27,14 @@ def init_db():
         plan TEXT DEFAULT 'free'
     )
     """)
-
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        status TEXT
+   )
+   """)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -181,17 +188,56 @@ def list_students():
     <hr>
     """
 
-    for s in data:
-        html += f"""
-        <p>
-            {s[1]} - {s[2]}
-            <a href="/edit/{s[0]}">✏️ Edit</a>
-            <a href="/delete/{s[0]}">🗑️ Delete</a>
-        </p>
-        """
+     for s in data:
+    html += f"""
+    <p>
+        {s[1]} - {s[2]}
+        <a href="/edit/{s[0]}">✏️ Edit</a>
+        <a href="/delete/{s[0]}">🗑️ Delete</a>
+        <a href="/attendance/{s[0]}/Present">✅ Present</a>
+        <a href="/attendance/{s[0]}/Absent">❌ Absent</a>
+    </p>
+    """
+ html += "<br><a href='/attendance_report'>📅 Attendance Report</a>"
+ html += "<br><a href='/dashboard'>Back</a>"
+return html
+#============ ATTENDANCE ==============
+@app.route("/attendance/<int:id>/<status>")
+def attendance(id, status):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
 
-    html += "<br><a href='/dashboard'>Back</a>"
+    cursor.execute(
+        "INSERT INTO attendance (student_id, status) VALUES (?, ?)",
+        (id, status)
+    )
 
+    conn.commit()
+    conn.close()
+
+    return redirect("/list")
+#=========== ATTENDANCE REPORT ============
+@app.route("/attendance_report")
+def attendance_report():
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT students.name, attendance.status
+    FROM attendance
+    JOIN students
+    ON students.id = attendance.student_id
+    """)
+
+    records = cursor.fetchall()
+    conn.close()
+
+    html = "<h2>📅 Attendance Report</h2>"
+
+    for r in records:
+        html += f"<p>{r[0]} : {r[1]}</p>"
+
+    html += "<br><a href='/list'>Back</a>"
     return html
 #============== EDIT ==============
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
