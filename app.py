@@ -330,6 +330,24 @@ def attendance_report():
 
     html += "<br><a href='/list'>Back</a>"
     return html
+ #=========== ADD TEACHER ==============
+@app.route("/add_teacher", methods=["POST"])
+ def add_teacher():
+    name = request.form["name"]
+    subject = request.form["subject"]
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO teachers (name, subject) VALUES (?, ?)",
+        (name, subject)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/teachers")
 #============== EDIT ==============
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
