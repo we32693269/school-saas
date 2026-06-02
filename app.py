@@ -175,8 +175,7 @@ def dashboard():
     <p><a href="/attendance_report">📅 Attendance</a></p>
     <p><a href="/ranking">🏆 Ranking</a></p>
     <p><a href="/payment">💰 Payment System</a></p>
-
-    <hr>
+   <hr>
 
     <p><a href="/logout">🚪 Logout</a></p>
     """
@@ -616,6 +615,31 @@ def success():
 @app.route("/cancel")
 def cancel():
     return "❌ Payment Cancelled"
+#============ CREATE CHECKOUT SESSION ===========
+@app.route("/create-checkout-session")
+def create_checkout_session():
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'School Fee Payment',
+                    },
+                    'unit_amount': 5000,  # $50.00
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url="https://school-saas-veqm.onrender.com/success",
+            cancel_url="https://school-saas-veqm.onrender.com/cancel",
+        )
+
+        return redirect(session.url, code=303)
+
+    except Exception as e:
+        return str(e)
 #========= LOGOUT =========== 
 @app.route("/logout")
 def logout():
