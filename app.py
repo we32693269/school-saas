@@ -170,6 +170,7 @@ def dashboard():
 
     <p>❌ Absent Records: {total_absent}</p>
     <p><a href="/teachers">👨‍🏫 Teacher Management</a></p>
+    <p><a href="/ranking">🏆 Top Students Ranking</a></p>
     <hr>
     <h2>➕ Add Student</h2>
 
