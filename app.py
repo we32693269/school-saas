@@ -49,6 +49,13 @@ def init_db():
         grade TEXT
     )
     """)
+    cursor.execute("""
+    CREATE  TABLE IF NOT EXISTS teachers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        subject TEXT
+   )
+   """)
 
     # default admin
     cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
