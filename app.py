@@ -122,6 +122,8 @@ def login():
 # =========================
 @app.route("/dashboard")
 def dashboard():
+    if "user" not in session:
+        return redirect("/login")
     return """
     <h1>🏫 Dashboard</h1>
 
