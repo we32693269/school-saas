@@ -170,8 +170,17 @@ def list_students():
 
     conn.close()
 
-    html = "<h2>📋 Students</h2>"
-    
+    html = """
+    <h2>📋 Students</h2>
+
+    <form action="/search" method="get">
+        <input name="q" placeholder="Search student">
+        <button type="submit">🔍 Search</button>
+    </form>
+
+    <hr>
+    """
+
     for s in data:
         html += f"""
         <p>
@@ -182,6 +191,7 @@ def list_students():
         """
 
     html += "<br><a href='/dashboard'>Back</a>"
+
     return html
 #============== EDIT ==============
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
