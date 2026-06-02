@@ -188,19 +188,21 @@ def list_students():
     <hr>
     """
 
-     for s in data:
-    html += f"""
-    <p>
-        {s[1]} - {s[2]}
-        <a href="/edit/{s[0]}">✏️ Edit</a>
-        <a href="/delete/{s[0]}">🗑️ Delete</a>
-        <a href="/attendance/{s[0]}/Present">✅ Present</a>
-        <a href="/attendance/{s[0]}/Absent">❌ Absent</a>
-    </p>
-    """
- html += "<br><a href='/attendance_report'>📅 Attendance Report</a>"
- html += "<br><a href='/dashboard'>Back</a>"
-return html
+    for s in data:
+        html += f"""
+        <p>
+            {s[1]} - {s[2]}
+            <a href="/edit/{s[0]}">✏️ Edit</a>
+            <a href="/delete/{s[0]}">🗑️ Delete</a>
+            <a href="/attendance/{s[0]}/Present">✅ Present</a>
+            <a href="/attendance/{s[0]}/Absent">❌ Absent</a>
+        </p>
+        """
+
+    html += "<br><a href='/attendance_report'>📅 Attendance Report</a>"
+    html += "<br><a href='/dashboard'>Back</a>"
+
+    return html
 #============ ATTENDANCE ==============
 @app.route("/attendance/<int:id>/<status>")
 def attendance(id, status):
