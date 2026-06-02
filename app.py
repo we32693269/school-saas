@@ -161,7 +161,7 @@ def dashboard():
     <p>✅ Present Records: {total_present}</p>
 
     <p>❌ Absent Records: {total_absent}</p>
-
+    <p><a href="/teachers">👨‍🏫 Teacher Management</a></p>
     <hr>
     <h2>➕ Add Student</h2>
 
