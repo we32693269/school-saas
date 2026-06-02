@@ -330,6 +330,18 @@ def attendance_report():
 
     html += "<br><a href='/list'>Back</a>"
     return html
+#========== DELETE TEACHER ============
+@app.route("/delete_teacher/<int:id>")
+def delete_teacher(id):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM teachers WHERE id=?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/teachers")
 #============= TEACHERS ============
 @app.route("/teachers")
 def teachers():
