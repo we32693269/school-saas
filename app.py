@@ -331,6 +331,7 @@ def list_students():
             <a href="/delete/{s[0]}">🗑️ Delete</a>
             <a href="/attendance/{s[0]}/Present">✅ Present</a>
             <a href="/attendance/{s[0]}/Absent">❌ Absent</a>
+            <a href="/marks/{s[0]}">📝 Marks</a>
         </p>
         """
     html += "<br><a href='/attendance_report'>📅 Attendance Report</a>"
