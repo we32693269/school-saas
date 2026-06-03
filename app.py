@@ -576,6 +576,7 @@ def student_profile(student_id):
 
     present = attendance[0] or 0
     absent = attendance[1] or 0
+    photo = student[2] if student[2] else "default.png"
 
 html = f"""
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -600,7 +601,8 @@ style="border-radius:50%; object-fit:cover;">
 
 <h3>📅 Attendance</h3>
 """
-    
+
+
 # =========================
 # ADD STUDENT
 # =========================
