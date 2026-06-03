@@ -479,6 +479,86 @@ def ranking():
     html += "<br><a href='/dashboard'>🏠 Dashboard</a>"
 
     return html
+#=============== STUDENT PROFILE ================
+@app.route("/student_profile/<int:student_id>")
+def student_profile(student_id):
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    # Student info
+    cursor.execute(
+        "SELECT name, grade FROM students WHERE id=?",
+        (student_id,)
+    )
+    student = cursor.fetchone()
+
+    # Marks
+    cursor.execute(
+        "SELECT subject, score FROM marks WHERE student_id=?",
+        (student_id,)
+    )
+    marks = cursor.fetchall()
+
+    # Attendance
+    cursor.execute("""
+    SELECT
+    SUM(CASE WHEN status='Present' THEN 1 ELSE 0 END),
+    SUM(CASE WHEN status='Absent' THEN 1 ELSE 0 END)
+    FROM attendance
+    WHERE student_id=?
+    """, (student_id,))
+    attendance = cursor.fetchone()
+
+    # Payments
+    cursor.execute("""
+    SELECT amount, payment_date
+    FROM payments
+    WHERE student_id=?
+    ORDER BY id DESC
+    """, (student_id,))
+    payments = cursor.fetchall()
+
+    conn.close()
+
+    present = attendance[0] or 0
+    absent = attendance[1] or 0
+
+    html = f"""
+    <h1>👨‍🎓 Student Profile</h1>
+
+    <h2>{student[0]}</h2>
+    <p><b>Grade:</b> {student[1]}</p>
+
+    <hr>
+
+    <h3>📅 Attendance</h3>
+    <p>✅ Present: {present}</p>
+    <p>❌ Absent: {absent}</p>
+
+    <hr>
+
+    <h3>📝 Marks</h3>
+    """
+
+    total = 0
+
+    for m in marks:
+        total += int(m[1])
+        html += f"<p>{m[0]} : {m[1]}</p>"
+
+    if len(marks) > 0:
+        avg = total / len(marks)
+        html += f"<h4>Average: {avg:.2f}</h4>"
+
+    html += "<hr><h3>💳 Payments</h3>"
+
+    for p in payments:
+        html += f"<p>${p[0]} - {p[1]}</p>"
+
+    html += "<br><a href='/list'>⬅ Back</a>"
+
+    return html
 # =========================
 # ADD STUDENT
 # =========================
@@ -568,6 +648,7 @@ def list_students():
             <a href="/attendance/{s[0]}/Present">✅ Present</a>
             <a href="/attendance/{s[0]}/Absent">❌ Absent</a>
             <a href="/marks/{s[0]}">📝 Marks</a>
+            <a href="/student_profile/{s[0]}">👤 Profile</a>
         </p>
         """
     html += "<br><a href='/attendance_report'>📅 Attendance Report</a>"
