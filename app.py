@@ -534,74 +534,130 @@ def student_profile(student_id):
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
-    # Student info
-    cursor.execute(
-        "SELECT name, grade FROM students WHERE id=?",
-        (student_id,)
-    )
+    # =====================
+    # STUDENT INFO
+    # =====================
     cursor.execute(
         "SELECT name, grade, photo FROM students WHERE id=?",
         (student_id,)
     )
-    photo = student[2] if student[2] else "default.png"
+
     student = cursor.fetchone()
 
-    # Marks
+    if not student:
+        return "Student not found"
+
+    photo = student[2] if student[2] else "default.png"
+
+    # =====================
+    # MARKS
+    # =====================
     cursor.execute(
         "SELECT subject, score FROM marks WHERE student_id=?",
         (student_id,)
     )
     marks = cursor.fetchall()
 
-    # Attendance
+    # =====================
+    # ATTENDANCE
+    # =====================
     cursor.execute("""
-    SELECT
-    SUM(CASE WHEN status='Present' THEN 1 ELSE 0 END),
-    SUM(CASE WHEN status='Absent' THEN 1 ELSE 0 END)
-    FROM attendance
-    WHERE student_id=?
+        SELECT
+        SUM(CASE WHEN status='Present' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN status='Absent' THEN 1 ELSE 0 END)
+        FROM attendance
+        WHERE student_id=?
     """, (student_id,))
+
     attendance = cursor.fetchone()
 
-    # Payments
+    present = attendance[0] or 0
+    absent = attendance[1] or 0
+
+    # =====================
+    # PAYMENTS
+    # =====================
     cursor.execute("""
-    SELECT amount, payment_date
-    FROM payments
-    WHERE student_id=?
-    ORDER BY id DESC
-    """, (student_id,))
+        SELECT amount, payment_date, status
+        FROM payments
+        WHERE student_name=?
+        ORDER BY id DESC
+    """, (student[0],))
+
     payments = cursor.fetchall()
 
     conn.close()
 
-    present = attendance[0] or 0
-    absent = attendance[1] or 0
-    
+    # =====================
+    # HTML UI (BOOTSTRAP)
+    # =====================
+    html = f"""
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-html = f"""
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <div class="container mt-4">
 
-<div class="container mt-4">
+    <div class="card shadow p-4 text-center">
 
-<div class="card shadow p-4 text-center">
+        <img src="/static/uploads/{photo}"
+        width="150" height="150"
+        style="border-radius:50%; object-fit:cover;">
 
-<img src="/static/uploads/{photo}"
-width="150"
-height="150"
-style="border-radius:50%; object-fit:cover;">
+        <h2 class="mt-2">{student[0]}</h2>
+        <p>Grade: {student[1]}</p>
 
-<h2>{student[0]}</h2>
-<p>Grade: {student[1]}</p>
+        <a class="btn btn-primary" href="/upload_photo/{student_id}">
+        📷 Upload Photo
+        </a>
 
-<a class="btn btn-primary" href="/upload_photo/{student_id}">
-📷 Upload Photo
-</a>
+    </div>
 
-<hr>
+    <br>
 
-<h3>📅 Attendance</h3>
-"""
+    <div class="card p-3 shadow">
+        <h4>📅 Attendance</h4>
+        <p>✅ Present: {present}</p>
+        <p>❌ Absent: {absent}</p>
+    </div>
 
+    <br>
+
+    <div class="card p-3 shadow">
+        <h4>📝 Marks</h4>
+    """
+
+    total = 0
+
+    for m in marks:
+        total += int(m[1])
+        html += f"<p>{m[0]} : {m[1]}</p>"
+
+    if marks:
+        avg = total / len(marks)
+        html += f"<h5>Average: {avg:.2f}</h5>"
+
+    html += """
+    </div>
+
+    <br>
+
+    <div class="card p-3 shadow">
+        <h4>💳 Payments</h4>
+    """
+
+    for p in payments:
+        html += f"<p>💰 {p[0]} - {p[1]} ({p[2]})</p>"
+
+    html += """
+    </div>
+
+    <br>
+
+    <a class="btn btn-secondary" href="/list">⬅ Back</a>
+
+    </div>
+    """
+
+    return html
 
 # =========================
 # ADD STUDENT
