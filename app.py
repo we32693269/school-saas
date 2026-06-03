@@ -184,7 +184,7 @@ def dashboard():
     <p><a href="/list">👨‍🎓 Students</a></p>
     <p><a href="/teachers">👨‍🏫 Teachers</a></p>
     <p><a href="/attendance_report">📅 Attendance</a></p>
-    <p><a href="/ranking">🏆 </a></p>
+    <p><a href="/ranking">🏆 rank</a></p>
     <p><a href="/payments">💳 Payments Report</a></p>
     <p><a href="/payment">💰 Payment System</a></p>
    <hr>
@@ -625,7 +625,23 @@ def pay():
     )
 
     return redirect(session.url)
-#======== payment ==========
+#========= PAYMENT ===========
+@app.route("/payment")
+def payment():
+    if "user" not in session:
+        return redirect("/login")
+
+    return """
+    <h2>💳 Payment System</h2>
+
+    <form action="/create-checkout-session" method="post">
+        <button type="submit">Pay School Fee</button>
+    </form>
+
+    <br>
+    <a href="/dashboard">🏠 Back</a>
+    """
+#======== payments ==========
 @app.route("/payments")
 def payments():
 
