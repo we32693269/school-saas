@@ -1,5 +1,4 @@
 from flask import Flask, request, redirect, session
-from werkzeug.utils import secure_filename
 mport sqlite3
 import os
 
