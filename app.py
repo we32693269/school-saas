@@ -243,6 +243,7 @@ def dashboard():
     <p><a href="/payments">💳 Payments Report</a></p>
     <p><a href="/payment">💰 Payment System</a></p>
     <p><a href="/fee_status">💰 Fee Status</a></p>
+    <p><a href="/income_dashboard">📊 Income Dashboard</a></p>
    <hr>
 
     <p><a href="/logout">🚪 Logout</a></p>
