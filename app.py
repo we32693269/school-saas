@@ -173,7 +173,7 @@ def dashboard():
     <p><a href="/logout">🚪 Logout</a></p>
     """
    
-    from datetime import datetime
+    
 
 #========== ADD MARK ===========
 @app.route("/add_mark/<int:student_id>", methods=["GET", "POST"])
