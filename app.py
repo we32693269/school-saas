@@ -344,6 +344,13 @@ def list_students():
 
     html = """
     <h2>📋 Students</h2>
+<form action="/add" method="post">
+    <input name="name" placeholder="Student Name">
+    <input name="grade" placeholder="Grade">
+    <button>Add Student</button>
+</form>
+
+<hr>
 
     <form action="/search" method="get">
         <input name="q" placeholder="Search student">
