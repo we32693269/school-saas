@@ -704,16 +704,19 @@ from datetime import datetime
 @app.route("/success")
 def success():
 
+    student_id = session.get("student_id", 0)
+    student_name = session.get("student_name", "Unknown")
+
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
     cursor.execute("""
-    INSERT INTO payments
-    (student_name, amount, status, payment_date)
-    VALUES (?, ?, ?, ?)
+        INSERT INTO payments (student_id, student_name, amount, status, payment_date)
+        VALUES (?, ?, ?, ?, ?)
     """, (
-        "Unknown Student",
-        10.0,
+        student_id,
+        student_name,
+        10,
         "Paid",
         datetime.now().strftime("%Y-%m-%d %H:%M")
     ))
