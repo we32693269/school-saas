@@ -52,6 +52,16 @@ def init_db():
         subject TEXT
     )
     """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS payments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        student_name TEXT,
+        amount REAL,
+        status TEXT,
+        payment_date TEXT
+    )
+    """)
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS marks (
