@@ -152,6 +152,51 @@ def login():
         <button>Login</button>
     </form>
     """
+#============ INCOME DASHBOARD =============
+@app.route("/income_dashboard")
+def income_dashboard():
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    # Total income
+    cursor.execute("SELECT SUM(amount) FROM payments WHERE status='Paid'")
+    total_income = cursor.fetchone()[0]
+
+    if total_income is None:
+        total_income = 0
+
+    # Paid students
+    cursor.execute("""
+    SELECT COUNT(DISTINCT student_id)
+    FROM payments
+    WHERE status='Paid'
+    """)
+    paid_students = cursor.fetchone()[0]
+
+    # Total students
+    cursor.execute("SELECT COUNT(*) FROM students")
+    total_students = cursor.fetchone()[0]
+
+    unpaid_students = total_students - paid_students
+
+    conn.close()
+
+    return f"""
+    <h2>📊 Income Dashboard</h2>
+
+    <hr>
+
+    <h3>💵 Total Income: ${total_income}</h3>
+
+    <p>✅ Paid Students: {paid_students}</p>
+
+    <p>❌ Unpaid Students: {unpaid_students}</p>
+
+    <br>
+
+    <a href='/dashboard'>🏠 Dashboard</a>
+    """
 # =========================
 # DASHBOARD
 # =========================
