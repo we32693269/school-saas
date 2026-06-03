@@ -539,6 +539,10 @@ def student_profile(student_id):
         "SELECT name, grade FROM students WHERE id=?",
         (student_id,)
     )
+    cursor.execute(
+        "SELECT name, grade, photo FROM students WHERE id=?",
+        (student_id,)
+    )
     student = cursor.fetchone()
 
     # Marks
