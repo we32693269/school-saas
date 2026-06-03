@@ -703,6 +703,38 @@ def payments():
     html += "<br><a href='/dashboard'>🏠 Back</a>"
 
     return html
+#=========== PAY PER STUDENT ===============
+@app.route("/pay/<int:student_id>")
+def pay(student_id):
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT name FROM students WHERE id=?", (student_id,))
+    student = cursor.fetchone()
+    conn.close()
+
+    session["student_id"] = student_id
+    session["student_name"] = student[0]
+
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": f"School Fee - {student[0]}"
+                },
+                "unit_amount": 1000
+            },
+            "quantity": 1
+        }],
+        mode="payment",
+        success_url="https://school-saas-veqm.onrender.com/success",
+        cancel_url="https://school-saas-veqm.onrender.com/cancel"
+    )
+
+    return redirect(checkout_session.url)
 # =========================
 # SUCCESS / CANCEL
 # =========================
