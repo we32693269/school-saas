@@ -6,7 +6,6 @@ app = Flask(__name__)
 app.secret_key = "school_secret_key"
 UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 import stripe
 # =========================
