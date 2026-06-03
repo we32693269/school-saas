@@ -197,6 +197,7 @@ def dashboard():
     <p><a href="/ranking">🏆 rank</a></p>
     <p><a href="/payments">💳 Payments Report</a></p>
     <p><a href="/payment">💰 Payment System</a></p>
+    <p><a href="/fee_status">💰 Fee Status</a></p>
    <hr>
 
     <p><a href="/logout">🚪 Logout</a></p>
