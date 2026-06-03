@@ -186,6 +186,7 @@ def dashboard():
     <p><a href="/attendance_report">📅 Attendance</a></p>
     <p><a href="/ranking">🏆 Ranking</a></p>
     <p><a href="/payment">💰 Payment System</a></p>
+    <p><a href="/payments">💳 Payments Report</a></p>
    <hr>
 
     <p><a href="/logout">🚪 Logout</a></p>
@@ -625,20 +626,49 @@ def pay():
 
     return redirect(session.url)
 #======== payment ==========
-@app.route("/payment")
-def payment():
-    return """
-    <h2>💳 School Payment</h2>
+@app.route("/payments")
+def payments():
 
-    <form action="/create-checkout-session" method="post">
-        <button type="submit">
-            Pay School Fee ($10)
-        </button>
-    </form>
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
 
-    <br>
-    <a href="/dashboard">🏠 Dashboard</a>
+    cursor.execute("""
+    SELECT id, student_name, amount, status, payment_date
+    FROM payments
+    ORDER BY id DESC
+    """)
+
+    data = cursor.fetchall()
+    conn.close()
+
+    html = """
+    <h2>💳 Payments Report</h2>
+
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>ID</th>
+            <th>Student</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
     """
+
+    for p in data:
+        html += f"""
+        <tr>
+            <td>{p[0]}</td>
+            <td>{p[1]}</td>
+            <td>${p[2]}</td>
+            <td>{p[3]}</td>
+            <td>{p[4]}</td>
+        </tr>
+        """
+
+    html += "</table>"
+    html += "<br><a href='/dashboard'>Back</a>"
+
+    return html
 # =========================
 # SUCCESS / CANCEL
 # =========================
