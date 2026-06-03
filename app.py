@@ -605,26 +605,27 @@ def delete(id):
 # =========================
 # STRIPE PAYMENT (FIXED WITH YOUR LINK)
 # =========================
-@app.route("/pay")
-def pay():
-    session = stripe.checkout.Session.create(
+@app.route("/create-checkout-session", methods=["POST"])
+def create_checkout_session():
+
+    checkout_session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[{
             "price_data": {
                 "currency": "usd",
                 "product_data": {
-                    "name": "School SaaS Premium"
+                    "name": "School Fee"
                 },
-                "unit_amount": 500,
+                "unit_amount": 1000
             },
-            "quantity": 1,
+            "quantity": 1
         }],
         mode="payment",
         success_url="https://school-saas-veqm.onrender.com/success",
-        cancel_url="https://school-saas-veqm.onrender.com/cancel",
+        cancel_url="https://school-saas-veqm.onrender.com/cancel"
     )
 
-    return redirect(session.url)
+    return redirect(checkout_session.url)
 #========= PAYMENT ===========
 @app.route("/payment")
 def payment():
