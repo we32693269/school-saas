@@ -54,16 +54,16 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         subject TEXT
-    )
-    """)
+   )
+   """)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS marks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER,
         subject TEXT,
         score INTEGER
-   )
-   """)
+  )
+  """)
    cursor.execute("""
    CREATE TABLE IF NOT EXISTS payments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,8 +71,8 @@ def init_db():
     amount REAL,
     status TEXT,
     payment_date TEXT
-  )
-  """)
+ )
+ """)
     
     # default admin
     cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
