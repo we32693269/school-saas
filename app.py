@@ -50,7 +50,7 @@ def init_db():
     )
     """)
     cursor.execute("""
-    CREATE  TABLE IF NOT EXISTS teachers (
+    CREATE TABLE IF NOT EXISTS teachers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         subject TEXT
