@@ -1,7 +1,7 @@
-from flask import Flask, request, redirect, session from werkzeug.utils import secure_filename
+from flask import Flask, request, redirect, session
 mport sqlite3
 import os
-
+from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
 UPLOAD_FOLDER = "static/uploads"
