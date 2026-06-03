@@ -639,19 +639,26 @@ def create_checkout_session():
 #========= PAYMENT ===========
 @app.route("/payment")
 def payment():
-    if "user" not in session:
-        return redirect("/login")
 
-    return """
-    <h2>💳 Payment System</h2>
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name FROM students")
+    students = cursor.fetchall()
+    conn.close()
 
-    <form action="/create-checkout-session" method="post">
-        <button type="submit">Pay School Fee</button>
-    </form>
+    html = "<h2>💳 Select Student to Pay</h2>"
 
-    <br>
-    <a href="/dashboard">🏠 Back</a>
-    """
+    for s in students:
+        html += f"""
+        <p>
+            {s[1]}
+            <a href="/pay/{s[0]}">Pay Fee</a>
+        </p>
+        """
+
+    html += "<br><a href='/dashboard'>Back</a>"
+    return html
+    
 #======== payments ==========
 @app.route("/payments")
 def payments():
