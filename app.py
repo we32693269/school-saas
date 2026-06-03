@@ -627,7 +627,46 @@ def student_profile(student_id):
     """
 
     return html
+#=============== RECEIPT PAYMENT ================
+@app.route("/receipt/<int:payment_id>")
+def receipt(payment_id):
 
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT student_name, amount, payment_date, status
+    FROM payments
+    WHERE id=?
+    """, (payment_id,))
+
+    payment = cursor.fetchone()
+    conn.close()
+
+    if not payment:
+        return "Receipt not found"
+
+    pdf_file = f"receipt_{payment_id}.pdf"
+
+    c = canvas.Canvas(pdf_file)
+
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(180, 800, "SCHOOL PAYMENT RECEIPT")
+
+    c.setFont("Helvetica", 12)
+    c.drawString(50, 740, f"Student: {payment[0]}")
+    c.drawString(50, 710, f"Amount: ${payment[1]}")
+    c.drawString(50, 680, f"Status: {payment[3]}")
+    c.drawString(50, 650, f"Date: {payment[2]}")
+
+    c.drawString(50, 600, "Thank you for your payment.")
+
+    c.save()
+
+    return send_file(
+        pdf_file,
+        as_attachment=True
+    )
 # =========================
 # ADD STUDENT
 # =========================
