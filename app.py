@@ -543,6 +543,7 @@ def student_profile(student_id):
         "SELECT name, grade, photo FROM students WHERE id=?",
         (student_id,)
     )
+    photo = student[2] if student[2] else "default.png"
     student = cursor.fetchone()
 
     # Marks
