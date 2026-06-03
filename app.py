@@ -201,7 +201,39 @@ def dashboard():
 
     <p><a href="/logout">🚪 Logout</a></p>
     """
-   
+#============== FEE STATUS ============
+@app.route("/fee_status")
+def fee_status():
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, name FROM students")
+    students = cursor.fetchall()
+
+    html = "<h2>💰 Fee Status Report</h2>"
+
+    for student in students:
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM payments WHERE student_id=? AND status='Paid'",
+            (student[0],)
+        )
+
+        paid = cursor.fetchone()[0]
+
+        if paid > 0:
+            status = "✅ Paid"
+        else:
+            status = "❌ Unpaid"
+
+        html += f"<p>{student[1]} → {status}</p>"
+
+    conn.close()
+
+    html += "<br><a href='/dashboard'>🏠 Dashboard</a>"
+
+    return html
     
 
 #========== ADD MARK ===========
