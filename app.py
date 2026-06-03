@@ -577,41 +577,30 @@ def student_profile(student_id):
     present = attendance[0] or 0
     absent = attendance[1] or 0
 
-    html = f"""
-    <h1>👨‍🎓 Student Profile</h1>
+html = f"""
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <h2>{student[0]}</h2>
-    <p><b>Grade:</b> {student[1]}</p>
+<div class="container mt-4">
 
-    <hr>
+<div class="card shadow p-4 text-center">
 
-    <h3>📅 Attendance</h3>
-    <p>✅ Present: {present}</p>
-    <p>❌ Absent: {absent}</p>
+<img src="/static/uploads/{photo}"
+width="150"
+height="150"
+style="border-radius:50%; object-fit:cover;">
 
-    <hr>
+<h2>{student[0]}</h2>
+<p>Grade: {student[1]}</p>
 
-    <h3>📝 Marks</h3>
-    """
+<a class="btn btn-primary" href="/upload_photo/{student_id}">
+📷 Upload Photo
+</a>
 
-    total = 0
+<hr>
 
-    for m in marks:
-        total += int(m[1])
-        html += f"<p>{m[0]} : {m[1]}</p>"
-
-    if len(marks) > 0:
-        avg = total / len(marks)
-        html += f"<h4>Average: {avg:.2f}</h4>"
-
-    html += "<hr><h3>💳 Payments</h3>"
-
-    for p in payments:
-        html += f"<p>${p[0]} - {p[1]}</p>"
-
-    html += "<br><a href='/list'>⬅ Back</a>"
-
-    return html
+<h3>📅 Attendance</h3>
+"""
+    
 # =========================
 # ADD STUDENT
 # =========================
