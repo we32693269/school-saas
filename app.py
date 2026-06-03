@@ -217,36 +217,127 @@ def dashboard():
     cursor.execute("SELECT COUNT(*) FROM attendance")
     attendance = cursor.fetchone()[0]
 
+    cursor.execute("SELECT SUM(amount) FROM payments WHERE status='Paid'")
+    income = cursor.fetchone()[0]
+
+    if income is None:
+        income = 0
+
     conn.close()
 
     return f"""
-    <h1>🏫 School Management Dashboard</h1>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>School Dashboard</title>
 
-    <hr>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <h2>📊 Overview</h2>
+        <style>
+            body {{
+                background: #f4f6f9;
+            }}
 
-    <div style="display:flex; gap:20px;">
-        <div>👨‍🎓 Students: {students}</div>
-        <div>👨‍🏫 Teachers: {teachers}</div>
-        <div>📅 Attendance Records: {attendance}</div>
+            .card {{
+                border-radius: 15px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }}
+
+            .menu-btn {{
+                width: 100%;
+                margin-bottom: 10px;
+            }}
+        </style>
+    </head>
+
+    <body>
+
+    <div class="container mt-4">
+
+        <h1 class="text-center mb-4">
+            🏫 School Management Dashboard
+        </h1>
+
+        <div class="row">
+
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <h3>👨‍🎓</h3>
+                    <h4>{students}</h4>
+                    <p>Students</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <h3>👨‍🏫</h3>
+                    <h4>{teachers}</h4>
+                    <p>Teachers</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <h3>📅</h3>
+                    <h4>{attendance}</h4>
+                    <p>Attendance</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3 text-center">
+                    <h3>💰</h3>
+                    <h4>${income}</h4>
+                    <p>Income</p>
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <h3>📌 Management Menu</h3>
+
+        <a href="/list" class="btn btn-primary menu-btn">
+            👨‍🎓 Students
+        </a>
+
+        <a href="/teachers" class="btn btn-success menu-btn">
+            👨‍🏫 Teachers
+        </a>
+
+        <a href="/attendance_report" class="btn btn-warning menu-btn">
+            📅 Attendance
+        </a>
+
+        <a href="/ranking" class="btn btn-info menu-btn">
+            🏆 Ranking
+        </a>
+
+        <a href="/payment" class="btn btn-dark menu-btn">
+            💳 Payment System
+        </a>
+
+        <a href="/payments" class="btn btn-secondary menu-btn">
+            📋 Payment Report
+        </a>
+
+        <a href="/fee_status" class="btn btn-danger menu-btn">
+            💰 Fee Status
+        </a>
+
+        <a href="/income_dashboard" class="btn btn-primary menu-btn">
+            📊 Income Dashboard
+        </a>
+
+        <a href="/logout" class="btn btn-outline-danger menu-btn">
+            🚪 Logout
+        </a>
+
     </div>
 
-    <hr>
-
-    <h2>📌 Menu</h2>
-
-    <p><a href="/list">👨‍🎓 Students</a></p>
-    <p><a href="/teachers">👨‍🏫 Teachers</a></p>
-    <p><a href="/attendance_report">📅 Attendance</a></p>
-    <p><a href="/ranking">🏆 rank</a></p>
-    <p><a href="/payments">💳 Payments Report</a></p>
-    <p><a href="/payment">💰 Payment System</a></p>
-    <p><a href="/fee_status">💰 Fee Status</a></p>
-    <p><a href="/income_dashboard">📊 Income Dashboard</a></p>
-   <hr>
-
-    <p><a href="/logout">🚪 Logout</a></p>
+    </body>
+    </html>
     """
 #============== FEE STATUS ============
 @app.route("/fee_status")
