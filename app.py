@@ -614,7 +614,21 @@ def pay():
     )
 
     return redirect(session.url)
+#======== payment ==========
+@app.route("/payment")
+def payment():
+    return """
+    <h2>💳 School Payment</h2>
 
+    <form action="/create-checkout-session" method="post">
+        <button type="submit">
+            Pay School Fee ($10)
+        </button>
+    </form>
+
+    <br>
+    <a href="/dashboard">🏠 Dashboard</a>
+    """
 # =========================
 # SUCCESS / CANCEL
 # =========================
