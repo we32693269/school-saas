@@ -186,6 +186,7 @@ def dashboard():
     <p><a href="/attendance_report">📅 Attendance</a></p>
     <p><a href="/ranking">🏆 Ranking</a></p>
     <p><a href="/payments">💳 Payments Report</a></p>
+    <p><a href="/payment">💰 Payment System</a></p>
    <hr>
 
     <p><a href="/logout">🚪 Logout</a></p>
