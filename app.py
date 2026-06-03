@@ -672,9 +672,32 @@ def payments():
 # =========================
 # SUCCESS / CANCEL
 # =========================
+from datetime import datetime
+
 @app.route("/success")
 def success():
-    return "🎉 Payment Successful! Premium Activated"
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO payments
+    (student_name, amount, status, payment_date)
+    VALUES (?, ?, ?, ?)
+    """, (
+        "Unknown Student",
+        10.0,
+        "Paid",
+        datetime.now().strftime("%Y-%m-%d %H:%M")
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return """
+    <h2>✅ Payment Successful</h2>
+    <a href="/payments">View Payments</a>
+    """
 
 @app.route("/cancel")
 def cancel():
