@@ -486,6 +486,47 @@ def ranking():
     html += "<br><a href='/dashboard'>🏠 Dashboard</a>"
 
     return html
+#============== UPLOAD PHOTO ===============
+@app.route("/upload_photo/<int:student_id>", methods=["GET", "POST"])
+def upload_photo(student_id):
+
+    if request.method == "POST":
+
+        file = request.files["photo"]
+
+        if file.filename:
+
+            filename = secure_filename(file.filename)
+
+            path = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                filename
+            )
+
+            file.save(path)
+
+            conn = sqlite3.connect("school.db")
+            cursor = conn.cursor()
+
+            cursor.execute(
+                "UPDATE students SET photo=? WHERE id=?",
+                (filename, student_id)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect(f"/student_profile/{student_id}")
+
+    return """
+    <h2>📷 Upload Student Photo</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="photo">
+        <br><br>
+        <button>Upload</button>
+    </form>
+    """
 #=============== STUDENT PROFILE ================
 @app.route("/student_profile/<int:student_id>")
 def student_profile(student_id):
