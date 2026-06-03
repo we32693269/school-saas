@@ -719,30 +719,27 @@ def success():
 def cancel():
     return "❌ Payment Cancelled"
 #============ CREATE CHECKOUT SESSION ===========
-@app.route("/create-checkout-session")
+@app.route("/create-checkout-session", methods=["POST"])
 def create_checkout_session():
-    try:
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': 'School Fee Payment',
-                    },
-                    'unit_amount': 5000,  # $50.00
+
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": "School Fee"
                 },
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url="https://school-saas-veqm.onrender.com/success",
-            cancel_url="https://school-saas-veqm.onrender.com/cancel",
-        )
+                "unit_amount": 1000
+            },
+            "quantity": 1
+        }],
+        mode="payment",
+        success_url="https://school-saas-veqm.onrender.com/success",
+        cancel_url="https://school-saas-veqm.onrender.com/cancel"
+    )
 
-        return redirect(session.url, code=303)
-
-    except Exception as e:
-        return str(e)
+    return redirect(checkout_session.url)
 #========= LOGOUT =========== 
 @app.route("/logout")
 def logout():
