@@ -81,6 +81,10 @@ def init_db():
         payment_date TEXT
     )
     """)
+ try:
+    cursor.execute("ALTER TABLE students ADD COLUMN photo TEXT")
+except:
+    pass
 
     cursor.execute(
         "SELECT * FROM users WHERE username=?",
