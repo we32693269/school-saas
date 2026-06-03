@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teachers</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+    <h2>👨‍🏫 Teachers Management</h2>
+
+    <!-- ADD TEACHER FORM -->
+    <div class="card p-3 mb-4 shadow">
+
+        <h5>Add Teacher</h5>
+
+        <form action="/add_teacher" method="post">
+
+            <input class="form-control mb-2" name="name" placeholder="Teacher Name" required>
+
+            <input class="form-control mb-2" name="subject" placeholder="Subject" required>
+
+            <button class="btn btn-success">➕ Add Teacher</button>
+
+        </form>
+
+    </div>
+
+    <!-- TEACHERS LIST -->
+    <div class="card p-3 shadow">
+
+        <h5>Teachers List</h5>
+
+        {% for t in teachers %}
+
+        <div class="border p-2 mb-2">
+
+            <b>{{t[1]}}</b> - Subject: {{t[2]}}
+
+            <div class="mt-2">
+
+                <a class="btn btn-sm btn-warning" href="/edit_teacher/{{t[0]}}">✏️ Edit</a>
+
+                <a class="btn btn-sm btn-danger" href="/delete_teacher/{{t[0]}}">🗑️ Delete</a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <br>
+
+    <a href="/dashboard" class="btn btn-secondary">🏠 Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
