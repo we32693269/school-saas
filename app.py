@@ -1055,6 +1055,9 @@ def payments():
             <td>{p[2]}</td>
             <td>{p[3]}</td>
             <td>{p[4]}</td>
+            <td>
+            <a href="/receipt/{p[0]}">📄 Receipt</a>
+            </td>
         </tr>
         """
 
