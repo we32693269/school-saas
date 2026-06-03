@@ -15,78 +15,80 @@ PUBLIC_KEY = "pk_test_51TdYS9AreGUdagSr8AWr9h9RWdzAFAkDlKttY2cAm6m6QFXatVh3pfb0B
 # =========================
 # DATABASE
 # =========================
+
 def init_db():
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
+conn = sqlite3.connect("school.db")
+cursor = conn.cursor()
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        password TEXT,
-        plan TEXT DEFAULT 'free'
-    )
-    """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS attendance (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        status TEXT,
-        date TEXT
-    )
-    """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS attendance (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        status TEXT
-    )
-    """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS students (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        grade TEXT
-    )
-    """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS teachers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        subject TEXT
-   )
-   """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS marks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        subject TEXT,
-        score INTEGER
-  )
-  """)
-   cursor.execute("""
-   CREATE TABLE IF NOT EXISTS payments (
-       id INTEGER PRIMARY KEY AUTOINCREMENT,
-       student_name TEXT,
-       amount REAL,
-       status TEXT,
-       payment_date TEXT
- )
- """)
-    
-    # default admin
-    cursor.execute("SELECT * FROM users WHERE username=?", ("admin",))
-    if not cursor.fetchone():
-        cursor.execute(
-            "INSERT INTO users (username, password, plan) VALUES (?, ?, ?)",
-            ("admin", "1234", "premium")
-        )
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    password TEXT,
+    plan TEXT DEFAULT 'free'
+)
+""")
 
-    conn.commit()
-    conn.close()
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS attendance (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    status TEXT,
+    date TEXT
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    grade TEXT
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS teachers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    subject TEXT
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS marks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER,
+    subject TEXT,
+    score INTEGER
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_name TEXT,
+    amount REAL,
+    status TEXT,
+    payment_date TEXT
+)
+""")
+
+# default admin
+cursor.execute(
+    "SELECT * FROM users WHERE username=?",
+    ("admin",)
+)
+
+if not cursor.fetchone():
+    cursor.execute(
+        "INSERT INTO users (username, password, plan) VALUES (?, ?, ?)",
+        ("admin", "1234", "premium")
+    )
+
+conn.commit()
+conn.close()
 
 init_db()
-
 # =========================
 # LOGIN CHECK
 # =========================
