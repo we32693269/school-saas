@@ -7,6 +7,8 @@ app.secret_key = "school_secret_key"
 UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+from flask import send_file
+from reportlab.pdfgen import canvas
 import stripe
 # =========================
 # STRIPE SETUP
