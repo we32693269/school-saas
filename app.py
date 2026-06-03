@@ -628,7 +628,17 @@ def pay():
 #======== payment ==========
 @app.route("/payments")
 def payments():
+    if "user" not in session:
+        return redirect("/login")
 
+    return """
+    <h2>💳 Payment System</h2>
+
+    <p><a href="/payments">📊 View Payments Report</a></p>
+
+    <br>
+    <a href="/dashboard">🏠 Back to Dashboard</a>
+    """
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
