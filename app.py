@@ -296,6 +296,10 @@ def dashboard():
         <div class="col-md-4">
             <a href="/ranking" class="btn btn-outline-dark w-100 mb-2">🏆 Ranking</a>
         </div>
+        
+        <div class="col-md-4">
+             <a href="/payment" class="btn btn-outline-info w-100 mb-2">💳 Payment System</a>
+        </div>
 
         <div class="col-md-4">
             <a href="/payments" class="btn btn-outline-danger w-100 mb-2">💳 Payments</a>
