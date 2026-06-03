@@ -184,7 +184,7 @@ def dashboard():
     <p><a href="/list">👨‍🎓 Students</a></p>
     <p><a href="/teachers">👨‍🏫 Teachers</a></p>
     <p><a href="/attendance_report">📅 Attendance</a></p>
-    <p><a href="/ranking">🏆 Ranking</a></p>
+    <p><a href="/ranking">🏆 </a></p>
     <p><a href="/payments">💳 Payments Report</a></p>
     <p><a href="/payment">💰 Payment System</a></p>
    <hr>
@@ -628,17 +628,7 @@ def pay():
 #======== payment ==========
 @app.route("/payments")
 def payments():
-    if "user" not in session:
-        return redirect("/login")
 
-    return """
-    <h2>💳 Payment System</h2>
-
-    <p><a href="/payments">📊 View Payments Report</a></p>
-
-    <br>
-    <a href="/dashboard">🏠 Back to Dashboard</a>
-    """
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
@@ -669,14 +659,14 @@ def payments():
         <tr>
             <td>{p[0]}</td>
             <td>{p[1]}</td>
-            <td>${p[2]}</td>
+            <td>{p[2]}</td>
             <td>{p[3]}</td>
             <td>{p[4]}</td>
         </tr>
         """
 
     html += "</table>"
-    html += "<br><a href='/dashboard'>Back</a>"
+    html += "<br><a href='/dashboard'>🏠 Back</a>"
 
     return html
 # =========================
