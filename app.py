@@ -238,6 +238,37 @@ def dashboard():
     <div class="container mt-4">
 
     <h2 class="mb-4">🏫 School SaaS Dashboard</h2>
+    <div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-lg rounded-4 bg-primary text-white p-3">
+            <h6>👨‍🎓 Students</h6>
+            <h2 class="fw-bold">{{students}}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-lg rounded-4 bg-success text-white p-3">
+            <h6>👨‍🏫 Teachers</h6>
+            <h2 class="fw-bold">{{teachers}}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-lg rounded-4 bg-warning text-dark p-3">
+            <h6>📅 Attendance</h6>
+            <h2 class="fw-bold">{{attendance}}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-lg rounded-4 bg-danger text-white p-3">
+            <h6>💳 Payments</h6>
+            <h2 class="fw-bold">{{payments}}</h2>
+        </div>
+    </div>
+
+</div>
 
     <div class="row">
 
@@ -282,7 +313,22 @@ def dashboard():
     <hr>
 
     <div class="row">
+    
+<div class="row g-3 mt-4">
 
+    <div class="col-md-4">
+        <a href="/students" class="btn btn-outline-primary w-100 rounded-3">👨‍🎓 Students</a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/teachers" class="btn btn-outline-success w-100 rounded-3">👨‍🏫 Teachers</a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/payments" class="btn btn-outline-danger w-100 rounded-3">💳 Payments</a>
+    </div>
+
+</div>
         <div class="col-md-4">
             <a href="/list" class="btn btn-outline-primary w-100 mb-2">👨‍🎓 Students</a>
         </div>
