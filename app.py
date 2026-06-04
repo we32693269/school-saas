@@ -144,35 +144,6 @@ def add():
         return redirect("/list")
 
     return render_template("add.html")
-# =========================
-# ADD STUDENT
-# =========================
-@app.route("/add student ", methods=["GET", "POST"])
-def add student ():
-    if "user" not in session:
-        return redirect("/")
-
-    if request.method == "POST":
-        name = request.form["name"]
-        class_name = request.form["class"]
-        age = request.form["age"]
-        gender = request.form["gender"]
-
-        conn = sqlite3.connect("school.db")
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            INSERT INTO students (name, class, age, gender)
-            VALUES (?, ?, ?, ?)
-        """, (name, class_name, age, gender))
-
-        conn.commit()
-        conn.close()
-
-        return redirect("/list")
-
-    return render_template("add.html")
-
 
 # =========================
 # LIST STUDENTS
