@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, render_template, session
 import sqlite3
 import os
-from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
 UPLOAD_FOLDER = "static/uploads"
@@ -106,28 +105,18 @@ def add():
         return redirect("/")
 
     if request.method == "POST":
-
         name = request.form["name"]
-        class_name = request.form["class"]
+        class_name = request.form["class_name"]
         age = request.form["age"]
         gender = request.form["gender"]
 
-        # SAFE PHOTO HANDLING
-        photo = request.files.get("photo")
-        filename = None
-
-        if photo and photo.filename != "":
-            filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-
-        # DATABASE INSERT
         conn = sqlite3.connect("school.db")
         cursor = conn.cursor()
 
         cursor.execute("""
-        INSERT INTO students (name, class, age, gender, photo)
-        VALUES (?, ?, ?, ?, ?)
-        """, (name, class_name, age, gender, filename))
+            INSERT INTO students (name, class_name, age, gender)
+            VALUES (?, ?, ?, ?)
+        """, (name, class_name, age, gender))
 
         conn.commit()
         conn.close()
