@@ -159,23 +159,33 @@ def edit_student(id):
 
     if request.method == "POST":
         name = request.form["name"]
+        class_name = request.form["class"]
+        age = request.form["age"]
+        gender = request.form["gender"]
 
-        cursor.execute(
-            "UPDATE students SET name = ? WHERE id = ?",
-            (name, id)
-        )
+        cursor.execute("""
+            UPDATE students
+            SET name=?, class=?, age=?, gender=?
+            WHERE id=?
+        """, (name, class_name, age, gender, id))
 
         conn.commit()
         conn.close()
 
         return redirect("/list")
 
-    cursor.execute("SELECT * FROM students WHERE id = ?", (id,))
+    cursor.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
     student = cursor.fetchone()
     conn.close()
 
-    return render_template("edit.html", student=student)
-
+    return render_template(
+        "edit.html",
+        student=student
+    )
 
 # =========================
 # DELETE STUDENT
