@@ -99,6 +99,51 @@ def search():
 
     return render_template("list.html", students=students)
 
+@app.route("/add", methods=["GET", "POST"])
+def add():
+    if "user" not in session:
+        return redirect("/")
+
+    if request.method == "POST":
+
+        name = request.form["name"]
+        class_name = request.form["class"]
+        age = request.form["age"]
+        gender = request.form["gender"]
+
+        photo = request.files["photo"]
+
+        filename = secure_filename(photo.filename)
+
+        photo.save(
+            os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                filename
+            )
+        )
+
+        conn = sqlite3.connect("school.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+        INSERT INTO students
+        (name, class, age, gender, photo)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            name,
+            class_name,
+            age,
+            gender,
+            filename
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/list")
+
+    return render_template("add.html")
 # =========================
 # ADD STUDENT
 # =========================
