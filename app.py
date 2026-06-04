@@ -107,7 +107,37 @@ def delete_student(id):
     conn.close()
 
     return redirect("/list")
+#============= EDIT STUDENT =============   
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit_student(id):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
 
+    if request.method == "POST":
+        name = request.form["name"]
+
+        cursor.execute(
+            "UPDATE students SET name = ? WHERE id = ?",
+            (name, id)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/list")
+
+    cursor.execute(
+        "SELECT * FROM students WHERE id = ?",
+        (id,)
+    )
+
+    student = cursor.fetchone()
+    conn.close()
+
+    return render_template(
+        "edit.html",
+        student=student
+    )
 
 # =========================
 # RUN
