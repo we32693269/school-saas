@@ -1,8 +1,9 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, session
 import sqlite3
 
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
+
 # =========================
 # DATABASE SETUP
 # =========================
@@ -24,6 +25,7 @@ init_db()
 
 # =========================
 # LOGIN
+# =========================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -37,6 +39,7 @@ def login():
             return "Login Failed"
 
     return render_template("login.html")
+
 
 # =========================
 # HOME
@@ -55,16 +58,14 @@ def home():
 def add():
     if "user" not in session:
         return redirect("/")
+
     if request.method == "POST":
         name = request.form["name"]
 
         conn = sqlite3.connect("school.db")
         cursor = conn.cursor()
 
-        cursor.execute(
-            "INSERT INTO students (name) VALUES (?)",
-            (name,)
-        )
+        cursor.execute("INSERT INTO students (name) VALUES (?)", (name,))
 
         conn.commit()
         conn.close()
@@ -81,6 +82,7 @@ def add():
 def list_students():
     if "user" not in session:
         return redirect("/")
+
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
@@ -89,32 +91,17 @@ def list_students():
 
     conn.close()
 
-    return render_template(
-        "list.html",
-        students=students
-    )
+    return render_template("list.html", students=students)
 
 
 # =========================
-# DELETE STUDENT
+# EDIT STUDENT
 # =========================
-@app.route("/delete/<int:id>")
-def delete_student(id):
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "DELETE FROM students WHERE id = ?",
-        (id,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/list")
-#============= EDIT STUDENT =============   
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit_student(id):
+    if "user" not in session:
+        return redirect("/")
+
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
@@ -131,24 +118,41 @@ def edit_student(id):
 
         return redirect("/list")
 
-    cursor.execute(
-        "SELECT * FROM students WHERE id = ?",
-        (id,)
-    )
-
+    cursor.execute("SELECT * FROM students WHERE id = ?", (id,))
     student = cursor.fetchone()
     conn.close()
 
-    return render_template(
-        "edit.html",
-        student=student
-    )
-#============== LOGOUT ==============
+    return render_template("edit.html", student=student)
+
+
+# =========================
+# DELETE STUDENT
+# =========================
+@app.route("/delete/<int:id>")
+def delete_student(id):
+    if "user" not in session:
+        return redirect("/")
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM students WHERE id = ?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/list")
+
+
+# =========================
+# LOGOUT
+# =========================
 @app.route("/logout")
 def logout():
     session.pop("user", None)
     return redirect("/")
-<a href="/logout">🚪 Logout</a>
+
+
 # =========================
 # RUN
 # =========================
