@@ -6,7 +6,12 @@
 </head>
 <body>
 
-    <h1>✏️ Edit Student</h1>
+<div class="navbar">
+    <h2>Edit Student</h2>
+    <a href="/list">Back</a>
+</div>
+
+<div class="card" style="margin:30px auto;">
 
     <form method="POST">
 
@@ -14,8 +19,43 @@
             type="text"
             name="name"
             value="{{ student[1] }}"
+            placeholder="Student Name"
             required
         >
+
+        <br>
+
+        <input
+            type="text"
+            name="class"
+            value="{{ student[2] }}"
+            placeholder="Class"
+            required
+        >
+
+        <br>
+
+        <input
+            type="number"
+            name="age"
+            value="{{ student[3] }}"
+            placeholder="Age"
+            required
+        >
+
+        <br>
+
+        <select name="gender" required>
+            <option value="Male"
+                {% if student[4] == "Male" %}selected{% endif %}>
+                Male
+            </option>
+
+            <option value="Female"
+                {% if student[4] == "Female" %}selected{% endif %}>
+                Female
+            </option>
+        </select>
 
         <br><br>
 
@@ -25,9 +65,7 @@
 
     </form>
 
-    <br>
-
-    <a href="/list">⬅ Back to List</a>
+</div>
 
 </body>
 </html>
