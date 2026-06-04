@@ -4,7 +4,6 @@ app = Flask(__name__)
 
 students = []
 
-# 🔐 LOGIN PAGE
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -12,36 +11,27 @@ def login():
         password = request.form["password"]
 
         if username == "admin" and password == "1234":
-            return """
-            <h2>Login Successful ✅</h2>
-            <a href='/home'>Go to School System</a>
-            """
+            return "<h1>Login Success</h1><a href='/home'>Enter</a>"
         else:
-            return """
-            <h2>❌ Login Failed</h2>
-            <a href='/'>Try Again</a>
-            """
+            return "<h1>Login Failed</h1><a href='/'>Try Again</a>"
 
     return """
     <h1>Login Page</h1>
     <form method='post'>
-        <input name='username' placeholder='Username'><br><br>
-        <input name='password' type='password' placeholder='Password'><br><br>
-        <button type='submit'>Login</button>
+        <input name='username' placeholder='Username'>
+        <input name='password' type='password' placeholder='Password'>
+        <button>Login</button>
     </form>
     """
 
-# 🏫 SCHOOL HOME
 @app.route("/home")
 def home():
     return """
-    <h1>🏫 School System</h1>
-    <a href='/add'>➕ Add Student</a><br>
-    <a href='/list'>👀 View Students</a><br>
-    <a href='/'>🔐 Logout</a>
+    <h1>School System</h1>
+    <a href='/add'>Add Student</a><br>
+    <a href='/list'>View Students</a>
     """
 
-# ➕ ADD STUDENT
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if request.method == "POST":
@@ -50,28 +40,21 @@ def add():
         return "<h3>Student Added!</h3><a href='/home'>Back</a>"
 
     return """
-    <h2>Add Student</h2>
     <form method='post'>
-        <input name='name' placeholder='Student name'>
-        <button type='submit'>Add</button>
+        <input name='name' placeholder='Student Name'>
+        <button>Add</button>
     </form>
-    <a href='/home'>Back</a>
     """
 
-# 👀 LIST STUDENTS
 @app.route("/list")
 def list_students():
     html = "<h2>Students List</h2>"
-
-    if len(students) == 0:
-        html += "<p>No students yet!</p>"
+    if not students:
+        html += "<p>No students yet</p>"
     else:
         for i, s in enumerate(students, 1):
             html += f"<p>{i}. {s}</p>"
+    return html + "<br><a href='/home'>Back</a>"
 
-    html += "<br><a href='/home'>Back</a>"
-    return html
-
-# 🚀 RUN APP
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
