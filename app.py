@@ -22,6 +22,14 @@ def init_db():
         gender TEXT NOT NULL
     )
     """)
+    CREATE TABLE students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        class TEXT,
+        age INTEGER,
+        gender TEXT,
+        photo TEXT
+    );
 
     conn.commit()
     conn.close()
