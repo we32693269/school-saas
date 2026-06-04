@@ -51,7 +51,31 @@ def login():
 def home():
     if "user" not in session:
         return redirect("/")
-    return render_template("home.html")
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM students")
+    total_students = cursor.fetchone()[0]
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM students WHERE gender='Male'"
+    )
+    total_males = cursor.fetchone()[0]
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM students WHERE gender='Female'"
+    )
+    total_females = cursor.fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "home.html",
+        total_students=total_students,
+        total_males=total_males,
+        total_females=total_females
+    )
 #================ SEARCH ===============
 @app.route("/search")
 def search():
