@@ -52,7 +52,26 @@ def home():
     if "user" not in session:
         return redirect("/")
     return render_template("home.html")
+#================ SEARCH ===============
+@app.route("/search")
+def search():
+    if "user" not in session:
+        return redirect("/")
 
+    query = request.args.get("q")
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM students
+        WHERE name LIKE ?
+    """, ('%' + query + '%',))
+
+    students = cursor.fetchall()
+    conn.close()
+
+    return render_template("list.html", students=students)
 
 # =========================
 # ADD STUDENT
