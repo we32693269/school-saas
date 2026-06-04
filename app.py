@@ -111,16 +111,13 @@ def add():
         age = request.form["age"]
         gender = request.form["gender"]
 
-        photo = request.files["photo"]
+        # SAFE PHOTO HANDLING
+        photo = request.files.get("photo")
+        filename = None
 
-        filename = secure_filename(photo.filename)
-
-        photo.save(
-            os.path.join(
-                app.config["UPLOAD_FOLDER"],
-                filename
-            )
-        )
+        if photo and photo.filename != "":
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
         conn = sqlite3.connect("school.db")
         cursor = conn.cursor()
