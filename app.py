@@ -15,7 +15,9 @@ def init_db():
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        grade TEXT NOT NULL
+        class TEXT NOT NULL,
+        age INTEGER NOT NULL,
+        gender TEXT NOT NULL
     )
     """)
 
