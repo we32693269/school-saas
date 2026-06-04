@@ -43,6 +43,8 @@ def login():
 # =========================
 @app.route("/home")
 def home():
+    if "user" not in session:
+        return redirect("/")
     return render_template("home.html")
 
 
@@ -51,6 +53,8 @@ def home():
 # =========================
 @app.route("/add", methods=["GET", "POST"])
 def add():
+    if "user" not in session:
+        return redirect("/")
     if request.method == "POST":
         name = request.form["name"]
 
@@ -75,6 +79,8 @@ def add():
 # =========================
 @app.route("/list")
 def list_students():
+    if "user" not in session:
+        return redirect("/")
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
@@ -137,6 +143,11 @@ def edit_student(id):
         "edit.html",
         student=student
     )
+#============== LOGOUT ==============
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect("/")
 
 # =========================
 # RUN
