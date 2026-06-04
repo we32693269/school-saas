@@ -12,14 +12,13 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 def init_db():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
-cursor.execute("""
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name NULL,NULL
         class NULL,NULL
         age NULL,NULL
         gender NULL,NULL
-        photo NULL,NULL
     )
     """)
     cursor.execute("""
