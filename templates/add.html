@@ -9,7 +9,7 @@
 <h1>Add Student</h1>
 
 <form method="POST">
-
+<form method="POST" enctype="multipart/form-data">
     <input type="text" name="name" placeholder="Student Name" required>
     <br><br>
 
@@ -24,9 +24,9 @@
         <option value="Male">Male</option>
         <option value="Female">Female</option>
     </select>
-
     <br><br>
-
+    <input type="file" name="photo" required>
+    <br><br>
     <button type="submit">Add Student</button>
 
 </form>
