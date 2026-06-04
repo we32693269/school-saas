@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, render_template
 import sqlite3
 
 app = Flask(__name__)
@@ -9,12 +9,14 @@ app = Flask(__name__)
 def init_db():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
+
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
-        )
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL
+    )
     """)
+
     conn.commit()
     conn.close()
 
@@ -32,27 +34,18 @@ def login():
         if username == "admin" and password == "1234":
             return redirect("/home")
         else:
-            return "<h1>Login Failed</h1>"
+            return "Login Failed"
 
-    return """
-    <h1>Login Page</h1>
-    <form method='post'>
-        <input name='username' placeholder='Username'><br><br>
-        <input name='password' type='password' placeholder='Password'><br><br>
-        <button>Login</button>
-    </form>
-    """
+    return render_template("login.html")
+
 
 # =========================
 # HOME
 # =========================
 @app.route("/home")
 def home():
-    return """
-    <h1>School System</h1>
-    <a href='/add'>Add Student</a><br>
-    <a href='/list'>View Students</a>
-    """
+    return render_template("home.html")
+
 
 # =========================
 # ADD STUDENT
@@ -64,29 +57,20 @@ def add():
 
         conn = sqlite3.connect("school.db")
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO students (name) VALUES (?)", (name,))
+
+        cursor.execute(
+            "INSERT INTO students (name) VALUES (?)",
+            (name,)
+        )
+
         conn.commit()
         conn.close()
 
-        return "<h3>Student Added!</h3><a href='/home'>Back</a>"
+        return redirect("/list")
 
-    return """
-    <h2>Add Student</h2>
-    <form method='post'>
-        <input name='name' placeholder='Student Name'>
-        <button>Add</button>
-    </form>
-    """
-#=========== delete student ==========
-@app.route("/delete/<int:id>")
-def delete_student(id):
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM students WHERE id = ?", (id,))
-    conn.commit()
-    conn.close()
+    return render_template("add.html")
 
-    return redirect("/list")
+
 # =========================
 # LIST STUDENTS
 # =========================
@@ -94,28 +78,39 @@ def delete_student(id):
 def list_students():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
+
     cursor.execute("SELECT * FROM students")
-    data = cursor.fetchall()
+    students = cursor.fetchall()
+
     conn.close()
 
-    html = "<h2>Students List</h2>"
+    return render_template(
+        "list.html",
+        students=students
+    )
 
-    if not data:
-        html += "<p>No students yet</p>"
-    else:
-        for row in data:
-            html += f"""
-            <p>
-                {row[0]}. {row[1]}
-                <a href="/delete/{row[0]}">🗑️ Delete</a>
-            </p>
-            """
 
-    html += "<br><a href='/home'>Back</a>"
-    return html
+# =========================
+# DELETE STUDENT
+# =========================
+@app.route("/delete/<int:id>")
+def delete_student(id):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM students WHERE id = ?",
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/list")
+
 
 # =========================
 # RUN
 # =========================
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
