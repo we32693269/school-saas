@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, render_template
 import sqlite3
 
 app = Flask(__name__)
-
+app.secret_key = "school_secret_key"
 # =========================
 # DATABASE SETUP
 # =========================
