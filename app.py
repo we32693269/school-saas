@@ -77,7 +77,16 @@ def add():
         <button>Add</button>
     </form>
     """
+#=========== delete student ==========
+@app.route("/delete/<int:id>")
+def delete_student(id):
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM students WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
 
+    return redirect("/list")
 # =========================
 # LIST STUDENTS
 # =========================
