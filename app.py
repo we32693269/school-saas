@@ -64,15 +64,17 @@ def add():
 
     if request.method == "POST":
         name = request.form["name"]
-        grade = request.form["grade"]
+        class_name = request.form["class"]
+        age = request.form["age"]
+        gender = request.form["gender"]
 
         conn = sqlite3.connect("school.db")
         cursor = conn.cursor()
 
-        cursor.execute(
-            "INSERT INTO students (name, grade) VALUES (?, ?)",
-            (name, grade)
-        )
+        cursor.execute("""
+            INSERT INTO students (name, class, age, gender)
+            VALUES (?, ?, ?, ?)
+        """, (name, class_name, age, gender))
 
         conn.commit()
         conn.close()
