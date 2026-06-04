@@ -148,7 +148,7 @@ def edit_student(id):
 def logout():
     session.pop("user", None)
     return redirect("/")
-
+<a href="/logout">🚪 Logout</a>
 # =========================
 # RUN
 # =========================
