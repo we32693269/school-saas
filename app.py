@@ -3,8 +3,6 @@ import sqlite3
 import os
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
-UPLOAD_FOLDER = "static/uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # =========================
 # DATABASE SETUP
 # =========================
