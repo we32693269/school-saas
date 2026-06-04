@@ -99,7 +99,7 @@ def search():
     conn.close()
 
     return render_template("list.html", students=students)
-
+#================ ADD STUDENT ================
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if "user" not in session:
@@ -119,9 +119,6 @@ def add():
         if photo and photo.filename != "":
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-
-        conn = sqlite3.connect("school.db")
-        cursor = conn.cursor()
 
         cursor.execute("""
         INSERT INTO students
