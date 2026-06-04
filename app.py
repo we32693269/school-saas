@@ -10,22 +10,22 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # DATABASE SETUP
 # =========================
 def init_db():
-     conn = sqlite3.connect("school.db")
-cursor = conn.cursor()
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS students (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    class TEXT,
-    age INTEGER,
-    gender TEXT,
-    photo TEXT
-)
-""")
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        class TEXT,
+        age INTEGER,
+        gender TEXT,
+        photo TEXT
+    )
+    """)
 
-conn.commit()
-conn.close()
+    conn.commit()
+    conn.close()
 
 init_db()
 
