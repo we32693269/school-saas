@@ -147,8 +147,8 @@ def add():
 # =========================
 # ADD STUDENT
 # =========================
-@app.route("/add", methods=["GET", "POST"])
-def add():
+@app.route("/add student ", methods=["GET", "POST"])
+def add student ():
     if "user" not in session:
         return redirect("/")
 
