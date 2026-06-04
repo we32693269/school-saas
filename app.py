@@ -9,8 +9,6 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # =========================
 # DATABASE SETUP
 # =========================
-import sqlite3
-
 def init_db():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
