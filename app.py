@@ -1,6 +1,6 @@
-import os
-import sqlite3
 from flask import Flask, request, redirect, render_template, session
+import sqlite3
+import os
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
