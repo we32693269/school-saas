@@ -21,7 +21,6 @@
         <th>Age</th>
         <th>Gender</th>
         <th>Actions</th>
-        <th>Photo</th>
     </tr>
 
     {% for s in students %}
@@ -36,13 +35,7 @@
             <a href="/edit/{{ s[0] }}">Edit</a>
             <a href="/delete/{{ s[0] }}">Delete</a>
         </td>
-        <td>
-           <img
-               src="{{ url_for('static', 
-         filename='uploads/' + s[5]) }}"
-               width="60"
-            >
-        </td>
+        
      </tr>
     {% endfor %}
 
