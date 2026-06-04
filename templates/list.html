@@ -6,16 +6,18 @@
 </head>
 <body>
 
-<h2>Students List</h2>
+<h1>Students List</h1>
 
 {% for student in students %}
 <p>
-    {{ student[0] }}. {{ student[1] }}
-    <a href="/edit/{{ student[0] }}">✏️ Edit</a>
-    <a href="/delete/{{ student[0] }}">🗑️ Delete</a>
+    {{ student[0] }}. {{ student[1] }} - Grade: {{ student[2] }}
+
+    <a href="/edit/{{ student[0] }}">Edit</a>
+    <a href="/delete/{{ student[0] }}">Delete</a>
 </p>
 {% endfor %}
 
+<br>
 <a href="/home">Back</a>
 
 </body>
