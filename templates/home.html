@@ -5,7 +5,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
+<form action="/search" method="get" style="margin-top:20px;">
+    <input type="text" name="q" placeholder="Search student name...">
+    <button type="submit">Search</button>
+</form>
     <div class="navbar">
         <h2>School Dashboard</h2>
         <a href="/logout">Logout</a>
