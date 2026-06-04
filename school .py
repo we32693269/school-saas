@@ -1,12 +1,21 @@
-students = []
+# School Management System
 
-while True:
-    name = input("Enter student name (or type exit): ")
+This is a simple Python project for managing students.
 
-    if name == "exit":
-        break
+## Features
+- Add students
+- Store student names
+- View student list
+- Save data using Python
 
-    students.append(name)
+## Technologies Used
+- Python
 
-print("All Students:")
-print(students)
+## How to Run
+1. Open Pydroid or any Python IDE
+2. Run school.py
+3. Enter student names
+4. Type "exit" to stop
+
+## Author
+Created by me 🚀
