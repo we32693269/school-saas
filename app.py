@@ -120,18 +120,14 @@ def add():
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
+        # DATABASE INSERT
+        conn = sqlite3.connect("school.db")
+        cursor = conn.cursor()
+
         cursor.execute("""
-        INSERT INTO students
-        (name, class, age, gender, photo)
+        INSERT INTO students (name, class, age, gender, photo)
         VALUES (?, ?, ?, ?, ?)
-        """,
-        (
-            name,
-            class_name,
-            age,
-            gender,
-            filename
-        ))
+        """, (name, class_name, age, gender, filename))
 
         conn.commit()
         conn.close()
