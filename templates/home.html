@@ -1,22 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>School Management System</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <h1>🏫 School Management System</h1>
+    <div class="navbar">
+        <h2>School Dashboard</h2>
+        <a href="/logout">Logout</a>
+    </div>
 
-    <p>Welcome Admin</p>
+    <div class="container">
 
-    <a href="/add">➕ Add Student</a>
+        <div class="card">
+            <h3>Add Student</h3>
+            <p>Register new students</p>
+            <a href="/add">Go</a>
+        </div>
 
-    <a href="/list">📋 View Students</a>
+        <div class="card">
+            <h3>Students List</h3>
+            <p>View all students</p>
+            <a href="/list">Go</a>
+        </div>
 
-    <br><br>
-
-    <a href="/">🚪 Logout</a>
+    </div>
 
 </body>
 </html>
