@@ -104,7 +104,12 @@ def list_students():
         html += "<p>No students yet</p>"
     else:
         for row in data:
-            html += f"<p>{row[0]}. {row[1]}</p>"
+            html += f"""
+            <p>
+                {row[0]}. {row[1]}
+                <a href="/delete/{row[0]}">🗑️ Delete</a>
+            </p>
+            """
 
     html += "<br><a href='/home'>Back</a>"
     return html
