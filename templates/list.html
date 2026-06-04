@@ -6,16 +6,21 @@
 </head>
 <body>
 
-<h1>Students Table</h1>
+<div class="navbar">
+    <h2>Students List</h2>
+    <a href="/home">Home</a>
+</div>
 
-<table border="1" style="margin:auto; background:white;">
+<div style="overflow-x:auto;">
+
+<table>
     <tr>
         <th>ID</th>
         <th>Name</th>
         <th>Class</th>
         <th>Age</th>
         <th>Gender</th>
-        <th>Action</th>
+        <th>Actions</th>
     </tr>
 
     {% for s in students %}
@@ -25,6 +30,7 @@
         <td>{{ s[2] }}</td>
         <td>{{ s[3] }}</td>
         <td>{{ s[4] }}</td>
+
         <td>
             <a href="/edit/{{ s[0] }}">Edit</a>
             <a href="/delete/{{ s[0] }}">Delete</a>
@@ -34,8 +40,7 @@
 
 </table>
 
-<br>
-<a href="/home">Back</a>
+</div>
 
 </body>
 </html>
