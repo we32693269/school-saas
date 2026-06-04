@@ -187,3 +187,17 @@ a {
         width: 90%;
     }
 }
+td a {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    margin: 2px;
+}
+
+td a[href*="edit"] {
+    background: orange;
+}
+
+td a[href*="delete"] {
+    background: red;
+}
