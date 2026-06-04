@@ -1,203 +1,152 @@
-/* GENERAL */
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
     background-color: #f4f6f9;
-}
-
-/* NAVBAR */
-.navbar {
-    background-color: #2c3e50;
-    color: white;
-    padding: 15px 20px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.navbar h2 {
     margin: 0;
-}
-
-.navbar a {
-    background-color: red;
-    color: white;
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-}
-
-/* SEARCH */
-.search-box {
+    padding: 0;
     text-align: center;
-    margin: 20px;
 }
 
-.search-box input {
-    padding: 10px;
-    width: 250px;
-    max-width: 80%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+h1, h2 {
+    color: #2c3e50;
 }
 
-.search-box button {
-    padding: 10px 15px;
-    border: none;
-    background-color: #3498db;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* CARDS */
 .container {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Dashboard Cards */
+.cards {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
-
-    padding: 20px;
+    flex-wrap: wrap;
+    margin: 20px;
 }
 
 .card {
     background: white;
     width: 220px;
     padding: 20px;
-
     border-radius: 10px;
-
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-
-    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.card h1,
-.card h2,
-.card h3 {
-    margin-top: 0;
+.card h2 {
+    margin: 0;
+    font-size: 30px;
 }
 
-.card a {
-    display: inline-block;
+.card p {
+    color: gray;
+    font-size: 16px;
+}
 
-    margin-top: 10px;
-
+/* Navigation */
+a {
+    text-decoration: none;
     background: #3498db;
     color: white;
-
     padding: 10px 15px;
-
-    text-decoration: none;
-
     border-radius: 5px;
+    display: inline-block;
+    margin: 5px;
 }
 
-/* FORMS */
+a:hover {
+    background: #2980b9;
+}
+
+/* Forms */
 form {
-    text-align: center;
-    margin-top: 30px;
+    background: white;
+    width: 350px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 input,
 select {
-    width: 250px;
-
+    width: 90%;
     padding: 10px;
-
-    margin: 5px;
-
+    margin: 8px 0;
     border: 1px solid #ccc;
-
     border-radius: 5px;
 }
 
 button {
-    padding: 10px 20px;
-
     background: green;
-
     color: white;
-
     border: none;
-
+    padding: 10px 20px;
     border-radius: 5px;
-
     cursor: pointer;
 }
 
-/* TABLE */
+button:hover {
+    background: darkgreen;
+}
+
+/* Table */
 table {
     width: 95%;
     margin: 20px auto;
-
     border-collapse: collapse;
-
     background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 th {
     background: #2c3e50;
     color: white;
+    padding: 12px;
 }
 
-th,
 td {
-    border: 1px solid #ddd;
-
     padding: 10px;
-
-    text-align: center;
+    border-bottom: 1px solid #ddd;
 }
 
-tr:nth-child(even) {
-    background: #f8f8f8;
+tr:hover {
+    background: #f1f1f1;
 }
 
-/* LINKS */
-a {
-    text-decoration: none;
+/* Student Photo */
+.student-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-/* MOBILE */
+/* Statistics Colors */
+.total {
+    border-top: 5px solid #3498db;
+}
+
+.boys {
+    border-top: 5px solid #27ae60;
+}
+
+.girls {
+    border-top: 5px solid #e91e63;
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-
-    .navbar {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-
-    .container {
+    .cards {
         flex-direction: column;
         align-items: center;
     }
 
-    .card {
+    form {
         width: 90%;
     }
 
     table {
         font-size: 14px;
     }
-
-    input,
-    select {
-        width: 90%;
-    }
-}
-td a {
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white;
-    margin: 2px;
-}
-
-td a[href*="edit"] {
-    background: orange;
-}
-
-td a[href*="delete"] {
-    background: red;
 }
