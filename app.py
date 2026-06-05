@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+
 app = Flask(__name__)
 app.secret_key = "school_secret"
 
+# Create database and table
 def init_db():
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
@@ -20,14 +22,16 @@ def init_db():
     conn.commit()
     conn.close()
 
+# Run database setup
 init_db()
-# ---------------- DATA ----------------
-    USERS = 
+
+# Users
+USERS = {
     "admin": {"password": "1234", "role": "admin"},
     "teacher": {"password": "1234", "role": "teacher"},
     "student": {"password": "1234", "role": "student"}
-    
-# ---------------- HOME ----------------
+}
+#---------------- HOME ----------------
 @app.route('/')
 def home():
     if "user" in session:
