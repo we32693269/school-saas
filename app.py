@@ -26,7 +26,7 @@ init_db()
     "admin": {"password": "1234", "role": "admin"},
     "teacher": {"password": "1234", "role": "teacher"},
     "student": {"password": "1234", "role": "student"}
-
+    }
 # ---------------- HOME ----------------
 @app.route('/')
 def home():
