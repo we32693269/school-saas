@@ -19,8 +19,8 @@
   <h2>📚 Students List</h2>
 
   {% for s in students %}
-    <p>👨‍🎓 {{ s }} 
-      <a href="/delete/{{ s }}">❌ Delete</a>
+    <p>👨‍🎓 {{ s[1] }} 
+      <a href="/delete/{{ s[0] }}">❌ Delete</a>
     </p>
   {% endfor %}
 
