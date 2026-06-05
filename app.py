@@ -3,103 +3,90 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = "school_secret"
 
-# Grades and Attendance
-grades = {}
-attendance = {}
+# ---------------- DATA ----------------
+students = [
+    {"id": 1, "name": "Abebe", "age": 16, "grade": "10", "attendance": "Present"}
+]
 
-# Users with roles
+next_id = 2
+
 USERS = {
     "admin": {"password": "1234", "role": "admin"},
     "teacher": {"password": "1234", "role": "teacher"},
     "student": {"password": "1234", "role": "student"}
 }
 
-# Student list
-students = ["Abebe", "Selam"]
-
+# ---------------- HOME ----------------
 @app.route('/')
 def home():
     if "user" in session:
         return redirect('/dashboard')
     return redirect('/login')
 
-# Login
+# ---------------- LOGIN ----------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        u = request.form['username']
+        p = request.form['password']
 
-        if username in USERS and USERS[username]['password'] == password:
-            session['user'] = username
-            session['role'] = USERS[username]['role']
+        if u in USERS and USERS[u]['password'] == p:
+            session['user'] = u
+            session['role'] = USERS[u]['role']
             return redirect('/dashboard')
 
-        return "❌ Wrong username or password"
+        return "❌ Wrong login"
 
     return render_template('login.html')
 
-# Dashboard
+# ---------------- DASHBOARD ----------------
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if "user" not in session:
         return redirect('/login')
 
     role = session['role']
+    global next_id
 
-    # Add student
+    # ➕ ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
         if role in ["admin", "teacher"]:
-            students.append(request.form['name'])
+            students.append({
+                "id": next_id,
+                "name": request.form['name'],
+                "age": request.form.get('age', "N/A"),
+                "grade": request.form.get('grade', "N/A"),
+                "attendance": "Present"
+            })
+            next_id += 1
 
-    # Add grade
-    if request.method == 'POST' and "grade_name" in request.form:
+    # 📅 UPDATE ATTENDANCE
+    if request.method == 'POST' and "attendance_id" in request.form:
         if role in ["admin", "teacher"]:
-            grades[request.form['grade_name']] = request.form['grade_value']
+            sid = int(request.form['attendance_id'])
+            status = request.form['attendance_status']
 
-    # Add attendance
-    if request.method == 'POST' and "attendance_name" in request.form:
-        if role in ["admin", "teacher"]:
-            attendance[request.form['attendance_name']] = request.form['attendance_status']
+            for s in students:
+                if s["id"] == sid:
+                    s["attendance"] = status
 
-    return render_template(
-        'dashboard.html',
-        students=students,
-        grades=grades,
-        attendance=attendance,
-        role=role
-    )
+    return render_template("dashboard.html", students=students, role=role)
 
-# Delete student (Admin only)
-@app.route('/delete/<name>')
-def delete(name):
+# ---------------- DELETE ----------------
+@app.route('/delete/<int:id>')
+def delete(id):
     if "user" in session and session['role'] == "admin":
-        if name in students:
-            students.remove(name)
+        global students
+        students = [s for s in students if s["id"] != id]
 
     return redirect('/dashboard')
 
-# Report Card
-@app.route('/report/<name>')
-def report(name):
-    if "user" not in session:
-        return redirect('/login')
-
-    grade = grades.get(name, "N/A")
-    status = attendance.get(name, "N/A")
-
-    return render_template(
-        'report.html',
-        name=name,
-        grade=grade,
-        status=status
-    )
-
-# Logout
+# ---------------- LOGOUT ----------------
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/login')
 
+# ---------------- RUN ----------------
 if __name__ == '__main__':
     app.run(debug=True)
