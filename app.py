@@ -61,6 +61,8 @@ def dashboard():
         return redirect('/login')
 
     role = session['role']
+    global next_id
+    
     conn = sqlite3.connect("school.db")
 conn.row_factory = sqlite3.Row
 
@@ -70,7 +72,6 @@ cursor.execute("SELECT * FROM students")
 students = cursor.fetchall()
 
 conn.close()
-    global next_id
 
     # ➕ ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
