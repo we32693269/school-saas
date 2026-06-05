@@ -42,13 +42,20 @@ def dashboard():
 
     role = session['role']
 
-    # only admin + teacher can add
-    if request.method == 'POST':
+    # ➕ add student
+    if request.method == 'POST' and "name" in request.form:
         if role in ["admin", "teacher"]:
             name = request.form['name']
             students.append(name)
 
-    return render_template("dashboard.html", students=students, role=role)
+    # 📊 add grade
+    if request.method == 'POST' and "grade_name" in request.form:
+        if role in ["admin", "teacher"]:
+            name = request.form['grade_name']
+            grade = request.form['grade_value']
+            grades[name] = grade
+
+    return render_template("dashboard.html", students=students, grades=grades, role=role)
 
 # ❌ DELETE (only admin)
 @app.route('/delete/<name>')
