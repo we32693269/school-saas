@@ -32,39 +32,11 @@
 
     <table class="table">
       <tr>
-        <h2>📊 Add Grade</h2>
-
-{% if role != "student" %}
-<form method="POST">
-  <input name="grade_name" placeholder="Student Name">
-  <input name="grade_value" placeholder="Grade (A, B, C)">
-  <button class="btn btn-primary">Save Grade</button>
-</form>
-{% endif %}
-
-<hr>
-
-<h2>📈 Grades List</h2>
-
-<table class="table">
-  <tr>
-    <th>Student</th>
-    <th>Grade</th>
-  </tr>
-
-  {% for name, grade in grades.items() %}
-  <tr>
-    <td>{{ name }}</td>
-    <td>{{ grade }}</td>
-  </tr>
-  {% endfor %}
-</table>
         <th>Name</th>
         {% if role == "admin" %}
         <th>Action</th>
         {% endif %}
       </tr>
-
       {% for s in students %}
       <tr>
         <td>{{ s }}</td>
