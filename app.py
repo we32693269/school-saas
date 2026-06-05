@@ -2,14 +2,19 @@ from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
 app.secret_key = "school_secret"
-grades = {}  # student -> grade
-# 👇 users with roles
+
+# Grades and Attendance
+grades = {}
+attendance = {}
+
+# Users with roles
 USERS = {
     "admin": {"password": "1234", "role": "admin"},
     "teacher": {"password": "1234", "role": "teacher"},
     "student": {"password": "1234", "role": "student"}
 }
 
+# Student list
 students = ["Abebe", "Selam"]
 
 @app.route('/')
@@ -18,23 +23,23 @@ def home():
         return redirect('/dashboard')
     return redirect('/login')
 
-# 🔐 LOGIN
+# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        u = request.form['username']
-        p = request.form['password']
+        username = request.form['username']
+        password = request.form['password']
 
-        if u in USERS and USERS[u]['password'] == p:
-            session['user'] = u
-            session['role'] = USERS[u]['role']
+        if username in USERS and USERS[username]['password'] == password:
+            session['user'] = username
+            session['role'] = USERS[username]['role']
             return redirect('/dashboard')
 
-        return "❌ Wrong login"
+        return "❌ Wrong username or password"
 
-    return render_template("login.html")
+    return render_template('login.html')
 
-# 🏫 DASHBOARD
+# Dashboard
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if "user" not in session:
@@ -42,22 +47,30 @@ def dashboard():
 
     role = session['role']
 
-    # ➕ add student
+    # Add student
     if request.method == 'POST' and "name" in request.form:
         if role in ["admin", "teacher"]:
-            name = request.form['name']
-            students.append(name)
+            students.append(request.form['name'])
 
-    # 📊 add grade
+    # Add grade
     if request.method == 'POST' and "grade_name" in request.form:
         if role in ["admin", "teacher"]:
-            name = request.form['grade_name']
-            grade = request.form['grade_value']
-            grades[name] = grade
+            grades[request.form['grade_name']] = request.form['grade_value']
 
-    return render_template("dashboard.html", students=students, grades=grades, role=role)
+    # Add attendance
+    if request.method == 'POST' and "attendance_name" in request.form:
+        if role in ["admin", "teacher"]:
+            attendance[request.form['attendance_name']] = request.form['attendance_status']
 
-# ❌ DELETE (only admin)
+    return render_template(
+        'dashboard.html',
+        students=students,
+        grades=grades,
+        attendance=attendance,
+        role=role
+    )
+
+# Delete student (Admin only)
 @app.route('/delete/<name>')
 def delete(name):
     if "user" in session and session['role'] == "admin":
@@ -66,7 +79,23 @@ def delete(name):
 
     return redirect('/dashboard')
 
-# 🚪 LOGOUT
+# Report Card
+@app.route('/report/<name>')
+def report(name):
+    if "user" not in session:
+        return redirect('/login')
+
+    grade = grades.get(name, "N/A")
+    status = attendance.get(name, "N/A")
+
+    return render_template(
+        'report.html',
+        name=name,
+        grade=grade,
+        status=status
+    )
+
+# Logout
 @app.route('/logout')
 def logout():
     session.clear()
