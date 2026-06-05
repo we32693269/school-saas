@@ -2,22 +2,26 @@
 <html>
 <head>
     <title>School Dashboard</title>
+
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
+<!-- NAVBAR -->
 <div class="navbar">
     <h2>School Dashboard</h2>
     <a href="/">Logout</a>
 </div>
 
+<!-- SEARCH -->
 <div class="search-box">
     <input type="text" placeholder="Search student name...">
     <button>Search</button>
 </div>
 
+<!-- DASHBOARD CARDS -->
 <div class="container">
 
     <div class="card">
