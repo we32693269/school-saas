@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* TOP NAVBAR */
+.top-bar {
+    background: #111827;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* ROLE BADGE */
+.badge-role {
+    background: #0d6efd;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* CARDS */
+.card-box {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+.card-box:hover {
+    transform: translateY(-3px);
+}
+
+/* BUTTONS */
+button, .btn {
+    border-radius: 8px !important;
+}
+
+/* TABLE */
+table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* LIST ITEMS */
+.list-group-item {
+    border: none;
+    padding: 12px;
+}
+
+/* INPUTS */
+input, select {
+    border-radius: 8px !important;
+    padding: 10px;
+}
+
+/* LOGIN PAGE */
+.login-box {
+    width: 350px;
+    margin: 100px auto;
+    padding: 30px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border-radius: 15px;
+    text-align: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .card-box {
+        margin-bottom: 15px;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+}
