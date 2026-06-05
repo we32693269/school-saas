@@ -1,9 +1,16 @@
-from flask import Flask, request, redirect, render_template, session
-import sqlite3
 import os
+import sqlite3
+from flask import Flask, render_template, request, redirect, session
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
+app.secret_key = "secret123"
+
+# =========================
+# UPLOAD CONFIG
+# =========================
 app.config["UPLOAD_FOLDER"] = "static/uploads"
-app.secret_key = "school_secret_key"
+
 # =========================
 # DATABASE SETUP
 # =========================
@@ -15,7 +22,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        class_name TEXT,
+        class TEXT,
         age INTEGER,
         gender TEXT,
         photo TEXT
@@ -28,25 +35,17 @@ def init_db():
 init_db()
 
 # =========================
-# LOGIN
+# LOGIN (SIMPLE)
 # =========================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        if username == "admin" and password == "1234":
-            session["user"] = username
-            return redirect("/home")
-        else:
-            return "Login Failed"
-
+        session["user"] = request.form["username"]
+        return redirect("/home")
     return render_template("login.html")
 
-
 # =========================
-# HOME
+# HOME DASHBOARD
 # =========================
 @app.route("/home")
 def home():
@@ -59,14 +58,10 @@ def home():
     cursor.execute("SELECT COUNT(*) FROM students")
     total_students = cursor.fetchone()[0]
 
-    cursor.execute(
-        "SELECT COUNT(*) FROM students WHERE gender='Male'"
-    )
+    cursor.execute("SELECT COUNT(*) FROM students WHERE gender='Male'")
     total_males = cursor.fetchone()[0]
 
-    cursor.execute(
-        "SELECT COUNT(*) FROM students WHERE gender='Female'"
-    )
+    cursor.execute("SELECT COUNT(*) FROM students WHERE gender='Female'")
     total_females = cursor.fetchone()[0]
 
     conn.close()
@@ -77,27 +72,10 @@ def home():
         total_males=total_males,
         total_females=total_females
     )
-#================ SEARCH ===============
-@app.route("/search")
-def search():
-    if "user" not in session:
-        return redirect("/")
 
-    query = request.args.get("q")
-
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT * FROM students
-        WHERE name LIKE ?
-    """, ('%' + query + '%',))
-
-    students = cursor.fetchall()
-    conn.close()
-
-    return render_template("list.html", students=students)
-#================ ADD STUDENT ================
+# =========================
+# ADD STUDENT (WITH PHOTO OPTIONAL)
+# =========================
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if "user" not in session:
@@ -105,17 +83,24 @@ def add():
 
     if request.method == "POST":
         name = request.form["name"]
-        class_name = request.form["class_name"]
+        class_name = request.form["class"]
         age = request.form["age"]
         gender = request.form["gender"]
+
+        photo = request.files.get("photo")
+        filename = None
+
+        if photo and photo.filename != "":
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
         conn = sqlite3.connect("school.db")
         cursor = conn.cursor()
 
         cursor.execute("""
-            INSERT INTO students (name, class_name, age, gender)
-            VALUES (?, ?, ?, ?)
-        """, (name, class_name, age, gender))
+            INSERT INTO students (name, class, age, gender, photo)
+            VALUES (?, ?, ?, ?, ?)
+        """, (name, class_name, age, gender, filename))
 
         conn.commit()
         conn.close()
@@ -125,10 +110,10 @@ def add():
     return render_template("add.html")
 
 # =========================
-# LIST STUDENTS
+# STUDENTS LIST
 # =========================
 @app.route("/list")
-def list_students():
+def student_list():
     if "user" not in session:
         return redirect("/")
 
@@ -142,78 +127,16 @@ def list_students():
 
     return render_template("list.html", students=students)
 
-
-# =========================
-# EDIT STUDENT
-# =========================
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit_student(id):
-    if "user" not in session:
-        return redirect("/")
-
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
-
-    if request.method == "POST":
-        name = request.form["name"]
-        class_name = request.form["class"]
-        age = request.form["age"]
-        gender = request.form["gender"]
-
-        cursor.execute("""
-            UPDATE students
-            SET name=?, class=?, age=?, gender=?
-            WHERE id=?
-        """, (name, class_name, age, gender, id))
-
-        conn.commit()
-        conn.close()
-
-        return redirect("/list")
-
-    cursor.execute(
-        "SELECT * FROM students WHERE id=?",
-        (id,)
-    )
-
-    student = cursor.fetchone()
-    conn.close()
-
-    return render_template(
-        "edit.html",
-        student=student
-    )
-
-# =========================
-# DELETE STUDENT
-# =========================
-@app.route("/delete/<int:id>")
-def delete_student(id):
-    if "user" not in session:
-        return redirect("/")
-
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM students WHERE id = ?", (id,))
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/list")
-
-
 # =========================
 # LOGOUT
 # =========================
 @app.route("/logout")
 def logout():
-    session.pop("user", None)
+    session.clear()
     return redirect("/")
 
-
 # =========================
-# RUN
+# RUN APP
 # =========================
 if __name__ == "__main__":
     app.run(debug=True)
