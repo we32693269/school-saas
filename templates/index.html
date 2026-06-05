@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>School System</title>
+</head>
+<body style="font-family:Arial; text-align:center;">
+
+  <h1>🏫 School Management System</h1>
+
+  <h2>📚 Students List</h2>
+
+  {% for s in students %}
+    <p>👨‍🎓 {{ s }}</p>
+  {% endfor %}
+
+  <h2>➕ Add Student</h2>
+
+  <input id="name" placeholder="Student Name">
+  <button onclick="addStudent()">Add</button>
+
+  <script>
+    function addStudent(){
+      let name = document.getElementById("name").value;
+      fetch("/add/" + name)
+      .then(res => res.text())
+      .then(() => location.reload());
+    }
+  </script>
+
+</body>
+</html>
