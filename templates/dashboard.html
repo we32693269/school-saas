@@ -3,169 +3,89 @@
 <head>
     <title>School Dashboard</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap
-        @5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/style.css">
-    <style>
-        body {
-            background: #f4f6f9;
-        }
-
-        .card-box {
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 20px;
-            background: white;
-        }
-
-        .top-bar {
-            background: #111827;
-            color: white;
-            padding: 15px;
-        }
-
-        .title {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .badge-role {
-            background: #0d6efd;
-            padding: 5px 10px;
-            border-radius: 8px;
-        }
-    </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div class="top-bar d-flex justify-content-between align-items-center">
-    <div class="title">🏫 School Management System</div>
-
+<div class="top-bar">
+    <h3>🏫 School System</h3>
     <div>
-        Role:
-        <span class="badge-role">{{ role }}</span>
-        <a href="/logout" class="btn btn-danger btn-sm ms-3">Logout</a>
+        Role: {{ role }}
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
     </div>
 </div>
 
 <div class="container mt-4">
 
-    <div class="row">
+    <!-- ADD STUDENT -->
+    {% if role != "student" %}
+    <div class="card-box">
+        <h4>➕ Add Student</h4>
 
-        <!-- ADD STUDENT -->
-        {% if role != "student" %}
-        <div class="col-md-4">
-            <div class="card-box">
-                <h5>➕ Add Student</h5>
+        <form method="POST">
+            <input name="name" class="form-control mb-2" placeholder="Name">
+            <input name="age" class="form-control mb-2" placeholder="Age">
+            <input name="grade" class="form-control mb-2" placeholder="Grade">
 
-                <form method="POST">
-                    <input name="name" class="form-control mb-2" placeholder="Student Name">
-                    <button class="btn btn-success w-100">Add</button>
-                </form>
-            </div>
-        </div>
-        {% endif %}
+            <button class="btn btn-success w-100">Add</button>
+        </form>
+    </div>
+    {% endif %}
 
-        <!-- STUDENTS -->
-        <div class="col-md-8">
-            <div class="card-box">
-                <h5>📚 Students</h5>
+    <!-- STUDENTS TABLE -->
+    <div class="card-box mt-4">
+        <h4>📚 Students List</h4>
 
-                <table class="table">
-                    <tr>
-                        <th>Name</th>
-                        <th>Report</th>
-                        {% if role == "admin" %}
-                        <th>Action</th>
-                        {% endif %}
-                    </tr>
+        <table class="table table-hover">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Grade</th>
+                <th>Attendance</th>
+                <th>Actions</th>
+            </tr>
 
-                    {% for s in students %}
-                    <tr>
-                        <td>{{ s }}</td>
-                        <td>
-                            <a href="/report/{{ s }}" class="btn btn-primary btn-sm">
-                                View
-                            </a>
-                        </td>
-
-                        {% if role == "admin" %}
-                        <td>
-                            <a href="/delete/{{ s }}" class="btn btn-danger btn-sm">
-                                Delete
-                            </a>
-                        </td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </table>
-
-            </div>
-        </div>
-
+            {% for s in students %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.age }}</td>
+                <td>{{ s.grade }}</td>
+                <td>
+                    <span class="badge bg-success">{{ s.attendance }}</span>
+                </td>
+                <td>
+                    <a href="/delete/{{ s.id }}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 
-    <div class="row mt-4">
+    <!-- ATTENDANCE UPDATE -->
+    {% if role != "student" %}
+    <div class="card-box mt-4">
+        <h4>📅 Update Attendance</h4>
 
-        <!-- GRADES -->
-        {% if role != "student" %}
-        <div class="col-md-6">
-            <div class="card-box">
-                <h5>📊 Grades</h5>
+        <form method="POST">
 
-                <form method="POST" class="mb-3">
-                    <input name="grade_name" class="form-control mb-2" placeholder="Student Name">
-                    <input name="grade_value" class="form-control mb-2" placeholder="Grade (A,B,C)">
-                    <button class="btn btn-primary w-100">Save Grade</button>
-                </form>
+            <input name="attendance_id" class="form-control mb-2" placeholder="Student ID">
 
-                <ul class="list-group">
-                    {% for name, grade in grades.items() %}
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>{{ name }}</span>
-                        <span class="badge bg-success">{{ grade }}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-        {% endif %}
+            <select name="attendance_status" class="form-control mb-2">
+                <option>Present</option>
+                <option>Absent</option>
+                <option>Late</option>
+            </select>
 
-        <!-- ATTENDANCE -->
-        {% if role != "student" %}
-        <div class="col-md-6">
-            <div class="card-box">
-                <h5>📅 Attendance</h5>
+            <button class="btn btn-primary w-100">Update</button>
 
-                <form method="POST" class="mb-3">
-                    <input name="attendance_name" class="form-control mb-2" placeholder="Student Name">
-
-                    <select name="attendance_status" class="form-control mb-2">
-                        <option>Present</option>
-                        <option>Absent</option>
-                        <option>Late</option>
-                    </select>
-
-                    <button class="btn btn-success w-100">Save Attendance</button>
-                </form>
-
-                <ul class="list-group">
-                    {% for name, status in attendance.items() %}
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>{{ name }}</span>
-                        <span class="badge bg-primary">{{ status }}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-
-            </div>
-        </div>
-        {% endif %}
-
+        </form>
     </div>
+    {% endif %}
 
 </div>
 
