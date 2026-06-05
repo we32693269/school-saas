@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>School Dashboard</h2>
+    <a href="/logout">Logout</a>
+</div>
+
+<!-- SEARCH -->
+<div class="search-box">
+    <input type="text" placeholder="Search student...">
+    <button>Search</button>
+</div>
+
+<!-- CARDS -->
+<div class="container">
+
+    <div class="card">
+        <h3>Total Students</h3>
+        <h1>{{ total_students }}</h1>
+    </div>
+
+    <div class="card">
+        <h3>Total Boys</h3>
+        <h1>{{ total_males }}</h1>
+    </div>
+
+    <div class="card">
+        <h3>Total Girls</h3>
+        <h1>{{ total_females }}</h1>
+    </div>
+
+    <div class="card">
+        <h3>Add Student</h3>
+        <p>Register new student</p>
+        <a href="/add">Go</a>
+    </div>
+
+    <div class="card">
+        <h3>Students List</h3>
+        <p>View all students</p>
+        <a href="/list">Go</a>
+    </div>
+
+</div>
+
+</body>
+</html>
