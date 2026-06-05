@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, render_template, session
 import sqlite3
 import os
 app = Flask(__name__)
+app.config["UPLOAD_FOLDER"] = "static/uploads"
 app.secret_key = "school_secret_key"
 # =========================
 # DATABASE SETUP
