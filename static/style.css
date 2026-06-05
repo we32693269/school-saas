@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #f1f4f9;
+    background: #eef2f7;
 }
 
 /* NAVBAR */
@@ -22,7 +22,7 @@ body {
     background: #e74c3c;
     color: white;
     padding: 8px 15px;
-    border-radius: 5px;
+    border-radius: 6px;
     text-decoration: none;
 }
 
@@ -35,8 +35,8 @@ body {
 .search-box input {
     padding: 10px;
     width: 250px;
+    border-radius: 6px;
     border: 1px solid #ccc;
-    border-radius: 5px;
 }
 
 .search-box button {
@@ -44,7 +44,7 @@ body {
     background: #3498db;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
 }
 
 /* DASHBOARD CARDS */
@@ -55,12 +55,13 @@ body {
     padding: 20px;
 }
 
+/* CARD STYLE */
 .card {
     background: white;
-    padding: 20px;
-    border-radius: 12px;
+    padding: 25px;
+    border-radius: 15px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     transition: 0.3s;
 }
 
@@ -68,64 +69,33 @@ body {
     transform: translateY(-5px);
 }
 
-.card h1 {
-    color: #3498db;
+.card h3 {
+    color: #333;
 }
 
-/* BUTTON */
+.card h1 {
+    color: #2ecc71;
+    font-size: 30px;
+}
+
+/* LINKS BUTTON */
 .card a {
     display: inline-block;
     margin-top: 10px;
     padding: 10px 15px;
     background: #2ecc71;
     color: white;
-    border-radius: 5px;
+    border-radius: 6px;
     text-decoration: none;
 }
 
-/* FORM */
-form {
-    text-align: center;
-    margin-top: 30px;
-}
+/* MOBILE */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
 
-input, select {
-    width: 250px;
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    padding: 10px 20px;
-    background: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* TABLE */
-table {
-    width: 90%;
-    margin: 20px auto;
-    border-collapse: collapse;
-    background: white;
-}
-
-th {
-    background: #1e2a38;
-    color: white;
-    padding: 10px;
-}
-
-td {
-    text-align: center;
-    padding: 10px;
-    border: 1px solid #ddd;
-}
-
-tr:nth-child(even) {
-    background: #f9f9f9;
+    .search-box input {
+        width: 80%;
+    }
 }
