@@ -1,16 +1,29 @@
 from flask import Flask, render_template, request, redirect, session
-
+import sqlite3
 app = Flask(__name__)
 app.secret_key = "school_secret"
 
+def init_db():
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        age TEXT,
+        grade TEXT,
+        attendance TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
 # ---------------- DATA ----------------
 students = [
-    {"id": 1, "name": "Abebe", "age": 16, "grade": "10", "attendance": "Present"}
-]
-
-next_id = 2
-
-USERS = {
+    USERS = {
     "admin": {"password": "1234", "role": "admin"},
     "teacher": {"password": "1234", "role": "teacher"},
     "student": {"password": "1234", "role": "student"}
