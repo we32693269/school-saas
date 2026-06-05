@@ -1,26 +1,36 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
+app.secret_key = "school123"
 
-# simple database (temporary memory)
-students = ["Abebe", "Selam", "Daniel"]
+# demo user (admin)
+USER = "admin"
+PASS = "1234"
 
 @app.route('/')
 def home():
-    return render_template("index.html", students=students)
+    if "user" in session:
+        return render_template("dashboard.html")
+    return redirect('/login')
 
-@app.route('/add', methods=['POST'])
-def add_student():
-    name = request.form.get("name")
-    if name:
-        students.append(name)
-    return redirect(url_for('home'))
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
-@app.route('/delete/<name>')
-def delete_student(name):
-    if name in students:
-        students.remove(name)
-    return redirect(url_for('home'))
+        if username == USER and password == PASS:
+            session["user"] = username
+            return redirect('/')
+        else:
+            return "❌ Wrong username or password"
+
+    return render_template("login.html")
+
+@app.route('/logout')
+def logout():
+    session.pop("user", None)
+    return redirect('/login')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
