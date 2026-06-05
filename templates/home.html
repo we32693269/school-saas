@@ -1,47 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="navbar">
-        <h2>School Dashboard</h2>
-        <a href="/logout">Logout</a>
-    </div>
-<form action="/search" method="get" style="margin-top:20px;">
-    <input type="text" name="q" placeholder="Search student name...">
-    <button type="submit">Search</button>
-</form>
-     <div class="container">
-     <div class="card">
-     <h3>Total Students</h3>
-    <h1>{{ total_students }}</h1>
-   </div>
+    <title>School Dashboard</title>
 
-   <div class="card">
-    <h3>Total Boys</h3>
-    <h1>{{ total_males }}</h1>
-   </div>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>School Dashboard</h2>
+    <a href="/">Logout</a>
+</div>
+
+<div class="search-box">
+    <input type="text" placeholder="Search student name...">
+    <button>Search</button>
+</div>
+
+<div class="container">
 
     <div class="card">
-    <h3>Total Girls</h3>
-    <h1>{{ total_females }}</h1>
+        <h3>Total Students</h3>
+        <h1>{{ total_students }}</h1>
     </div>
 
-        <div class="card">
-            <h3>Add Student</h3>
-            <p>Register new students</p>
-            <a href="/add">Go</a>
-        </div>
-
-        <div class="card">
-            <h3>Students List</h3>
-            <p>View all students</p>
-            <a href="/list">Go</a>
-        </div>
-
+    <div class="card">
+        <h3>Total Boys</h3>
+        <h1>{{ boys }}</h1>
     </div>
+
+    <div class="card">
+        <h3>Total Girls</h3>
+        <h1>{{ girls }}</h1>
+    </div>
+
+    <div class="card">
+        <h3>Add Student</h3>
+        <p>Register new students</p>
+        <a href="/add">Go</a>
+    </div>
+
+    <div class="card">
+        <h3>Students List</h3>
+        <p>View all students</p>
+        <a href="/list">Go</a>
+    </div>
+
+</div>
 
 </body>
 </html>
