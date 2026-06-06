@@ -77,9 +77,9 @@ def dashboard():
 
       file = request.files.get('photo')
 
-filename = ""
+     filename = ""
 
-if file and file.filename != "":
+    if file and file.filename != "":
     file.seek(0, 2)
     size = file.tell()
     file.seek(0)
