@@ -69,7 +69,7 @@ def login():
 def dashboard():
 
     if "user" not in session:
-        return redirect('/login')
+    return redirect('/login')
 
     role = session['role']
 
