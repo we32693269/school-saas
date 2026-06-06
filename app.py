@@ -4,7 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = "school_secret"
-
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 # Create database and table
 def init_db():
     conn = sqlite3.connect("school.db")
