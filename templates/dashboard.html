@@ -61,10 +61,11 @@
     <div class="card-box">
         <h4>➕ Add Student</h4>
 
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <input name="name" class="form-control mb-2" placeholder="Name">
             <input name="age" class="form-control mb-2" placeholder="Age">
             <input name="grade" class="form-control mb-2" placeholder="Grade">
+            <input type="file" name="photo" class="form-control mb-2">
 
             <button class="btn btn-success w-100">Add</button>
         </form>
