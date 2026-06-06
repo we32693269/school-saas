@@ -139,6 +139,41 @@ def search():
         conn.close()
 
     return render_template("search.html", students=students, role=role)  
+#============= LIVE-SEARCH =================
+@app.route('/live-search')
+def live_search():
+
+    if "user" not in session:
+        return redirect('/login')
+
+    keyword = request.args.get('q', '')
+
+    conn = sqlite3.connect("school.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT * FROM students
+    WHERE name LIKE ?
+    """, ('%' + keyword + '%',))
+
+    students = cursor.fetchall()
+    conn.close()
+
+    results = ""
+
+    for s in students:
+        results += f"""
+        <tr>
+            <td>{s['id']}</td>
+            <td>{s['name']}</td>
+            <td>{s['age']}</td>
+            <td>{s['grade']}</td>
+            <td>{s['attendance']}</td>
+        </tr>
+        """
+
+    return results
 #================ EDIT ================
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
