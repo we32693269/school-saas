@@ -75,7 +75,7 @@ def dashboard():
     # ➕ ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
 
- file = request.files.get('photo')
+      file = request.files.get('photo')
 
 filename = ""
 
