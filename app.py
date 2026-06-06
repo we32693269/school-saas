@@ -5,7 +5,6 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "school_secret"
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
