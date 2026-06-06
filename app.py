@@ -57,44 +57,47 @@ def login():
 # ---------------- DASHBOARD ----------------
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+
     if "user" not in session:
         return redirect('/login')
 
     role = session['role']
-    global next_id
-conn = sqlite3.connect("school.db")
-conn.row_factory = sqlite3.Row
 
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM students")
-
-students = cursor.fetchall()
-
-conn.close()
-
-    # ➕ ADD STUDENT
+    # ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
-        if role in ["admin", "teacher"]:
-            students.append({
-                "id": next_id,
-                "name": request.form['name'],
-                "age": request.form.get('age', "N/A"),
-                "grade": request.form.get('grade', "N/A"),
-                "attendance": "Present"
-            })
-            next_id += 1
 
-    # 📅 UPDATE ATTENDANCE
-    if request.method == 'POST' and "attendance_id" in request.form:
-        if role in ["admin", "teacher"]:
-            sid = int(request.form['attendance_id'])
-            status = request.form['attendance_status']
+        conn = sqlite3.connect("school.db")
+        cursor = conn.cursor()
 
-            for s in students:
-                if s["id"] == sid:
-                    s["attendance"] = status
+        cursor.execute("""
+        INSERT INTO students(name, age, grade, attendance)
+        VALUES (?, ?, ?, ?)
+        """, (
+            request.form['name'],
+            request.form['age'],
+            request.form['grade'],
+            "Present"
+        ))
 
-    return render_template("dashboard.html", students=students, role=role)
+        conn.commit()
+        conn.close()
+
+    # LOAD STUDENTS
+    conn = sqlite3.connect("school.db")
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM students")
+
+    students = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "dashboard.html",
+        students=students,
+        role=role
+    )
 #================ EDIT ================
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
