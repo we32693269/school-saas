@@ -75,35 +75,46 @@ def dashboard():
     # ➕ ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
 
-      file = request.files.get('photo')
+    file = request.files.get('photo')
 
-     filename = none
+    filename = ""
 
     if file and file.filename != "":
-    file.seek(0, 2)
-    size = file.tell()
-    file.seek(0)
 
-    if size <= 5 * 1024 * 1024:
+        # 📷 Check size (16MB)
+        file.seek(0, 2)
+        size = file.tell()
+        file.seek(0)
+
+        if size > 16 * 1024 * 1024:
+            return "Photo size must be less than 16MB"
+
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        conn = sqlite3.connect("school.db")
-        cursor = conn.cursor()
+        file.save(
+            os.path.join(
+                app.config['UPLOAD_FOLDER'],
+                filename
+            )
+        )
 
-        cursor.execute("""
-        INSERT INTO students(name, age, grade, attendance, photo)
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO students
+        (name, age, grade, attendance, photo)
         VALUES (?, ?, ?, ?, ?)
-        """, (
-            request.form['name'],
-            request.form['age'],
-            request.form['grade'],
-            "Present",
-            filename
-        ))
+    """, (
+        request.form['name'],
+        request.form['age'],
+        request.form['grade'],
+        "Present",
+        filename
+    ))
 
-        conn.commit()
-        conn.close()
+    conn.commit()
+    conn.close()
 
     # 📚 LOAD STUDENTS
     conn = sqlite3.connect("school.db")
