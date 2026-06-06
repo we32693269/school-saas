@@ -2,27 +2,49 @@
 <html>
 <head>
     <title>School Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .top-bar {
+            background: #111827;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
 
+<!-- TOP BAR -->
 <div class="top-bar">
     <h3>🏫 School System</h3>
+
     <div>
         Role: {{ role }}
-        <a href="/search" class="btn btn-info btn-sm">Search</a>
         <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
     </div>
 </div>
 
 <div class="container mt-4">
 
-    <!-- 📊 STATS CARDS -->
-    <div class="row mb-4">
+    <!-- STATS -->
+    <div class="row">
 
         <div class="col-md-4">
             <div class="card-box text-center">
@@ -46,104 +68,67 @@
         </div>
 
     </div>
-    <div class="card-box mt-4">
-    
-</div>
-    <h4>📊 Attendance Chart</h4>
-<div style="max-width:350px; margin:auto;">
-    <canvas id="attendanceChart"></canvas>
-</div>
-    
-</div>
 
-    <!-- ➕ ADD STUDENT -->
+    <!-- ADD STUDENT -->
     {% if role != "student" %}
     <div class="card-box">
         <h4>➕ Add Student</h4>
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST">
+
             <input name="name" class="form-control mb-2" placeholder="Name">
             <input name="age" class="form-control mb-2" placeholder="Age">
             <input name="grade" class="form-control mb-2" placeholder="Grade">
-            <input type="file" name="photo" class="form-control mb-2">
 
-            <button class="btn btn-success w-100">Add</button>
+            <button class="btn btn-success w-100">Add Student</button>
+
         </form>
     </div>
     {% endif %}
 
-    <!-- 📚 STUDENTS TABLE -->
-    <div class="card-box mt-4">
+    <!-- STUDENTS TABLE -->
+    <div class="card-box">
         <h4>📚 Students List</h4>
 
-        <table class="table table-hover">
-            <tr>
-                <th>ID</th>
-                <th>Photo</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>Attendance</th>
-                <th>Actions</th>
-            </tr>
+        <table class="table table-bordered table-hover mt-3">
 
-            {% for s in students %}
-            <tr>
-                <td>{{ s.id }}</td>
-                <td>
-                    {% if s.photo %}
-                        <img src="/static/uploads/
-            {{ s.photo }}" width="50" height="50" 
-            style="border-radius:50%;">
-                    {% else %}
-                       No Image
-                    {% endif %}
-                </td>
-                <td>{{ s.name }}</td>
-                <td>{{ s.age }}</td>
-                <td>{{ s.grade }}</td>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Grade</th>
+                    <th>Attendance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
 
-                <td>
-                    <span class="badge bg-success">
-                        {{ s.attendance }}
-                    </span>
-                </td>
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.age }}</td>
+                    <td>{{ s.grade }}</td>
 
-                <td>
-                    <a href="/edit/{{ s.id }}" class="btn btn-warning btn-sm">
-                        Edit
-                    </a>
+                    <td>
+                        <span class="badge bg-success">
+                            {{ s.attendance }}
+                        </span>
+                    </td>
 
-                    <a href="/delete/{{ s.id }}" class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
+                    <td>
+                        <a href="/edit/{{ s.id }}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="/delete/{{ s.id }}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
 
         </table>
     </div>
-    <script>
-const ctx = document.getElementById('attendanceChart');
 
-
-  new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['Present', 'Absent'],
-        datasets: [{
-            data: [
-                {{ present_count }},
-                {{ absent_count }}
-            ],
-            backgroundColor: [
-                '#22c55e',
-                '#ef4444'
-            ]
-        }]
-    }
-});      
-</script>
+</div>
 
 </body>
 </html>
