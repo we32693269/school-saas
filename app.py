@@ -18,6 +18,10 @@ def init_db():
         attendance TEXT
     )
     """)
+    try:
+    cursor.execute("ALTER TABLE students ADD COLUMN photo TEXT")
+except:
+    pass
 
     conn.commit()
     conn.close()
