@@ -4,7 +4,8 @@ import os
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = "school_secret"
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 # Create database and table
 def init_db():
