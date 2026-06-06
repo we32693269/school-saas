@@ -87,9 +87,6 @@ if request.method == 'POST' and "name" in request.form:
         size = file.tell()
         file.seek(0)
 
-        if size > 16 * 1024 * 1024:
-        return "Photo size must be less than 16MB"
-
         filename = secure_filename(file.filename)
 
         file.save(
