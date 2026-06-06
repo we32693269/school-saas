@@ -90,24 +90,28 @@ def dashboard():
     cursor.execute("SELECT * FROM students")
 
     students = cursor.fetchall()
+
     total_students = len(students)
 
-present_count = sum(
-    1 for s in students
-    if s["attendance"] == "Present"
-)
+    present_count = sum(
+        1 for s in students
+        if s["attendance"] == "Present"
+    )
 
-absent_count = sum(
-    1 for s in students
-    if s["attendance"] == "Absent"
-)
+    absent_count = sum(
+        1 for s in students
+        if s["attendance"] == "Absent"
+    )
 
     conn.close()
 
     return render_template(
         "dashboard.html",
         students=students,
-        role=role
+        role=role,
+        total_students=total_students,
+        present_count=present_count,
+        absent_count=absent_count
     )
 #================ EDIT ================
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
