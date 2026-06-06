@@ -15,8 +15,6 @@
 </form>
 
 <hr>
-<a href="/dashboard" class="btn btn-secondary mt-3">
-    ⬅ Back to Home
 <table class="table table-bordered"
     <tr>
         <th>ID</th>
@@ -26,6 +24,8 @@
         <th>Attendance</th>
     </tr>
 </a>
+    <a href="/dashboard" class="btn btn-secondary mt-3">
+    ⬅ Back to Home
 {% for s in students %}
     <tr>
         <td>{{ s.id }}</td>
