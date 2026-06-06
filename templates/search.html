@@ -15,7 +15,9 @@
 </form>
 
 <hr>
-<table class="table table-bordered"
+
+<table class="table table-bordered">
+
     <tr>
         <th>ID</th>
         <th>Name</th>
@@ -23,8 +25,8 @@
         <th>Grade</th>
         <th>Attendance</th>
     </tr>
-</a>
-{% for s in students %}
+
+    {% for s in students %}
     <tr>
         <td>{{ s.id }}</td>
         <td>{{ s.name }}</td>
@@ -33,9 +35,13 @@
         <td>{{ s.attendance }}</td>
     </tr>
     {% endfor %}
+
 </table>
+
+<!-- BACK BUTTON -->
 <a href="/dashboard" class="btn btn-secondary mt-3">
     ⬅ Back to Home
 </a>
+
 </body>
 </html>
