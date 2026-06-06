@@ -89,14 +89,16 @@
 
             {% for s in students %}
             <tr>
-               <td>
-    {% if s.photo %}
-        <img src="/static/uploads/{{ s.photo }}" width="50" height="50" style="border-radius:50%;">
-    {% else %}
-        No Image
-    {% endif %}
-</td> 
                 <td>{{ s.id }}</td>
+                <td>
+                    {% if s.photo %}
+                        <img src="/static/uploads/
+            {{ s.photo }}" width="50" height="50" 
+            style="border-radius:50%;">
+                    {% else %}
+                       No Image
+                    {% endif %}
+                </td>
                 <td>{{ s.name }}</td>
                 <td>{{ s.age }}</td>
                 <td>{{ s.grade }}</td>
