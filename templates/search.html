@@ -7,34 +7,27 @@
 
 <body class="container mt-4">
 
-<h2>🔍 Search Student</h2>
+<h2>🔍 Live Search Student</h2>
 
-<form method="POST">
-    <input name="keyword" class="form-control mb-2" placeholder="Enter student name">
-    <button class="btn btn-primary w-100">Search</button>
-</form>
+<!-- LIVE SEARCH INPUT -->
+<input type="text" id="searchBox" class="form-control mb-3" placeholder="Type student name...">
 
 <hr>
 
+<!-- RESULTS TABLE -->
 <table class="table table-bordered">
 
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Grade</th>
-        <th>Attendance</th>
-    </tr>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Grade</th>
+            <th>Attendance</th>
+        </tr>
+    </thead>
 
-    {% for s in students %}
-    <tr>
-        <td>{{ s.id }}</td>
-        <td>{{ s.name }}</td>
-        <td>{{ s.age }}</td>
-        <td>{{ s.grade }}</td>
-        <td>{{ s.attendance }}</td>
-    </tr>
-    {% endfor %}
+    <tbody id="results"></tbody>
 
 </table>
 
@@ -42,6 +35,24 @@
 <a href="/dashboard" class="btn btn-secondary mt-3">
     ⬅ Back to Home
 </a>
+
+<!-- LIVE SEARCH SCRIPT -->
+<script>
+let box = document.getElementById("searchBox");
+let results = document.getElementById("results");
+
+box.addEventListener("keyup", function () {
+
+    let query = box.value;
+
+    fetch("/live-search?q=" + query)
+        .then(response => response.text())
+        .then(data => {
+            results.innerHTML = data;
+        });
+
+});
+</script>
 
 </body>
 </html>
