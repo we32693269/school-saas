@@ -90,6 +90,17 @@ def dashboard():
     cursor.execute("SELECT * FROM students")
 
     students = cursor.fetchall()
+    total_students = len(students)
+
+present_count = sum(
+    1 for s in students
+    if s["attendance"] == "Present"
+)
+
+absent_count = sum(
+    1 for s in students
+    if s["attendance"] == "Absent"
+)
 
     conn.close()
 
