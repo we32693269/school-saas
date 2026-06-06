@@ -42,18 +42,23 @@ USERS = {
 def login():
 
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
 
-        if username in USERS and USERS[username]["password"] == password:
-            session['user'] = username
-            session['role'] = USERS[username]["role"]
-            return redirect('/dashboard')
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-        return "Invalid login"
+        # ✅ safe check
+        if username and password:
+
+            if username in USERS and USERS[username]["password"] == password:
+
+                session['user'] = username
+                session['role'] = USERS[username]["role"]
+
+                return redirect('/dashboard')
+
+        return "Invalid login ❌"
 
     return render_template("login.html")
-
 # ======================
 # DASHBOARD
 # ======================
