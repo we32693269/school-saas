@@ -67,51 +67,47 @@ def login():
 # ---------------- DASHBOARD ----------------
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+
     if "user" not in session:
-           return redirect('/login')
+        return redirect('/login')
 
     role = session['role']
 
-    # ➕ ADD STUDENTS
-if request.method == 'POST' and "name" in request.form:
+    # ➕ ADD STUDENT
+    if request.method == 'POST' and "name" in request.form:
 
-    file = request.files.get('photo')
+        file = request.files.get('photo')
 
-    filename = ""
+        filename = ""
 
-    if file and file.filename != "":
+        if file and file.filename != "":
 
-        # 📷 Check size (16MB)
-        file.seek(0, 2)
-        size = file.tell()
-        file.seek(0)
+            file.seek(0, 2)
+            size = file.tell()
+            file.seek(0)
 
-        filename = secure_filename(file.filename)
+            if size <= 16 * 1024 * 1024:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        file.save(
-            os.path.join(
-                app.config['UPLOAD_FOLDER'],
-                filename
-            )
-        )
+        conn = sqlite3.connect("school.db")
+        cursor = conn.cursor()
 
-    conn = sqlite3.connect("school.db")
-    cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO students
+            (name, age, grade, attendance, photo)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            request.form['name'],
+            request.form['age'],
+            request.form['grade'],
+            "Present",
+            filename
+        ))
 
-    cursor.execute("""
-        INSERT INTO students
-        (name, age, grade, attendance, photo)
-        VALUES (?, ?, ?, ?, ?)
-    """, (
-        request.form['name'],
-        request.form['age'],
-        request.form['grade'],
-        "Present",
-        filename
-    ))
+        conn.commit()
+        conn.close()
 
-    conn.commit()
-    conn.close()
     # 📚 LOAD STUDENTS
     conn = sqlite3.connect("school.db")
     conn.row_factory = sqlite3.Row
@@ -119,19 +115,16 @@ if request.method == 'POST' and "name" in request.form:
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM students")
     students = cursor.fetchall()
-
     conn.close()
 
     total_students = len(students)
 
     present_count = sum(
-        1 for s in students
-        if s["attendance"] == "Present"
+        1 for s in students if s["attendance"] == "Present"
     )
 
     absent_count = sum(
-        1 for s in students
-        if s["attendance"] == "Absent"
+        1 for s in students if s["attendance"] == "Absent"
     )
 
     return render_template(
