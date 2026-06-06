@@ -101,26 +101,46 @@ def dashboard():
 #================ EDIT ================
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
+
     if "user" not in session:
         return redirect('/login')
 
-    student = None
-
-    for s in students:
-        if s["id"] == id:
-            student = s
-            break
+    conn = sqlite3.connect("school.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
 
     if request.method == 'POST':
-        if student:
-            student["name"] = request.form['name']
-            student["age"] = request.form['age']
-            student["grade"] = request.form['grade']
-            student["attendance"] = request.form['attendance']
+
+        cursor.execute("""
+        UPDATE students
+        SET name=?, age=?, grade=?, attendance=?
+        WHERE id=?
+        """, (
+            request.form['name'],
+            request.form['age'],
+            request.form['grade'],
+            request.form['attendance'],
+            id
+        ))
+
+        conn.commit()
+        conn.close()
 
         return redirect('/dashboard')
 
-    return render_template("edit.html", student=student)
+    cursor.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
+    student = cursor.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "edit.html",
+        student=student
+    )
 
 # ---------------- DELETE ----------------
 @app.route('/delete/<int:id>')
