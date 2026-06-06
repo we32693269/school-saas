@@ -71,13 +71,13 @@ def dashboard():
 
     role = session['role']
 
-    # 👇 THIS IS WHERE YOUR CODE GOES
+    # ➕ ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
 
-        file = request.files['photo']
+        file = request.files.get('photo')  # ✅ SAFE
 
-        filename = None
-        if file:
+        filename = ""
+        if file and file.filename != "":
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
@@ -97,6 +97,37 @@ def dashboard():
 
         conn.commit()
         conn.close()
+
+    # 📚 LOAD STUDENTS
+    conn = sqlite3.connect("school.db")
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+
+    conn.close()
+
+    total_students = len(students)
+
+    present_count = sum(
+        1 for s in students
+        if s["attendance"] == "Present"
+    )
+
+    absent_count = sum(
+        1 for s in students
+        if s["attendance"] == "Absent"
+    )
+
+    return render_template(
+        "dashboard.html",
+        students=students,
+        role=role,
+        total_students=total_students,
+        present_count=present_count,
+        absent_count=absent_count
+    )
 
     # ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
