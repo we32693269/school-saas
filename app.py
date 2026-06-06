@@ -75,14 +75,18 @@ def dashboard():
     # ➕ ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
 
-        file = request.files.get('photo')  # ✅ SAFE
+ file = request.files.get('photo')
 
-        filename = ""
-        if file and file.filename != "":
-            filename = secure_filename(file.filename)
-    if len(file.read()) < 5 * 1024 * 1024:
-        file.seek(0)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+filename = ""
+
+if file and file.filename != "":
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+
+    if size <= 5 * 1024 * 1024:
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         conn = sqlite3.connect("school.db")
         cursor = conn.cursor()
