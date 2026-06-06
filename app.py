@@ -72,8 +72,8 @@ def dashboard():
 
     role = session['role']
 
-    # ➕ ADD STUDENT
-    if request.method == 'POST' and "name" in request.form:
+    # ➕ ADD STUDENTS
+if request.method == 'POST' and "name" in request.form:
 
     file = request.files.get('photo')
 
@@ -115,7 +115,6 @@ def dashboard():
 
     conn.commit()
     conn.close()
-
     # 📚 LOAD STUDENTS
     conn = sqlite3.connect("school.db")
     conn.row_factory = sqlite3.Row
