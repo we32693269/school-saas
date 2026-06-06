@@ -4,6 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = "school_secret"
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 # Create database and table
 def init_db():
@@ -79,6 +80,8 @@ def dashboard():
         filename = ""
         if file and file.filename != "":
             filename = secure_filename(file.filename)
+            if len(file.read()) < 5 * 1024 * 1024:
+        file.seek(0)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         conn = sqlite3.connect("school.db")
