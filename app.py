@@ -77,7 +77,7 @@ def dashboard():
 
       file = request.files.get('photo')
 
-     filename = ""
+     filename = none
 
     if file and file.filename != "":
     file.seek(0, 2)
