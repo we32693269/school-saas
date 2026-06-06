@@ -115,7 +115,8 @@
     <script>
 const ctx = document.getElementById('attendanceChart');
 
-new Chart(ctx, {
+
+  new Chart(ctx, {
     type: 'pie',
     data: {
         labels: ['Present', 'Absent'],
@@ -123,13 +124,14 @@ new Chart(ctx, {
             data: [
                 {{ present_count }},
                 {{ absent_count }}
+            ],
+            backgroundColor: [
+                '#22c55e',
+                '#ef4444'
             ]
         }]
-    },
-    options: {
-        responsive: true
     }
-});
+});      
 </script>
 
 </body>
