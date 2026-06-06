@@ -118,3 +118,12 @@ input, select {
         font-size: 14px;
     }
 }
+.card-box h2{
+    font-size: 40px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.card-box h5{
+    color: #666;
+}
