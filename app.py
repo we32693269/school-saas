@@ -18,17 +18,15 @@ def init_db():
         attendance TEXT
     )
     """)
-conn = sqlite3.connect("school.db")
-cursor = conn.cursor()
 
-try:
-    cursor.execute("ALTER TABLE students ADD COLUMN photo TEXT")
-except:
-    pass
+    # 👇 add photo column safely
+    try:
+        cursor.execute("ALTER TABLE students ADD COLUMN photo TEXT")
+    except:
+        pass
 
-conn.commit()
-conn.close()
-
+    conn.commit()
+    conn.close()
 
 
 # Run database setup
