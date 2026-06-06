@@ -10,8 +10,9 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # ✅ THEN create folder
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+app.config['UPLOAD_FOLDER']
 
+            
 # Create database and table
 def init_db():
     conn = sqlite3.connect("school.db")
