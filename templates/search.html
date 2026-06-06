@@ -24,8 +24,10 @@
         <th>Grade</th>
         <th>Attendance</th>
     </tr>
-
-    {% for s in students %}
+    <a href="/dashboard" class="btn btn-secondary mt-3">
+    ⬅ Back to Home
+</a>
+{% for s in students %}
     <tr>
         <td>{{ s.id }}</td>
         <td>{{ s.name }}</td>
