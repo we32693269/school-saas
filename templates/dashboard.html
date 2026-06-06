@@ -1,10 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>School Dashboard</title>
+</head>
+<body>
+
 <h1>📊 School Dashboard</h1>
 
-<p>Welcome Admin 🎉</p>
+<p>Welcome Admin 👋</p>
+
+<hr>
+
+<!-- ➕ ADD STUDENT -->
+<h3>➕ Add Student</h3>
+
+<form action="/add_student" method="POST">
+    <input type="text" name="name" placeholder="Student Name" required><br><br>
+    <input type="number" name="age" placeholder="Age" required><br><br>
+    <button type="submit">Add Student</button>
+</form>
+
+<hr>
+
+<!-- 📋 STUDENT LIST -->
+<h3>📋 Students List</h3>
 
 <ul>
-    <li>Students: 0</li>
-    <li>Teachers: 0</li>
+    {% if students %}
+        {% for s in students %}
+            <li>👨‍🎓 {{ s[1] }} - {{ s[2] }} years old</li>
+        {% endfor %}
+    {% else %}
+        <li>No students yet ❌</li>
+    {% endif %}
 </ul>
 
+<hr>
+
+<!-- 🚪 LOGOUT -->
 <a href="/">Logout</a>
+
+</body>
+</html>
