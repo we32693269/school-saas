@@ -70,6 +70,31 @@ def dashboard():
         return redirect('/login')
 
     role = session['role']
+    if request.method == 'POST' and "name" in request.form:
+
+    file = request.files['photo']
+
+    filename = None
+    if file:
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO students(name, age, grade, attendance, photo)
+    VALUES (?, ?, ?, ?, ?)
+    """, (
+        request.form['name'],
+        request.form['age'],
+        request.form['grade'],
+        "Present",
+        filename
+    ))
+
+    conn.commit()
+    conn.close()
 
     # ADD STUDENT
     if request.method == 'POST' and "name" in request.form:
