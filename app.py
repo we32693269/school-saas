@@ -62,8 +62,7 @@ def dashboard():
 
     role = session['role']
     global next_id
-    
-    conn = sqlite3.connect("school.db")
+conn = sqlite3.connect("school.db")
 conn.row_factory = sqlite3.Row
 
 cursor = conn.cursor()
