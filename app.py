@@ -126,6 +126,9 @@ def edit(id):
 @app.route('/delete/<int:id>')
 def delete(id):
 
+    if "user" not in session:
+        return redirect('/login')
+
     conn = sqlite3.connect("school.db")
     cursor = conn.cursor()
 
