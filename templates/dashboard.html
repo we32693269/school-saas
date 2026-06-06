@@ -24,6 +24,22 @@
 
 <!-- 📋 STUDENTS LIST -->
 <h3>📋 Students List</h3>
+    <h3>Students List</h3>
+
+<ul>
+    {% for s in students %}
+        <li>
+            👨‍🎓 {{ s[1] }} - {{ s[2] }}
+
+            <a href="/edit_student/{{ s[0] }}">✏️ Edit</a>
+
+            <a href="/delete_student/{{ s[0] }}"
+               onclick="return confirm('Are you sure?')">
+               🗑 Delete
+            </a>
+        </li>
+    {% endfor %}
+</ul>
 
 <ul>
     {% for s in students %}
