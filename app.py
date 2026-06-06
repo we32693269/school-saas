@@ -125,11 +125,20 @@ def edit(id):
 # ---------------- DELETE ----------------
 @app.route('/delete/<int:id>')
 def delete(id):
-    if "user" in session and session['role'] == "admin":
-        global students
-        students = [s for s in students if s["id"] != id]
+
+    conn = sqlite3.connect("school.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM students WHERE id=?",
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
 
     return redirect('/dashboard')
+
 
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
