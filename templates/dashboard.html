@@ -101,26 +101,6 @@
 
         </table>
     </div>
-    
-<!-- 📅 ATTENDANCE UPDATE -->
-    {% if role != "student" %}
-    <div class="card-box mt-4">
-        <h4>📅 Update Attendance</h4>
-        <form method="POST">
-            <input name="attendance_id" class="form-control mb-2" placeholder="Student ID">
-
-            <select name="attendance_status" class="form-control mb-2">
-                <option>Present</option>
-                <option>Absent</option>
-                <option>Late</option>
-            </select>
-
-            <button class="btn btn-primary w-100">Update</button>
-        </form>
-    </div>
-    {% endif %}
-
-</div>
 
 </body>
 </html>
