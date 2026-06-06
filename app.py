@@ -74,6 +74,27 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
+#============== EDIT STUDENT ==============
+@app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
+def edit_student(id):
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    if request.method == 'POST':
+        name = request.form['name']
+        age = request.form['age']
+
+        c.execute("UPDATE students SET name=?, age=? WHERE id=?", (name, age, id))
+        conn.commit()
+        conn.close()
+
+        return redirect('/dashboard')
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+    conn.close()
+
+    return render_template('edit_student.html', student=student)
 #============ DELETE STUDENT ===============
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
