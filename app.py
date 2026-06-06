@@ -80,7 +80,7 @@ def dashboard():
         filename = ""
         if file and file.filename != "":
             filename = secure_filename(file.filename)
-            if len(file.read()) < 5 * 1024 * 1024:
+        if len(file.read()) < 5 * 1024 * 1024:
         file.seek(0)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
