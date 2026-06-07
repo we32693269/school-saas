@@ -98,11 +98,17 @@ def edit_student(id):
     if request.method == 'POST':
         name = request.form['name']
         age = request.form['age']
+        fee = request.form['fee']
+        paid = request.form['paid']
 
-        c.execute("UPDATE students SET name=?, age=? WHERE id=?", (name, age, id))
+        c.execute("""
+            UPDATE students 
+            SET name=?, age=?, fee=?, paid=? 
+            WHERE id=?
+        """, (name, age, fee, paid, id))
+
         conn.commit()
         conn.close()
-
         return redirect('/dashboard')
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
