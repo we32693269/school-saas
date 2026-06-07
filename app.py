@@ -17,7 +17,16 @@ def init_db():
             age INTEGER
         )
     ''')
-
+    
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS students (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            age INTEGER,
+            fee INTEGER DEFAULT 0,
+            paid INTEGER DEFAULT 0
+        )
+    ''')
     conn.commit()
     conn.close()
 
