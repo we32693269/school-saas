@@ -3,6 +3,7 @@
 <table border="1" cellpadding="10">
 
 <tr>
+    <th>ID</th>
     <th>Student Name</th>
     <th>Status</th>
     <th>Date</th>
@@ -11,24 +12,22 @@
 {% for row in data %}
 <tr>
 
-    <!-- NAME -->
     <td>{{ row[0] }}</td>
+    <td>{{ row[1] }}</td>
 
-    <!-- STATUS -->
     <td>
-        {% if row[1] == 'Present' %}
+        {% if row[2] == 'Present' %}
             🟢 Present
-        {% elif row[1] == 'Absent' %}
+        {% elif row[2] == 'Absent' %}
             🔴 Absent
-        {% elif row[1] == 'Late' %}
+        {% elif row[2] == 'Late' %}
             🟡 Late
         {% else %}
-            ⚪ Unknown
+            ⚪ Not Marked
         {% endif %}
     </td>
 
-    <!-- DATE -->
-    <td>{{ row[2] }}</td>
+    <td>{{ row[3] }}</td>
 
 </tr>
 {% endfor %}
