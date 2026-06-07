@@ -15,60 +15,44 @@
         <h2>🏫 School Dashboard</h2>
         <p>Welcome Admin 👋</p>
     </div>
+
+    <!-- ATTENDANCE CARDS -->
     <div class="row mb-4">
 
-    <div class="col-md-3">
-        <div class="card bg-primary text-white shadow text-center p-3">
-            <h5>📚 Total</h5>
-            <h2>{{ total_students }}</h2>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow text-center p-3">
+                <h5>📚 Total</h5>
+                <h2>{{ total_students }}</h2>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card bg-success text-white shadow text-center p-3">
-            <h5>🟢 Present</h5>
-            <h2>{{ present_students }}</h2>
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow text-center p-3">
+                <h5>🟢 Present</h5>
+                <h2>{{ present_students }}</h2>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card bg-danger text-white shadow text-center p-3">
-            <h5>🔴 Absent</h5>
-            <h2>{{ absent_students }}</h2>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white shadow text-center p-3">
+                <h5>🔴 Absent</h5>
+                <h2>{{ absent_students }}</h2>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card bg-warning text-dark shadow text-center p-3">
-            <h5>🟡 Late</h5>
-            <h2>{{ late_students }}</h2>
-        </div>
-    </div>
-
-</div>
-
-    <!-- ADD STUDENT -->
-    <div class="card shadow p-3 mb-4">
-        <h4>➕ Add Student</h4>
-        <div class="row mb-4">
-
-        <div class="col-md-4">
-
-        <div class="card shadow text-white bg-primary">
-            <div class="card-body text-center">
-
-                <h5>📚 Total Students</h5>
-
-                <h1>
-                    {{ total_students }}
-                </h1>
-
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow text-center p-3">
+                <h5>🟡 Late</h5>
+                <h2>{{ late_students }}</h2>
             </div>
         </div>
 
     </div>
 
-</div>
+    <!-- ADD STUDENT (NO DUPLICATE CARD!) -->
+    <div class="card shadow p-3 mb-4">
+
+        <h4>➕ Add Student</h4>
 
         <form action="/add_student" method="POST" class="row g-2">
 
