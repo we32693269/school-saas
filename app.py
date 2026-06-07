@@ -6,11 +6,8 @@ app = Flask(__name__)
 # -----------------------------
 # DATABASE INIT
 # -----------------------------
-import os
-import sqlite3
 
-if os.path.exists("school.db"):
-    os.remove("school.db")
+import sqlite3
 
 def init_db():
     conn = sqlite3.connect('school.db')
@@ -37,7 +34,6 @@ def init_db():
 
     conn.commit()
     conn.close()
-
 # -----------------------------
 # HOME PAGE
 # -----------------------------
@@ -73,7 +69,23 @@ def dashboard():
     conn.close()
 
     return render_template('dashboard.html', students=students)
+#========== ATTENDANCE ==============
+@app.route('/attendance')
+def attendance():
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
 
+    c.execute("""
+        SELECT students.name, attendance.status, attendance.date
+        FROM attendance
+        JOIN students ON students.id = attendance.student_id
+    """)
+
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template('attendance.html', data=data)
 #================ MARK ATTENDANCE ===============
 from datetime import date
 
@@ -152,23 +164,6 @@ def delete_student(id):
     conn.close()
 
     return redirect('/dashboard')
-#========== ATTENDANCE ==============
-@app.route('/attendance')
-def attendance():
-    conn = sqlite3.connect('school.db')
-    c = conn.cursor()
-
-    c.execute("""
-        SELECT students.name, attendance.status, attendance.date
-        FROM attendance
-        JOIN students ON students.id = attendance.student_id
-    """)
-
-    data = c.fetchall()
-
-    conn.close()
-
-    return render_template('attendance.html', data=data)
 # -----------------------------
 # RUN APP
 # -----------------------------
