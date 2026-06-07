@@ -73,18 +73,7 @@ def dashboard():
     conn.close()
 
     return render_template('dashboard.html', students=students)
-#========== ATTENDANCE ==============
-@app.route('/attendance')
-def attendance():
-    conn = sqlite3.connect('school.db')
-    c = conn.cursor()
 
-    c.execute("SELECT * FROM attendance")
-    data = c.fetchall()
-
-    conn.close()
-
-    return str(data)
 #================ MARK ATTENDANCE ===============
 from datetime import date
 
