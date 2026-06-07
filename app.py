@@ -100,8 +100,10 @@ def attendance():
 #================ MARK ATTENDANCE ===============
 from datetime import date
 
-@app.route('/mark_attendance/<int:id>/<status>')
-def mark_attendance(id, status):
+@app.route('/mark_attendance/<int:id>', methods=['POST'])
+def mark_attendance(id):
+    status = request.form['status']
+
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
