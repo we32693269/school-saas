@@ -152,19 +152,22 @@ def edit_student(id):
         fee = request.form['fee']
         paid = request.form['paid']
         status = request.form['status']
-         
-c.execute("""
-    UPDATE students
-    SET name=?, age=?, fee=?, paid=?, status=?
-    WHERE id=?
-""", (name, age, fee, paid, status, id))
+
+        c.execute("""
+            UPDATE students
+            SET name=?, age=?, fee=?, paid=?, status=?
+            WHERE id=?
+        """, (name, age, fee, paid, status, id))
 
         conn.commit()
         conn.close()
+
         return redirect('/dashboard')
 
+    # GET student data
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
+
     conn.close()
 
     return render_template('edit_student.html', student=student)
