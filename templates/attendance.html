@@ -1,11 +1,43 @@
-<h2>Attendance Report</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Report</title>
+</head>
+<body>
 
-<ul>
-{% for row in data %}
-    <li>
-        {{ row[0] }} - {{ row[1] }} - {{ row[2] }}
-    </li>
-{% endfor %}
-</ul>
+<h2>📊 Attendance Report</h2>
 
-<a href="/dashboard">Back</a>
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Student Name</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+
+    {% for row in data %}
+    <tr>
+        <td>{{ row[0] }}</td>
+
+        <td>
+            {% if row[1] == 'Present' %}
+                🟢 Present
+            {% elif row[1] == 'Absent' %}
+                🔴 Absent
+            {% elif row[1] == 'Late' %}
+                🟡 Late
+            {% else %}
+                ⚪ Unknown
+            {% endif %}
+        </td>
+
+        <td>{{ row[2] }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br>
+<a href="/dashboard">⬅ Back to Dashboard</a>
+
+</body>
+</html>
