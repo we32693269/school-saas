@@ -1,43 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Attendance Report</title>
-</head>
-<body>
-
 <h2>📊 Attendance Report</h2>
 
 <table border="1" cellpadding="10">
-    <tr>
-        <th>Student Name</th>
-        <th>Status</th>
-        <th>Date</th>
-    </tr>
 
-    {% for row in data %}
-    <tr>
-        <td>{{ row[0] }}</td>
+<tr>
+    <th>Student Name</th>
+    <th>Status</th>
+    <th>Date</th>
+</tr>
 
-        <td>
-            {% if row[1] == 'Present' %}
-                🟢 Present
-            {% elif row[1] == 'Absent' %}
-                🔴 Absent
-            {% elif row[1] == 'Late' %}
-                🟡 Late
-            {% else %}
-                ⚪ Unknown
-            {% endif %}
-        </td>
+{% for row in data %}
+<tr>
 
-        <td>{{ row[2] }}</td>
-    </tr>
-    {% endfor %}
+    <!-- NAME -->
+    <td>{{ row[0] }}</td>
+
+    <!-- STATUS -->
+    <td>
+        {% if row[1] == 'Present' %}
+            🟢 Present
+        {% elif row[1] == 'Absent' %}
+            🔴 Absent
+        {% elif row[1] == 'Late' %}
+            🟡 Late
+        {% else %}
+            ⚪ Unknown
+        {% endif %}
+    </td>
+
+    <!-- DATE -->
+    <td>{{ row[2] }}</td>
+
+</tr>
+{% endfor %}
 
 </table>
-
-<br>
-<a href="/dashboard">⬅ Back to Dashboard</a>
-
-</body>
-</html>
