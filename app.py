@@ -126,16 +126,35 @@ def delete_student(id):
 @app.route('/mark_attendance/<int:id>', methods=['POST'])
 def mark_attendance(id):
     status = request.form['status']
+    today = str(date.today())
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
     c.execute("""
-    INSERT INTO attendance (student_id, status, date)
-    VALUES (?, ?, ?)
-    """, (id, status, str(date.today())))
+        SELECT id
+        FROM attendance
+        WHERE student_id=? AND date=?
+    """, (id, today))
 
-    c.execute("UPDATE students SET status=? WHERE id=?", (status, id))
+    existing = c.fetchone()
+
+    if existing:
+        c.execute("""
+            UPDATE attendance
+            SET status=?
+            WHERE student_id=? AND date=?
+        """, (status, id, today))
+    else:
+        c.execute("""
+            INSERT INTO attendance(student_id, status, date)
+            VALUES(?, ?, ?)
+        """, (id, status, today))
+
+    c.execute(
+        "UPDATE students SET status=? WHERE id=?",
+        (status, id)
+    )
 
     conn.commit()
     conn.close()
