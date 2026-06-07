@@ -35,6 +35,15 @@
         | Fee: {{ s[3] }}
         | Paid: {{ s[4] }}
         | Balance: {{ s[3] - s[4] }}
+ <form action="/mark_attendance/{{ s[0] }}" method="POST">
+    <select name="status">
+        <option value="Present">🟢 Present</option>
+        <option value="Absent">🔴 Absent</option>
+        <option value="Late">🟡 Late</option>
+    </select>
+
+    <button type="submit">Save</button>
+</form>
 
         | Attendance:
         {% if s[5] == 'Present' %}
