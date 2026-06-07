@@ -66,10 +66,17 @@ def dashboard():
 def add_student():
     name = request.form['name']
     age = request.form['age']
+    fee = int(request.form['fee'])
+    paid = int(request.form['paid'])
 
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
-    c.execute("INSERT INTO students (name, age) VALUES (?, ?)", (name, age))
+
+    c.execute(
+        "INSERT INTO students (name, age, fee, paid) VALUES (?, ?, ?, ?)",
+        (name, age, fee, paid)
+    )
+
     conn.commit()
     conn.close()
 
