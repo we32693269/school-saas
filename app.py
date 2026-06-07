@@ -1,7 +1,10 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect
 from datetime import date
+import os
 
+if os.path.exists("school.db"):
+    os.remove("school.db")
 app = Flask(__name__)
 
 # ---------------- DATABASE ----------------
@@ -14,6 +17,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         age INTEGER,
+        grade TEXT,
         fee INTEGER DEFAULT 0,
         paid INTEGER DEFAULT 0,
         status TEXT DEFAULT 'Not Marked'
