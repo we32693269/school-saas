@@ -1,7 +1,6 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect
 from datetime import date
-import os
 
 app = Flask(__name__)
 
