@@ -47,16 +47,15 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-        if email == "admin@gmail.com" and password == "1234":
+        if username == 'admin' and password == '1234':
             return redirect('/dashboard')
-
-        return "Invalid login ❌"
+        else:
+            return "Invalid login"
 
     return render_template('login.html')
-
 # -----------------------------
 # DASHBOARD (SHOW STUDENTS)
 # -----------------------------
