@@ -102,17 +102,15 @@ from datetime import date
 
 @app.route('/mark_attendance/<int:id>', methods=['POST'])
 def mark_attendance(id):
-    status = request.form['status']
+    status = request.form.get('status')
 
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    today = str(date.today())
-
-    c.execute(
-        "INSERT INTO attendance (student_id, status, date) VALUES (?, ?, ?)",
-        (id, status, today)
-    )
+    c.execute("""
+        INSERT INTO attendance (student_id, status, date)
+        VALUES (?, ?, ?)
+    """, (id, status, str(date.today())))
 
     conn.commit()
     conn.close()
