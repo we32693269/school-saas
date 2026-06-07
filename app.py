@@ -3,8 +3,6 @@ from flask import Flask, render_template, request, redirect
 from datetime import date
 import os
 
-if os.path.exists("school.db"):
-    os.remove("school.db")
 app = Flask(__name__)
 
 # ---------------- DATABASE ----------------
