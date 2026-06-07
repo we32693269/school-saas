@@ -151,12 +151,13 @@ def edit_student(id):
         age = request.form['age']
         fee = request.form['fee']
         paid = request.form['paid']
-
-        c.execute("""
-            UPDATE students 
-            SET name=?, age=?, fee=?, paid=? 
-            WHERE id=?
-        """, (name, age, fee, paid, id))
+        status = request.form['status']
+         
+c.execute("""
+    UPDATE students
+    SET name=?, age=?, fee=?, paid=?, status=?
+    WHERE id=?
+""", (name, age, fee, paid, status, id))
 
         conn.commit()
         conn.close()
