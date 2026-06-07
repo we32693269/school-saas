@@ -73,7 +73,25 @@ def dashboard():
     conn.close()
 
     return render_template('dashboard.html', students=students)
+#================ MARK ATTENDANCE ===============
+from datetime import date
 
+@app.route('/mark_attendance/<int:id>/<status>')
+def mark_attendance(id, status):
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    today = str(date.today())
+
+    c.execute(
+        "INSERT INTO attendance (student_id, status, date) VALUES (?, ?, ?)",
+        (id, status, today)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/dashboard')
 # -----------------------------
 # ADD STUDENT
 # -----------------------------
