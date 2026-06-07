@@ -113,6 +113,18 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
+#========== RECEIPT =============
+@app.route('/receipt/<int:id>')
+def receipt(id):
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template('receipt.html', student=student)
 
 # ---------------- EDIT STUDENT ----------------
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
