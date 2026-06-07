@@ -30,13 +30,20 @@
 {% for s in students %}
     <li>
         👨‍🎓 {{ s[1] }}
+
         | Age: {{ s[2] }}
+
         | Fee: {{ s[3] }}
         | Paid: {{ s[4] }}
+
         | Balance: {{ s[3] - s[4] }}
 
         <a href="/edit_student/{{ s[0] }}">✏️ Edit</a>
         <a href="/delete_student/{{ s[0] }}">🗑 Delete</a>
+
+        <!-- ATTENDANCE -->
+        <a href="/mark_attendance/{{ s[0] }}/Present">🟢 Present</a>
+        <a href="/mark_attendance/{{ s[0] }}/Absent">🔴 Absent</a>
     </li>
 {% endfor %}
 </ul>
