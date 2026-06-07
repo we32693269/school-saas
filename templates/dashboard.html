@@ -34,47 +34,40 @@
         | Age: {{ s[2] }}
         | Fee: {{ s[3] }}
         | Paid: {{ s[4] }}
-        | Balance: {{ s[3] - s[4] }}
- <form action="/mark_attendance/{{ s[0] }}" method="POST">
-         <select name="status">
-         <option value="Present">🟢 Present</option>
-         <option value="Absent">🔴 Absent</option>
-         <option value="Late">🟡 Late</option>
-         </select>
-        button type="submit">Save</button>
-</form>
 
-        | Attendance:
-        {% if s[5] == 'Present' %}
-            🟢 Present
-        {% elif s[5] == 'Absent' %}
-            🔴 Absent
-        {% else %}
-            ⚪ Not Marked
-        {% endif %}
+        <!-- BALANCE -->
+        | Balance: {{ (s[3]|int) - (s[4]|int) }}
 
+        <br><br>
+
+        <!-- ATTENDANCE FORM -->
+        <form action="/mark_attendance/{{ s[0] }}" method="POST">
+            <select name="status">
+                <option value="Present">🟢 Present</option>
+                <option value="Absent">🔴 Absent</option>
+                <option value="Late">🟡 Late</option>
+            </select>
+
+            <button type="submit">Save</button>
+        </form>
+
+        <br>
+
+        <!-- ACTIONS -->
         <a href="/edit_student/{{ s[0] }}">✏️ Edit</a>
-
+        |
         <a href="/delete_student/{{ s[0] }}"
            onclick="return confirm('Are you sure?')">
            🗑 Delete
         </a>
-
-        <a href="/mark_attendance/{{ s[0] }}/Present">
-            🟢 Present
-        </a>
-
-        <a href="/mark_attendance/{{ s[0] }}/Absent">
-            🔴 Absent
-        </a>
     </li>
+
+    <hr>
 {% endfor %}
 </ul>
 
 <br>
-<a href="/attendance">📊 Attendance Report</a>
-
-
+<a href="/attendance">📊 View Attendance Report</a>
 <hr>
 
 <!-- 🚪 LOGOUT -->
