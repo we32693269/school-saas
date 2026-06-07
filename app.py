@@ -118,6 +118,46 @@ def mark_attendance(id):
     conn.close()
 
     return redirect('/dashboard')
+#============ ATTENDANCE PERCENTAGE ===============
+@app.route('/attendance_percentage')
+def attendance_percentage():
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    # Get all students
+    c.execute("SELECT id, name FROM students")
+    students = c.fetchall()
+
+    result = []
+
+    for s in students:
+        student_id = s[0]
+        name = s[1]
+
+        # Total attendance
+        c.execute("""
+            SELECT status FROM attendance
+            WHERE student_id=?
+        """, (student_id,))
+        records = c.fetchall()
+
+        total = len(records)
+        present = 0
+
+        for r in records:
+            if r[0] == "Present" or r[0] == "Late":
+                present += 1
+
+        if total == 0:
+            percent = 0
+        else:
+            percent = (present / total) * 100
+
+        result.append((name, total, present, round(percent, 2)))
+
+    conn.close()
+
+    return render_template('attendance_percentage.html', data=result)
 # -----------------------------
 # ADD STUDENT
 # -----------------------------
