@@ -86,17 +86,12 @@ def attendance():
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    c.execute("""
-        SELECT students.name, attendance.status, attendance.date
-        FROM attendance
-        JOIN students ON students.id = attendance.student_id
-        ORDER BY attendance.id DESC
-    """)
-
+    c.execute("SELECT * FROM attendance")
     data = c.fetchall()
+
     conn.close()
 
-    return render_template('attendance.html', data=data)
+    return str(data)
 #================ MARK ATTENDANCE ===============
 from datetime import date
 
