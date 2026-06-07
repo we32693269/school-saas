@@ -42,6 +42,13 @@
         <a href="/delete_student/{{ s[0] }}">🗑 Delete</a>
 
         <!-- ATTENDANCE -->
+{% if s[5] == 'Present' %}
+    🟢 Present
+{% elif s[5] == 'Absent' %}
+    🔴 Absent
+{% else %}
+    ⚪ Not Marked
+{% endif %}
         <a href="/mark_attendance/{{ s[0] }}/Present">🟢 Present</a>
         <a href="/mark_attendance/{{ s[0] }}/Absent">🔴 Absent</a>
     </li>
