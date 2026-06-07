@@ -90,10 +90,10 @@ def attendance():
         SELECT students.name, attendance.status, attendance.date
         FROM attendance
         JOIN students ON students.id = attendance.student_id
+        ORDER BY attendance.id DESC
     """)
 
     data = c.fetchall()
-
     conn.close()
 
     return render_template('attendance.html', data=data)
