@@ -13,7 +13,7 @@ if os.path.exists("school.db"):
     os.remove("school.db")
 
 def init_db():
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
     c.execute('''
@@ -26,10 +26,17 @@ def init_db():
     )
     ''')
 
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        status TEXT,
+        date TEXT
+    )
+    ''')
+
     conn.commit()
     conn.close()
-
-init_db()
 
 # -----------------------------
 # HOME PAGE
