@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .receipt {
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border: 2px dashed #333;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .row {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="receipt">
+
+    <h2>🏫 School Receipt</h2>
+
+    <div class="row"><b>Name:</b> {{ student[1] }}</div>
+    <div class="row"><b>Age:</b> {{ student[2] }}</div>
+    <div class="row"><b>Grade:</b> {{ student[3] }}</div>
+
+    <hr>
+
+    <div class="row"><b>Total Fee:</b> {{ student[4] }}</div>
+    <div class="row"><b>Paid:</b> {{ student[5] }}</div>
+    <div class="row"><b>Balance:</b> {{ student[4] - student[5] }}</div>
+
+    <hr>
+
+    <p style="text-align:center;">Thank you for payment 🙏</p>
+
+    <button onclick="window.print()">🖨 Print Receipt</button>
+
+</div>
+
+</body>
+</html>
