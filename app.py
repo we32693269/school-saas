@@ -152,6 +152,23 @@ def delete_student(id):
     conn.close()
 
     return redirect('/dashboard')
+#========== ATTENDANCE ==============
+@app.route('/attendance')
+def attendance():
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT students.name, attendance.status, attendance.date
+        FROM attendance
+        JOIN students ON students.id = attendance.student_id
+    """)
+
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template('attendance.html', data=data)
 # -----------------------------
 # RUN APP
 # -----------------------------
