@@ -56,18 +56,25 @@ def login():
             return "Invalid login"
 
     return render_template('login.html')
-# -----------------------------
-# DASHBOARD (SHOW STUDENTS)
-# -----------------------------
-import sqlite3
-from flask import render_template
 
+#========= DASHBOARD (SHOW STUDENTS) ============
 @app.route('/dashboard')
 def dashboard():
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students")
+    c.execute("""
+        SELECT students.*,
+        (
+            SELECT status
+            FROM attendance
+            WHERE attendance.student_id = students.id
+            ORDER BY attendance.id DESC
+            LIMIT 1
+        ) as attendance_status
+        FROM students
+    """)
+
     students = c.fetchall()
 
     conn.close()
