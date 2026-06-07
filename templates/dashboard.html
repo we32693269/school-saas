@@ -40,19 +40,6 @@
     {% endfor %}
 </ul>
 
-<ul>
-    {% for s in students %}
-        <li>
-            👨‍🎓 {{ s[1] }} - {{ s[2] }} years old
-
-            <!-- 🗑 DELETE BUTTON -->
-            <a href="/delete_student/{{ s[0] }}"
-               onclick="return confirm('Are you sure you want to delete this student?')">
-               🗑 Delete
-            </a>
-        </li>
-    {% endfor %}
-</ul>
 
 <hr>
 
