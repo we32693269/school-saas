@@ -55,18 +55,35 @@ def dashboard():
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
+    # 1. ALL STUDENTS
     c.execute("SELECT * FROM students")
     students = c.fetchall()
 
+    # ⭐ 2. TOTAL STUDENTS
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
+
+    # ⭐ 3. PRESENT
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Present'")
+    present_students = c.fetchone()[0]
+
+    # ⭐ 4. ABSENT
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Absent'")
+    absent_students = c.fetchone()[0]
+
+    # ⭐ 5. LATE
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Late'")
+    late_students = c.fetchone()[0]
 
     conn.close()
 
     return render_template(
         'dashboard.html',
         students=students,
-        total_students=total_students
+        total_students=total_students,
+        present_students=present_students,
+        absent_students=absent_students,
+        late_students=late_students
     )
 # ---------------- ADD STUDENT ----------------
 @app.route('/add_student', methods=['POST'])
