@@ -6,27 +6,26 @@ app = Flask(__name__)
 # -----------------------------
 # DATABASE INIT
 # -----------------------------
+import os
+import sqlite3
+
+if os.path.exists("school.db"):
+    os.remove("school.db")
+
 def init_db():
-    conn = sqlite3.connect('school.db')
+    conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
     c.execute('''
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            age INTEGER
-        )
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        age INTEGER,
+        fee INTEGER DEFAULT 0,
+        paid INTEGER DEFAULT 0
+    )
     ''')
-    
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            age INTEGER,
-            fee INTEGER DEFAULT 0,
-            paid INTEGER DEFAULT 0
-        )
-    ''')
+
     conn.commit()
     conn.close()
 
