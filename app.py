@@ -102,6 +102,8 @@ def mark_attendance(id):
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
+    print("DEBUG STUDENT ID:", id)  # <-- important test
+
     c.execute("""
         INSERT INTO attendance (student_id, status, date)
         VALUES (?, ?, ?)
