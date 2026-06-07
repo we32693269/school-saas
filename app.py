@@ -52,16 +52,22 @@ def login():
 # ---------------- DASHBOARD ----------------
 @app.route('/dashboard')
 def dashboard():
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
     c.execute("SELECT * FROM students")
     students = c.fetchall()
 
+    c.execute("SELECT COUNT(*) FROM students")
+    total_students = c.fetchone()[0]
+
     conn.close()
 
-    return render_template('dashboard.html', students=students)
-
+    return render_template(
+        'dashboard.html',
+        students=students,
+        total_students=total_students
+    )
 # ---------------- ADD STUDENT ----------------
 @app.route('/add_student', methods=['POST'])
 def add_student():
