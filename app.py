@@ -59,12 +59,17 @@ def login():
 # -----------------------------
 # DASHBOARD (SHOW STUDENTS)
 # -----------------------------
+import sqlite3
+from flask import render_template
+
 @app.route('/dashboard')
 def dashboard():
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
+
     c.execute("SELECT * FROM students")
     students = c.fetchall()
+
     conn.close()
 
     return render_template('dashboard.html', students=students)
