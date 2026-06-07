@@ -74,7 +74,18 @@ def dashboard():
     conn.close()
 
     return render_template('dashboard.html', students=students)
+#============ STUDENTS =============
+@app.route('/students')
+def students():
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
 
+    c.execute("SELECT * FROM students")
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template('students.html', students=data)
 # -----------------------------
 # ADD STUDENT
 # -----------------------------
