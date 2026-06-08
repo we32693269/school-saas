@@ -4,7 +4,7 @@ import os
 from reportlab.pdfgen import canvas
 from flask import send_file
 app = Flask(__name__)
-
+app.secret_key = "school_erp_secret"
 # ================= DATABASE =================
 def init_db():
     conn = sqlite3.connect("school.db")
@@ -26,8 +26,22 @@ def init_db():
     conn.close()
 
 init_db()
+#============= login ==============
+@app.route('/login', methods=['GET', 'POST'])
+def login():
 
+    if request.method == 'POST':
 
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username == "admin" and password == "1234":
+            session['admin'] = True
+            return redirect('/dashboard')
+
+        return "Invalid Username or Password"
+
+    return render_template('login.html')
 # ================= HOME =================
 @app.route('/')
 def home():
@@ -37,9 +51,10 @@ def home():
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
-
-    conn = sqlite3.connect('school.db')
-    c = conn.cursor()
+        if   not session.get('admin'):
+               return redirect('/login')
+                conn = sqlite3.connect('school.db')
+                c = conn.cursor()
 
     c.execute("SELECT * FROM students")
     students = c.fetchall()
@@ -218,7 +233,11 @@ def delete_student(id):
     conn.close()
 
     return redirect('/dashboard')
-
+#=============== LOGOUT ==================
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
 
 # ================= RUN =================
 if __name__ == "__main__":
