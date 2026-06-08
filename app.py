@@ -105,29 +105,34 @@ def receipt(id):
     file_name = f"receipt_{id}.pdf"
 
     pdf = canvas.Canvas(file_name)
+# BORDER
+pdf.rect(40, 40, 520, 750)
 
-    # 🟦 BORDER
-    pdf.rect(40, 40, 520, 750)
+# LOGO
+pdf.drawImage("static/logo.png", 250, 780, width=80, height=80)
 
-    # 🏫 LOGO
-    pdf.drawImage("logo.png", 250, 780, width=80, height=80)
+# TITLE
+pdf.setFont("Helvetica-Bold", 18)
+pdf.drawString(180, 750, "SCHOOL INVOICE")
 
-    # TITLE
-    pdf.setFont("Helvetica-Bold", 18)
-    pdf.drawString(180, 750, "SCHOOL INVOICE")
+# STUDENT INFO
+pdf.setFont("Helvetica", 12)
 
-    # STUDENT INFO
-    pdf.setFont("Helvetica", 12)
-    pdf.drawString(70, 700, f"Name: {student[1]}")
-    pdf.drawString(70, 670, f"Age: {student[2]}")
-    pdf.drawString(70, 640, f"Grade: {student[3]}")
-    pdf.drawString(70, 610, f"Fee: {student[4]}")
-    pdf.drawString(70, 580, f"Paid: {student[5]}")
-    pdf.drawString(70, 550, f"Status: {student[6]}")
+pdf.drawString(70, 700, f"Student Name: {student[1]}")
+pdf.drawString(70, 670, f"Age: {student[2]}")
+pdf.drawString(70, 640, f"Grade: {student[3]}")
+pdf.drawString(70, 610, f"Total Fee: {student[4]}")
+pdf.drawString(70, 580, f"Paid Amount: {student[5]}")
 
-    pdf.save()
+balance = student[4] - student[5]
+pdf.drawString(70, 550, f"Balance: {balance}")
 
-    return send_file(file_name, as_attachment=True)
+pdf.drawString(70, 520, f"Status: {student[6]}")
+
+pdf.save()
+
+return send_file(file_name, as_attachment=True)
+ 
 
 # ================= EDIT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
