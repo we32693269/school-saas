@@ -91,6 +91,10 @@ def add_student():
 
     return redirect('/dashboard')
 #============ RECEIPT ==============
+from reportlab.pdfgen import canvas
+from flask import send_file
+from datetime import datetime
+
 @app.route('/receipt/<int:id>')
 def receipt(id):
 
@@ -102,37 +106,66 @@ def receipt(id):
 
     conn.close()
 
+    if not student:
+        return "Student Not Found"
+
     file_name = f"receipt_{id}.pdf"
 
     pdf = canvas.Canvas(file_name)
-# BORDER
-pdf.rect(40, 40, 520, 750)
 
-# LOGO
-pdf.drawImage("static/logo.png", 250, 780, width=80, height=80)
+    # BORDER
+    pdf.rect(40, 40, 520, 750)
 
-# TITLE
-pdf.setFont("Helvetica-Bold", 18)
-pdf.drawString(180, 750, "SCHOOL INVOICE")
+    # LOGO
+    pdf.drawImage("static/logo.png", 240, 760, width=80, height=80)
 
-# STUDENT INFO
-pdf.setFont("Helvetica", 12)
+    # SCHOOL NAME
+    pdf.setFont("Helvetica-Bold", 20)
+    pdf.drawString(170, 730, "SCHOOL ERP SYSTEM")
 
-pdf.drawString(70, 700, f"Student Name: {student[1]}")
-pdf.drawString(70, 670, f"Age: {student[2]}")
-pdf.drawString(70, 640, f"Grade: {student[3]}")
-pdf.drawString(70, 610, f"Total Fee: {student[4]}")
-pdf.drawString(70, 580, f"Paid Amount: {student[5]}")
+    # INVOICE TITLE
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(210, 700, "FEE RECEIPT")
 
-balance = student[4] - student[5]
-pdf.drawString(70, 550, f"Balance: {balance}")
+    # DATE
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(70, 660, f"Date: {datetime.now().strftime('%Y-%m-%d')}")
 
-pdf.drawString(70, 520, f"Status: {student[6]}")
+    # RECEIPT NUMBER
+    pdf.drawString(380, 660, f"Receipt No: INV-{id:04}")
 
-pdf.save()
+    # LINE
+    pdf.line(60, 640, 540, 640)
 
-return send_file(file_name, as_attachment=True)
- 
+    # STUDENT DETAILS
+    pdf.drawString(70, 600, f"Student Name: {student[1]}")
+    pdf.drawString(70, 570, f"Age: {student[2]}")
+    pdf.drawString(70, 540, f"Grade: {student[3]}")
+
+    # FINANCE
+    pdf.drawString(70, 490, f"Total Fee: {student[4]} Birr")
+    pdf.drawString(70, 460, f"Paid Amount: {student[5]} Birr")
+
+    balance = student[4] - student[5]
+
+    pdf.drawString(70, 430, f"Balance: {balance} Birr")
+    pdf.drawString(70, 400, f"Status: {student[6]}")
+
+    # FOOTER LINE
+    pdf.line(60, 180, 540, 180)
+
+    # SIGNATURES
+    pdf.drawString(70, 150, "Cashier Signature: ______________")
+
+    pdf.drawString(330, 150, "Principal Signature: ______________")
+
+    # FOOTER
+    pdf.setFont("Helvetica-Oblique", 10)
+    pdf.drawString(170, 100, "Thank you for choosing our school")
+
+    pdf.save()
+
+    return send_file(file_name, as_attachment=True)
 
 # ================= EDIT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
