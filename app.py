@@ -132,7 +132,6 @@ def receipt(id):
 #============ PDF ================
 from reportlab.pdfgen import canvas
 from flask import send_file
-
 @app.route('/receipt/pdf/<int:id>')
 def pdf(id):
     conn = sqlite3.connect('school.db')
@@ -142,9 +141,11 @@ def pdf(id):
     s = c.fetchone()
     conn.close()
 
-    file_path = f"/sdcard/receipt_{id}.pdf"
+    # ⭐ HERE IS THE CORRECT PLACE
+    file_path = f"receipt_{id}.pdf"
 
     pdf = canvas.Canvas(file_path)
+
     pdf.drawString(100, 800, "🏫 School Receipt")
     pdf.drawString(100, 770, f"Name: {s[1]}")
     pdf.drawString(100, 750, f"Grade: {s[3]}")
