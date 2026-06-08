@@ -201,6 +201,9 @@ def edit_student(id):
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
+    # ======================
+    # UPDATE (POST)
+    # ======================
     if request.method == 'POST':
         name = request.form.get('name')
         age = request.form.get('age')
@@ -216,14 +219,17 @@ def edit_student(id):
 
         conn.commit()
         conn.close()
+
         return redirect('/dashboard')
 
+    # ======================
+    # GET (SHOW DATA)
+    # ======================
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
-
     conn.close()
 
-    # ✅ SAFE CHECK (THIS FIXES 500 ERROR)
+    # SAFE CHECK (prevents internal server error)
     if student is None:
         return "Student not found"
 
