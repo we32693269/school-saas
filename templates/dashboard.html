@@ -5,113 +5,83 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body {
-            background: #f4f6f9;
+        body { background:#f4f6f9; }
+
+        .sidebar{
+            height:100vh;
+            width:220px;
+            background:#111827;
+            color:white;
+            position:fixed;
+            padding:20px;
         }
 
-        /* SIDEBAR */
-        .sidebar {
-            height: 100vh;
-            background: #111827;
-            color: white;
-            padding: 20px;
-            position: fixed;
-            width: 220px;
+        .sidebar a{
+            display:block;
+            color:#ccc;
+            padding:10px;
+            text-decoration:none;
         }
 
-        .sidebar h4 {
-            margin-bottom: 30px;
+        .sidebar a:hover{ background:#1f2937; color:white; }
+
+        .main{
+            margin-left:240px;
+            padding:20px;
         }
 
-        .sidebar a {
-            display: block;
-            color: #ccc;
-            padding: 10px;
-            text-decoration: none;
-            border-radius: 8px;
+        .card-box{
+            padding:20px;
+            border-radius:12px;
+            color:white;
         }
 
-        .sidebar a:hover {
-            background: #1f2937;
-            color: white;
-        }
-
-        /* MAIN */
-        .main {
-            margin-left: 240px;
-            padding: 20px;
-        }
-
-        .card-box {
-            border-radius: 15px;
-            padding: 20px;
-            color: white;
-        }
-
-        .bg1 { background: #3b82f6; }
-        .bg2 { background: #10b981; }
-        .bg3 { background: #ef4444; }
-        .bg4 { background: #f59e0b; }
-
-        .topbar {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+        .bg1{background:#3b82f6;}
+        .bg2{background:#10b981;}
+        .bg3{background:#ef4444;}
+        .bg4{background:#f59e0b;}
     </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <h4>🏫 School Pro</h4>
-    <a href="/dashboard">📊 Dashboard</a>
-    <a href="#">➕ Add Student</a>
-    <a href="#">📋 Students</a>
-    <a href="#">🧾 Receipt</a>
-    <a href="#">📊 Attendance</a>
+    <h4>🏫 School</h4>
+    <a href="/dashboard">Dashboard</a>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-    <!-- TOP BAR -->
-    <div class="topbar">
-        <h3>Welcome Admin 👋</h3>
-        <small>Professional School Management System</small>
-    </div>
+    <h3>Welcome Admin 👋</h3>
 
-    <!-- CARDS -->
+    <!-- STATS -->
     <div class="row g-3">
 
         <div class="col-md-3">
             <div class="card-box bg1">
-                <h5>👨‍🎓 Students</h5>
-                <h2>{{ total_students }}</h2>
+                Students<br>
+                <h3>{{ total_students }}</h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card-box bg2">
-                <h5>💰 Paid</h5>
-                <h2>{{ total_paid }}</h2>
+                Paid<br>
+                <h3>{{ total_paid }}</h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card-box bg3">
-                <h5>❗ Balance</h5>
-                <h2>{{ total_balance }}</h2>
+                Balance<br>
+                <h3>{{ total_balance }}</h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card-box bg4">
-                <h5>📚 Total Fee</h5>
-                <h2>{{ total_fee }}</h2>
+                Fee<br>
+                <h3>{{ total_fee }}</h3>
             </div>
         </div>
 
@@ -119,68 +89,65 @@
 
     <br>
 
-    <!-- ATTENDANCE -->
-    <div class="row g-3">
+    <!-- ADD STUDENT -->
+    <div class="card p-3">
 
-        <div class="col-md-4">
-            <div class="card-box bg2">
-                🟢 Present<br>
-                <h3>{{ present_students }}</h3>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card-box bg3">
-                🔴 Absent<br>
-                <h3>{{ absent_students }}</h3>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card-box bg4">
-                🟡 Late<br>
-                <h3>{{ late_students }}</h3>
-            </div>
-        </div>
-
-    </div>
-
-    <br>
-
-    <!-- ➕ ADD STUDENT FORM -->
-    <div class="card p-3 shadow">
-
-        <h4>➕ Add Student</h4>
+        <h4>Add Student</h4>
 
         <form action="/add_student" method="POST" class="row g-2">
 
             <div class="col-md-3">
-                <input type="text" name="name" class="form-control" placeholder="Name" required>
+                <input name="name" class="form-control" placeholder="Name">
             </div>
 
             <div class="col-md-2">
-                <input type="number" name="age" class="form-control" placeholder="Age" required>
+                <input name="age" class="form-control" placeholder="Age">
             </div>
 
             <div class="col-md-2">
-                <input type="text" name="grade" class="form-control" placeholder="Grade" required>
+                <input name="grade" class="form-control" placeholder="Grade">
             </div>
 
             <div class="col-md-2">
-                <input type="number" name="fee" class="form-control" placeholder="Fee" required>
+                <input name="fee" class="form-control" placeholder="Fee">
             </div>
 
             <div class="col-md-2">
-                <input type="number" name="paid" class="form-control" placeholder="Paid" required>
+                <input name="paid" class="form-control" placeholder="Paid">
             </div>
 
             <div class="col-md-1">
-                <button class="btn btn-success w-100">Add</button>
+                <button class="btn btn-success">Add</button>
             </div>
 
         </form>
-
     </div>
+
+    <br>
+
+    <!-- TABLE -->
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th><th>Name</th><th>Age</th><th>Grade</th><th>Fee</th><th>Paid</th><th>Actions</th>
+        </tr>
+
+        {% for s in students %}
+        <tr>
+            <td>{{ s[0] }}</td>
+            <td>{{ s[1] }}</td>
+            <td>{{ s[2] }}</td>
+            <td>{{ s[3] }}</td>
+            <td>{{ s[4] }}</td>
+            <td>{{ s[5] }}</td>
+
+            <td>
+                <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                <a href="/receipt/pdf/{{ s[0] }}" class="btn btn-dark btn-sm">PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 
 </div>
 
