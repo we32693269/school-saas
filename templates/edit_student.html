@@ -33,6 +33,30 @@
                 <input type="text" name="grade" value="{{ student[3] }}" class="form-control" required>
             </div>
 
+            <!-- STATUS -->
+            <div class="mb-3">
+                <label>Status</label>
+                <select name="status" class="form-control" required>
+
+                    <option value="Present" {% if student[6]=='Present' %}selected{% endif %}>
+                        Present
+                    </option>
+
+                    <option value="Absent" {% if student[6]=='Absent' %}selected{% endif %}>
+                        Absent
+                    </option>
+
+                    <option value="Late" {% if student[6]=='Late' %}selected{% endif %}>
+                        Late
+                    </option>
+
+                    <option value="Not Marked" {% if student[6]=='Not Marked' %}selected{% endif %}>
+                        Not Marked
+                    </option>
+
+                </select>
+            </div>
+
             <!-- FEE -->
             <div class="mb-3">
                 <label>Fee</label>
