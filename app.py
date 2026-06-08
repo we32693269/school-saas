@@ -100,14 +100,18 @@ def dashboard():
 def add_student():
     name = request.form['name']
     age = request.form['age']
+    grade = request.form['grade']
     fee = request.form['fee']
     paid = request.form['paid']
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("INSERT INTO students (name, age, fee, paid) VALUES (?, ?, ?, ?)",
-              (name, age, fee, paid))
+    c.execute("""
+        INSERT INTO students
+        (name, age, grade, fee, paid)
+        VALUES (?, ?, ?, ?, ?)
+    """, (name, age, grade, fee, paid))
 
     conn.commit()
     conn.close()
