@@ -26,6 +26,12 @@ def init_db():
 init_db()
 
 
+# ================= HOME =================
+@app.route('/')
+def home():
+    return redirect('/dashboard')
+
+
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
@@ -49,12 +55,14 @@ def dashboard():
 
     conn.close()
 
-    return render_template("dashboard.html",
-                           students=students,
-                           total_students=total_students,
-                           total_fee=total_fee,
-                           total_paid=total_paid,
-                           total_balance=total_balance)
+    return render_template(
+        "dashboard.html",
+        students=students,
+        total_students=total_students,
+        total_fee=total_fee,
+        total_paid=total_paid,
+        total_balance=total_balance
+    )
 
 
 # ================= ADD STUDENT =================
@@ -71,7 +79,8 @@ def add_student():
     c = conn.cursor()
 
     c.execute("""
-        INSERT INTO students (name, age, grade, fee, paid, status)
+        INSERT INTO students
+        (name, age, grade, fee, paid, status)
         VALUES (?, ?, ?, ?, ?, ?)
     """, (name, age, grade, fee, paid, "Not Marked"))
 
@@ -81,7 +90,7 @@ def add_student():
     return redirect('/dashboard')
 
 
-# ================= EDIT STUDENT =================
+# ================= EDIT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
 
@@ -91,7 +100,7 @@ def edit_student(id):
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
 
-    if not student:
+    if student is None:
         conn.close()
         return "Student Not Found"
 
@@ -120,7 +129,7 @@ def edit_student(id):
     return render_template("edit_student.html", student=student)
 
 
-# ================= DELETE STUDENT =================
+# ================= DELETE =================
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
 
@@ -135,6 +144,7 @@ def delete_student(id):
     return redirect('/dashboard')
 
 
-# ================= RUN APP =================
+# ================= RUN =================
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("APP STARTING...")
+    app.run(host="0.0.0.0", port=5000, debug=True)
