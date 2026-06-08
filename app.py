@@ -1,10 +1,32 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = "erp_secret_key"
 
-# ---------------- DASHBOARD ----------------
+# ================= DATABASE AUTO SETUP =================
+def init_db():
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        age INTEGER,
+        grade TEXT,
+        fee INTEGER,
+        paid INTEGER,
+        status TEXT DEFAULT 'Not Marked'
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
+
+
+# ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
 
@@ -23,31 +45,29 @@ def dashboard():
     c.execute("SELECT SUM(paid) FROM students")
     total_paid = c.fetchone()[0] or 0
 
-    balance = total_fee - total_paid
+    total_balance = total_fee - total_paid
 
     conn.close()
 
-    return render_template(
-        "dashboard.html",
-        students=students,
-        total_students=total_students,
-        total_fee=total_fee,
-        total_paid=total_paid,
-        total_balance=balance
-    )
+    return render_template("dashboard.html",
+                           students=students,
+                           total_students=total_students,
+                           total_fee=total_fee,
+                           total_paid=total_paid,
+                           total_balance=total_balance)
 
 
-# ---------------- ADD STUDENT ----------------
+# ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
 def add_student():
 
-    name = request.form['name']
-    age = request.form['age']
-    grade = request.form['grade']
-    fee = request.form['fee']
-    paid = request.form['paid']
+    name = request.form.get('name')
+    age = request.form.get('age')
+    grade = request.form.get('grade')
+    fee = request.form.get('fee')
+    paid = request.form.get('paid')
 
-    conn = sqlite3.connect('school.db')
+    conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
     c.execute("""
@@ -61,7 +81,7 @@ def add_student():
     return redirect('/dashboard')
 
 
-# ---------------- EDIT ----------------
+# ================= EDIT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
 
@@ -70,17 +90,17 @@ def edit_student(id):
 
     if request.method == 'POST':
 
-        name = request.form['name']
-        age = request.form['age']
-        grade = request.form['grade']
-        fee = request.form['fee']
-        paid = request.form['paid']
-        status = request.form['status']
+        name = request.form.get('name')
+        age = request.form.get('age')
+        grade = request.form.get('grade')
+        fee = request.form.get('fee')
+        paid = request.form.get('paid')
+        status = request.form.get('status')
 
         c.execute("""
-        UPDATE students
-        SET name=?, age=?, grade=?, fee=?, paid=?, status=?
-        WHERE id=?
+            UPDATE students
+            SET name=?, age=?, grade=?, fee=?, paid=?, status=?
+            WHERE id=?
         """, (name, age, grade, fee, paid, status, id))
 
         conn.commit()
@@ -96,7 +116,7 @@ def edit_student(id):
     return render_template("edit_student.html", student=student)
 
 
-# ---------------- DELETE ----------------
+# ================= DELETE =================
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
 
