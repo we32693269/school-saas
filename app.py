@@ -209,9 +209,6 @@ def edit_student(id):
             fee = request.form.get('fee')
             paid = request.form.get('paid')
 
-            if not name:
-                return "Name is required"
-
             c.execute("""
                 UPDATE students
                 SET name=?, age=?, grade=?, fee=?, paid=?
@@ -224,11 +221,15 @@ def edit_student(id):
             return redirect('/dashboard')
 
         except Exception as e:
-            return f"Error: {str(e)}"
+            return f"POST Error: {str(e)}"
 
+    # GET PART (SAFE)
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
     conn.close()
+
+    if student is None:
+        return "Student not found"
 
     return render_template('edit.html', student=student)
 
