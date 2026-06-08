@@ -225,7 +225,7 @@ def edit_student(id):
 
     conn.close()
 
-    return render_template('edit.html', student=student)
+    return render_template('edit_student.html', student=student)
 # ---------------- DELETE ----------------
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
