@@ -196,45 +196,60 @@ def receipt_pdf(id):
 
     return send_file(file_path, as_attachment=True)
 # ---------------- EDIT STUDENT ----------------
+
+import sqlite3
+from flask import Flask, render_template, request, redirect
+import traceback   # ✅ IMPORTANT
+
+app = Flask(__name__)
+
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
+
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    # ======================
-    # UPDATE (POST)
-    # ======================
-    if request.method == 'POST':
-        name = request.form.get('name')
-        age = request.form.get('age')
-        grade = request.form.get('grade')
-        fee = request.form.get('fee')
-        paid = request.form.get('paid')
+    try:
 
-        c.execute("""
-            UPDATE students
-            SET name=?, age=?, grade=?, fee=?, paid=?
-            WHERE id=?
-        """, (name, age, grade, fee, paid, id))
+        # =====================
+        # UPDATE STUDENT
+        # =====================
+        if request.method == 'POST':
 
-        conn.commit()
+            name = request.form.get('name')
+            age = request.form.get('age')
+            grade = request.form.get('grade')
+            fee = request.form.get('fee')
+            paid = request.form.get('paid')
+
+            c.execute("""
+                UPDATE students
+                SET name=?, age=?, grade=?, fee=?, paid=?
+                WHERE id=?
+            """, (name, age, grade, fee, paid, id))
+
+            conn.commit()
+            conn.close()
+
+            return redirect('/dashboard')
+
+        # =====================
+        # GET STUDENT DATA
+        # =====================
+        c.execute("SELECT * FROM students WHERE id=?", (id,))
+        student = c.fetchone()
+
         conn.close()
 
-        return redirect('/dashboard')
+        if student is None:
+            return "❌ Student not found"
 
-    # ======================
-    # GET (SHOW DATA)
-    # ======================
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
-    student = c.fetchone()
-    conn.close()
+        return render_template('edit.html', student=student)
 
-    # SAFE CHECK (prevents internal server error)
-    if student is None:
-        return "Student not found"
-
-    return render_template('edit.html', student=student)
-
+    except Exception:
+        print("❌ ERROR OCCURED:")
+        print(traceback.format_exc())
+        return "Internal Server Error (check terminal)"
 # ---------------- DELETE ----------------
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
