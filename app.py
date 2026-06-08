@@ -130,7 +130,72 @@ def receipt(id):
 
     return render_template('receipt.html', student=student)
 #============ PDF ================
+from reportlab.pdfgen import canvas
+from flask import send_file
+import sqlite3
+import datetime
 
+@app.route('/receipt/pdf/<int:id>')
+def receipt_pdf(id):
+
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    s = c.fetchone()
+    conn.close()
+
+    # ❗ SAFE CHECK
+    if not s:
+        return "Student not found"
+
+    date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    file_path = f"receipt_{id}.pdf"
+
+    pdf = canvas.Canvas(file_path)
+
+    # 🏫 LOGO (FIXED)
+    logo_path = "logo.jpg"
+    try:
+        pdf.drawImage(logo_path, 50, 760, width=60, height=60)
+    except:
+        pass  # ignore logo error
+
+    # 🏫 HEADER
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(120, 800, "Bright Future School")
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(120, 780, "📞 09xxxxxxxx | 📍 Addis Ababa")
+
+    pdf.line(50, 750, 550, 750)
+
+    # 🧾 INFO
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, 720, f"Receipt No: R-{id:04d}")
+    pdf.drawString(350, 720, f"Date: {date}")
+
+    pdf.line(50, 710, 550, 710)
+
+    pdf.setFont("Helvetica", 11)
+    pdf.drawString(50, 680, f"Name: {s[1]}")
+    pdf.drawString(50, 660, f"Age: {s[2]}")
+    pdf.drawString(50, 640, f"Grade: {s[3]}")
+
+    pdf.line(50, 630, 550, 630)
+
+    pdf.drawString(50, 600, f"Total Fee: {s[4]}")
+    pdf.drawString(50, 580, f"Paid: {s[5]}")
+    pdf.drawString(50, 560, f"Balance: {s[4]-s[5]}")
+
+    pdf.line(50, 540, 550, 540)
+
+    pdf.drawString(200, 500, "Thank you 🙏")
+
+    pdf.save()
+
+    return send_file(file_path, as_attachment=True)
 # ---------------- EDIT STUDENT ----------------
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
