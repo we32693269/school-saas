@@ -129,6 +129,32 @@ def receipt(id):
     conn.close()
 
     return render_template('receipt.html', student=student)
+#============ PDF ================
+from reportlab.pdfgen import canvas
+from flask import send_file
+
+@app.route('/receipt/pdf/<int:id>')
+def pdf(id):
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    s = c.fetchone()
+    conn.close()
+
+    file_path = f"/sdcard/receipt_{id}.pdf"
+
+    pdf = canvas.Canvas(file_path)
+    pdf.drawString(100, 800, "🏫 School Receipt")
+    pdf.drawString(100, 770, f"Name: {s[1]}")
+    pdf.drawString(100, 750, f"Grade: {s[3]}")
+    pdf.drawString(100, 730, f"Fee: {s[4]}")
+    pdf.drawString(100, 710, f"Paid: {s[5]}")
+    pdf.drawString(100, 690, f"Balance: {s[4]-s[5]}")
+
+    pdf.save()
+
+    return send_file(file_path, as_attachment=True)
 
 # ---------------- EDIT STUDENT ----------------
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
