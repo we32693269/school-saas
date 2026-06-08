@@ -202,32 +202,28 @@ def edit_student(id):
     c = conn.cursor()
 
     if request.method == 'POST':
-        try:
-            name = request.form.get('name')
-            age = request.form.get('age')
-            grade = request.form.get('grade')
-            fee = request.form.get('fee')
-            paid = request.form.get('paid')
+        name = request.form.get('name')
+        age = request.form.get('age')
+        grade = request.form.get('grade')
+        fee = request.form.get('fee')
+        paid = request.form.get('paid')
 
-            c.execute("""
-                UPDATE students
-                SET name=?, age=?, grade=?, fee=?, paid=?
-                WHERE id=?
-            """, (name, age, grade, fee, paid, id))
+        c.execute("""
+            UPDATE students
+            SET name=?, age=?, grade=?, fee=?, paid=?
+            WHERE id=?
+        """, (name, age, grade, fee, paid, id))
 
-            conn.commit()
-            conn.close()
+        conn.commit()
+        conn.close()
+        return redirect('/dashboard')
 
-            return redirect('/dashboard')
-
-        except Exception as e:
-            return f"POST Error: {str(e)}"
-
-    # GET PART (SAFE)
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
+
     conn.close()
 
+    # ✅ SAFE CHECK (THIS FIXES 500 ERROR)
     if student is None:
         return "Student not found"
 
