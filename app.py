@@ -55,25 +55,14 @@ def dashboard():
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    # 👇 1. STUDENTS LIST
+    # 👨‍🎓 STUDENTS
     c.execute("SELECT * FROM students")
     students = c.fetchall()
 
-    # 👇 2. TOTAL STUDENTS
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    # 👇 3. ATTENDANCE COUNTS
-    c.execute("SELECT COUNT(*) FROM students WHERE status='Present'")
-    present_students = c.fetchone()[0]
-
-    c.execute("SELECT COUNT(*) FROM students WHERE status='Absent'")
-    absent_students = c.fetchone()[0]
-
-    c.execute("SELECT COUNT(*) FROM students WHERE status='Late'")
-    late_students = c.fetchone()[0]
-
-    # 💰 4. FINANCE SECTION (THIS IS YOUR CODE 👇)
+    # 💰 FINANCE
     c.execute("SELECT SUM(fee) FROM students")
     total_fee = c.fetchone()[0] or 0
 
@@ -82,18 +71,28 @@ def dashboard():
 
     total_balance = total_fee - total_paid
 
+    # 📊 ATTENDANCE
+    c.execute("SELECT COUNT(*) FROM attendance WHERE status='Present'")
+    present_students = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM attendance WHERE status='Absent'")
+    absent_students = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM attendance WHERE status='Late'")
+    late_students = c.fetchone()[0]
+
     conn.close()
 
     return render_template(
         'dashboard.html',
         students=students,
         total_students=total_students,
-        present_students=present_students,
-        absent_students=absent_students,
-        late_students=late_students,
         total_fee=total_fee,
         total_paid=total_paid,
-        total_balance=total_balance
+        total_balance=total_balance,
+        present_students=present_students,
+        absent_students=absent_students,
+        late_students=late_students
     )
 # ---------------- ADD STUDENT ----------------
 @app.route('/add_student', methods=['POST'])
