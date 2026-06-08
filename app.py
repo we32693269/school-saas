@@ -196,18 +196,18 @@ def receipt_pdf(id):
 
     return send_file(file_path, as_attachment=True)
 # ---------------- EDIT STUDENT ----------------
-@app.route('/edit_student/<int:id>')
+@app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
 
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students")
-    students = c.fetchall()
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
 
     conn.close()
 
-    return str(students)
+    return f"ID={id}, STUDENT={student}"
 # ---------------- DELETE ----------------
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
