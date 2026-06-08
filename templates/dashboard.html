@@ -157,6 +157,7 @@
 
                     <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">Edit</a>
                     <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                    <a href="/receipt/pdf/{{ s[0] }}" class="btn btn-danger btn-sm">📄 PDF</a>
 
                     <form action="/mark_attendance/{{ s[0] }}" method="POST" style="display:inline;">
                         <select name="status" class="form-select form-select-sm d-inline w-auto">
