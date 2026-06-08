@@ -116,8 +116,7 @@ def receipt(id):
     # BORDER
     pdf.rect(40, 40, 520, 750)
 
-    # LOGO
-    pdf.drawImage("static/logo.png", 240, 760, width=80, height=80)
+    
 
     # SCHOOL NAME
     pdf.setFont("Helvetica-Bold", 20)
