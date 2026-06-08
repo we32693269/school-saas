@@ -198,31 +198,39 @@ def receipt_pdf(id):
 # ---------------- EDIT STUDENT ----------------
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
-        fee = request.form['fee']
-        paid = request.form['paid']
-        status = request.form['status']
+        try:
+            name = request.form.get('name')
+            age = request.form.get('age')
+            grade = request.form.get('grade')
+            fee = request.form.get('fee')
+            paid = request.form.get('paid')
 
-        c.execute("""
-        UPDATE students
-        SET name=?, age=?, fee=?, paid=?, status=?
-        WHERE id=?
-        """, (name, age, fee, paid, status, id))
+            if not name:
+                return "Name is required"
 
-        conn.commit()
-        conn.close()
-        return redirect('/dashboard')
+            c.execute("""
+                UPDATE students
+                SET name=?, age=?, grade=?, fee=?, paid=?
+                WHERE id=?
+            """, (name, age, grade, fee, paid, id))
+
+            conn.commit()
+            conn.close()
+
+            return redirect('/dashboard')
+
+        except Exception as e:
+            return f"Error: {str(e)}"
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
-
     conn.close()
-    return render_template('edit_student.html', student=student)
+
+    return render_template('edit.html', student=student)
 
 # ---------------- DELETE ----------------
 @app.route('/delete_student/<int:id>')
