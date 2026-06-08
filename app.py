@@ -196,60 +196,41 @@ def receipt_pdf(id):
 
     return send_file(file_path, as_attachment=True)
 # ---------------- EDIT STUDENT ----------------
-
-import sqlite3
-from flask import Flask, render_template, request, redirect
-import traceback   # ✅ IMPORTANT
-
-app = Flask(__name__)
-
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
 
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    try:
+    # CHECK IF STUDENT EXISTS FIRST
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
 
-        # =====================
-        # UPDATE STUDENT
-        # =====================
-        if request.method == 'POST':
+    if student is None:
+        conn.close()
+        return f"❌ No student with ID {id}"
 
-            name = request.form.get('name')
-            age = request.form.get('age')
-            grade = request.form.get('grade')
-            fee = request.form.get('fee')
-            paid = request.form.get('paid')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        age = request.form.get('age')
+        grade = request.form.get('grade')
+        fee = request.form.get('fee')
+        paid = request.form.get('paid')
 
-            c.execute("""
-                UPDATE students
-                SET name=?, age=?, grade=?, fee=?, paid=?
-                WHERE id=?
-            """, (name, age, grade, fee, paid, id))
+        c.execute("""
+            UPDATE students
+            SET name=?, age=?, grade=?, fee=?, paid=?
+            WHERE id=?
+        """, (name, age, grade, fee, paid, id))
 
-            conn.commit()
-            conn.close()
-
-            return redirect('/dashboard')
-
-        # =====================
-        # GET STUDENT DATA
-        # =====================
-        c.execute("SELECT * FROM students WHERE id=?", (id,))
-        student = c.fetchone()
-
+        conn.commit()
         conn.close()
 
-        if student is None:
-            return "❌ Student not found"
+        return redirect('/dashboard')
 
-        return render_template('edit.html', student=student)
+    conn.close()
 
-    except Exception:
-        print("❌ ERROR OCCURED:")
-        print(traceback.format_exc())
-        return "Internal Server Error (check terminal)"
+    return render_template('edit.html', student=student)
 # ---------------- DELETE ----------------
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
