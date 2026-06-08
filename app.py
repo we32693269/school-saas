@@ -71,14 +71,14 @@ def dashboard():
 
     total_balance = total_fee - total_paid
 
-    # 📊 ATTENDANCE
-    c.execute("SELECT COUNT(*) FROM attendance WHERE status='Present'")
+    # 📊 ATTENDANCE (FIXED → USE students table)
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Present'")
     present_students = c.fetchone()[0]
 
-    c.execute("SELECT COUNT(*) FROM attendance WHERE status='Absent'")
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Absent'")
     absent_students = c.fetchone()[0]
 
-    c.execute("SELECT COUNT(*) FROM attendance WHERE status='Late'")
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Late'")
     late_students = c.fetchone()[0]
 
     conn.close()
