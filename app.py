@@ -99,40 +99,31 @@ def receipt(id):
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
-    conn.close()
 
-    if not student:
-        return "Student not found"
+    conn.close()
 
     file_name = f"receipt_{id}.pdf"
 
     pdf = canvas.Canvas(file_name)
 
-    # 🟦 BORDER (Professional Frame)
+    # 🟦 BORDER
     pdf.rect(40, 40, 520, 750)
 
-    # 🏫 HEADER
+    # 🏫 LOGO
+    pdf.drawImage("logo.png", 250, 780, width=80, height=80)
+
+    # TITLE
     pdf.setFont("Helvetica-Bold", 18)
-    pdf.drawString(180, 780, "🏫 SCHOOL INVOICE")
+    pdf.drawString(180, 750, "SCHOOL INVOICE")
 
+    # STUDENT INFO
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(70, 740, f"Student Name: {student[1]}")
-    pdf.drawString(70, 710, f"Age: {student[2]}")
-    pdf.drawString(70, 680, f"Grade: {student[3]}")
-
-    # 💰 FINANCE
-    pdf.drawString(70, 640, f"Total Fee: {student[4]}")
-    pdf.drawString(70, 610, f"Paid Amount: {student[5]}")
-
-    balance = student[4] - student[5]
-    pdf.drawString(70, 580, f"Balance: {balance}")
-
-    # 📌 STATUS
-    pdf.drawString(70, 540, f"Status: {student[6]}")
-
-    # ✍ FOOTER
-    pdf.setFont("Helvetica-Oblique", 10)
-    pdf.drawString(200, 80, "Thank you for choosing our school")
+    pdf.drawString(70, 700, f"Name: {student[1]}")
+    pdf.drawString(70, 670, f"Age: {student[2]}")
+    pdf.drawString(70, 640, f"Grade: {student[3]}")
+    pdf.drawString(70, 610, f"Fee: {student[4]}")
+    pdf.drawString(70, 580, f"Paid: {student[5]}")
+    pdf.drawString(70, 550, f"Status: {student[6]}")
 
     pdf.save()
 
