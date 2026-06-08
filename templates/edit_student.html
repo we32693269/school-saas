@@ -11,7 +11,7 @@
 
     <div class="card shadow p-4">
 
-        <h3 class="text-center mb-4">✏️ Edit Student</h3>
+        <h3 class="text-center mb-4">✏️ Edit Student (PRO)</h3>
 
         <form method="POST">
 
@@ -33,7 +33,19 @@
                 <input type="text" name="grade" value="{{ student[3] }}" class="form-control" required>
             </div>
 
-            <!-- STATUS -->
+            <!-- FEE -->
+            <div class="mb-3">
+                <label>Fee</label>
+                <input type="number" name="fee" value="{{ student[4] }}" class="form-control" required>
+            </div>
+
+            <!-- PAID -->
+            <div class="mb-3">
+                <label>Paid</label>
+                <input type="number" name="paid" value="{{ student[5] }}" class="form-control" required>
+            </div>
+
+            <!-- STATUS (IMPORTANT FIX) -->
             <div class="mb-3">
                 <label>Status</label>
                 <select name="status" class="form-control" required>
@@ -57,18 +69,7 @@
                 </select>
             </div>
 
-            <!-- FEE -->
-            <div class="mb-3">
-                <label>Fee</label>
-                <input type="number" name="fee" value="{{ student[4] }}" class="form-control" required>
-            </div>
-
-            <!-- PAID -->
-            <div class="mb-3">
-                <label>Paid</label>
-                <input type="number" name="paid" value="{{ student[5] }}" class="form-control" required>
-            </div>
-
+            <!-- BUTTON -->
             <button type="submit" class="btn btn-success w-100">
                 Update Student
             </button>
