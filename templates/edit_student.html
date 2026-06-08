@@ -15,33 +15,50 @@
 
         <form method="POST">
 
+            <!-- NAME -->
             <div class="mb-3">
                 <label>Name</label>
                 <input type="text" name="name" value="{{ student[1] }}" class="form-control" required>
             </div>
 
+            <!-- AGE -->
             <div class="mb-3">
                 <label>Age</label>
                 <input type="number" name="age" value="{{ student[2] }}" class="form-control" required>
             </div>
 
-            <!-- ✅ GRADE FIX -->
+            <!-- GRADE -->
             <div class="mb-3">
                 <label>Grade</label>
                 <input type="text" name="grade" value="{{ student[3] }}" class="form-control" required>
             </div>
 
+            <!-- FEE -->
             <div class="mb-3">
                 <label>Fee</label>
                 <input type="number" name="fee" value="{{ student[4] }}" class="form-control" required>
             </div>
 
+            <!-- PAID -->
             <div class="mb-3">
                 <label>Paid</label>
                 <input type="number" name="paid" value="{{ student[5] }}" class="form-control" required>
             </div>
 
-            <button type="submit" class="btn btn-success w-100">Update Student</button>
+            <!-- QUICK INLINE VERSION (optional compact UI) -->
+            <hr>
+
+            <h6>Quick Edit View</h6>
+
+            <input type="text" name="name" value="{{ student[1] }}" class="form-control mb-2">
+            <input type="number" name="age" value="{{ student[2] }}" class="form-control mb-2">
+            <input type="text" name="grade" value="{{ student[3] }}" class="form-control mb-2">
+            <input type="number" name="fee" value="{{ student[4] }}" class="form-control mb-2">
+            <input type="number" name="paid" value="{{ student[5] }}" class="form-control mb-3">
+
+            <button type="submit" class="btn btn-success w-100">
+                Update Student
+            </button>
 
         </form>
 
