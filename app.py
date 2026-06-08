@@ -88,7 +88,37 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
+#============ RECEIPT ==============
+@app.route('/receipt/<int:id>')
+def receipt(id):
 
+    conn = sqlite3.connect('school.db')
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+    conn.close()
+
+    if not student:
+        return "Student not found"
+
+    file_name = f"receipt_{id}.pdf"
+
+    pdf = canvas.Canvas(file_name)
+    pdf.setFont("Helvetica", 12)
+
+    pdf.drawString(100, 800, "🏫 SCHOOL RECEIPT")
+    pdf.drawString(100, 770, f"Name: {student[1]}")
+    pdf.drawString(100, 750, f"Age: {student[2]}")
+    pdf.drawString(100, 730, f"Grade: {student[3]}")
+    pdf.drawString(100, 710, f"Fee: {student[4]}")
+    pdf.drawString(100, 690, f"Paid: {student[5]}")
+    pdf.drawString(100, 670, f"Balance: {student[4] - student[5]}")
+    pdf.drawString(100, 650, f"Status: {student[6]}")
+
+    pdf.save()
+
+    return f"Receipt created: {file_name}"
 
 # ================= EDIT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
