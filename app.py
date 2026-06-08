@@ -119,7 +119,7 @@ def receipt(id):
 
     pdf.save()
 
-    return f"Receipt created: {file_name}"
+    return send_file(file_name, as_attachment=True)
 
 # ================= EDIT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
