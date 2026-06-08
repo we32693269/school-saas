@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, send_file
 import sqlite3
 import os
 from reportlab.pdfgen import canvas
+from flask import send_file
 app = Flask(__name__)
 
 # ================= DATABASE =================
@@ -106,16 +107,32 @@ def receipt(id):
     file_name = f"receipt_{id}.pdf"
 
     pdf = canvas.Canvas(file_name)
-    pdf.setFont("Helvetica", 12)
 
-    pdf.drawString(100, 800, "🏫 SCHOOL RECEIPT")
-    pdf.drawString(100, 770, f"Name: {student[1]}")
-    pdf.drawString(100, 750, f"Age: {student[2]}")
-    pdf.drawString(100, 730, f"Grade: {student[3]}")
-    pdf.drawString(100, 710, f"Fee: {student[4]}")
-    pdf.drawString(100, 690, f"Paid: {student[5]}")
-    pdf.drawString(100, 670, f"Balance: {student[4] - student[5]}")
-    pdf.drawString(100, 650, f"Status: {student[6]}")
+    # 🟦 BORDER (Professional Frame)
+    pdf.rect(40, 40, 520, 750)
+
+    # 🏫 HEADER
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(180, 780, "🏫 SCHOOL INVOICE")
+
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(70, 740, f"Student Name: {student[1]}")
+    pdf.drawString(70, 710, f"Age: {student[2]}")
+    pdf.drawString(70, 680, f"Grade: {student[3]}")
+
+    # 💰 FINANCE
+    pdf.drawString(70, 640, f"Total Fee: {student[4]}")
+    pdf.drawString(70, 610, f"Paid Amount: {student[5]}")
+
+    balance = student[4] - student[5]
+    pdf.drawString(70, 580, f"Balance: {balance}")
+
+    # 📌 STATUS
+    pdf.drawString(70, 540, f"Status: {student[6]}")
+
+    # ✍ FOOTER
+    pdf.setFont("Helvetica-Oblique", 10)
+    pdf.drawString(200, 80, "Thank you for choosing our school")
 
     pdf.save()
 
