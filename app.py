@@ -97,25 +97,29 @@ def dashboard():
 # ---------------- ADD STUDENT ----------------
 @app.route('/add_student', methods=['POST'])
 def add_student():
-    name = request.form['name']
-    age = request.form['age']
-    grade = request.form['grade']
-    fee = request.form['fee']
-    paid = request.form['paid']
+    try:
+        name = request.form['name']
+        age = request.form['age']
+        grade = request.form['grade']
+        fee = request.form['fee']
+        paid = request.form['paid']
 
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
+        conn = sqlite3.connect("school.db")
+        c = conn.cursor()
 
-    c.execute("""
-        INSERT INTO students
-        (name, age, grade, fee, paid)
-        VALUES (?, ?, ?, ?, ?)
-    """, (name, age, grade, fee, paid))
+        c.execute("""
+            INSERT INTO students
+            (name, age, grade, fee, paid, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (name, age, grade, fee, paid, "Not Marked"))
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
 
-    return redirect('/dashboard')
+        return redirect('/dashboard')
+
+    except Exception as e:
+        return f"Error: {e}"
 #========== RECEIPT =============
 @app.route('/receipt/<int:id>')
 def receipt(id):
