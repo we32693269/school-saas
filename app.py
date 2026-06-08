@@ -3,7 +3,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-# ================= DATABASE AUTO SETUP =================
+# ================= DATABASE =================
 def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
@@ -81,12 +81,19 @@ def add_student():
     return redirect('/dashboard')
 
 
-# ================= EDIT =================
+# ================= EDIT STUDENT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
 
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    if not student:
+        conn.close()
+        return "Student Not Found"
 
     if request.method == 'POST':
 
@@ -108,15 +115,12 @@ def edit_student(id):
 
         return redirect('/dashboard')
 
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
-    student = c.fetchone()
-
     conn.close()
 
     return render_template("edit_student.html", student=student)
 
 
-# ================= DELETE =================
+# ================= DELETE STUDENT =================
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
 
@@ -131,5 +135,6 @@ def delete_student(id):
     return redirect('/dashboard')
 
 
+# ================= RUN APP =================
 if __name__ == "__main__":
     app.run(debug=True)
