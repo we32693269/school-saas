@@ -202,12 +202,30 @@ def edit_student(id):
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
+    if request.method == 'POST':
+        name = request.form['name']
+        age = request.form['age']
+        grade = request.form['grade']
+        fee = request.form['fee']
+        paid = request.form['paid']
+
+        c.execute("""
+        UPDATE students
+        SET name=?, age=?, grade=?, fee=?, paid=?
+        WHERE id=?
+        """, (name, age, grade, fee, paid, id))
+
+        conn.commit()
+        conn.close()
+
+        return redirect('/dashboard')
+
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
 
     conn.close()
 
-    return f"ID={id}, STUDENT={student}"
+    return render_template('edit.html', student=student)
 # ---------------- DELETE ----------------
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
