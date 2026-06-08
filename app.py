@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
-
+import os
+from reportlab.pdfgen import canvas
 app = Flask(__name__)
 
 # ================= DATABASE =================
