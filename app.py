@@ -196,41 +196,18 @@ def receipt_pdf(id):
 
     return send_file(file_path, as_attachment=True)
 # ---------------- EDIT STUDENT ----------------
-@app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
+@app.route('/edit_student/<int:id>')
 def edit_student(id):
 
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    # CHECK IF STUDENT EXISTS FIRST
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
-    student = c.fetchone()
-
-    if student is None:
-        conn.close()
-        return f"❌ No student with ID {id}"
-
-    if request.method == 'POST':
-        name = request.form.get('name')
-        age = request.form.get('age')
-        grade = request.form.get('grade')
-        fee = request.form.get('fee')
-        paid = request.form.get('paid')
-
-        c.execute("""
-            UPDATE students
-            SET name=?, age=?, grade=?, fee=?, paid=?
-            WHERE id=?
-        """, (name, age, grade, fee, paid, id))
-
-        conn.commit()
-        conn.close()
-
-        return redirect('/dashboard')
+    c.execute("SELECT * FROM students")
+    students = c.fetchall()
 
     conn.close()
 
-    return render_template('edit.html', student=student)
+    return str(students)
 # ---------------- DELETE ----------------
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
