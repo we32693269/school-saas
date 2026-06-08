@@ -38,6 +38,13 @@
     <div class="row"><b>Age:</b> {{ student[2] }}</div>
     <div class="row"><b>Grade:</b> {{ student[3] }}</div>
 
+
+<p><b>Receipt No:</b> R-{{ "%04d"|format(student[0]) }}</p>
+
+<div class="row"><b>Name:</b> {{ student[1] }}</div>
+<div class="row"><b>Age:</b> {{ student[2] }}</div>
+<div class="row"><b>Grade:</b> {{ student[3] }}</div>
+
     <hr>
 
     <div class="row"><b>Total Fee:</b> {{ student[4] }}</div>
