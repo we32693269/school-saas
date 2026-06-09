@@ -167,16 +167,6 @@ def receipt(id):
     # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
 
-    # ================= LOGO =================
-    if os.path.exists(logo):
-        pdf.drawImage(
-            logo,
-            260,
-            760,
-            width=80,
-            height=80
-        )
-
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
     pdf.drawCentredString(300, 740, "MY SCHOOL")
