@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 from reportlab.pdfgen import canvas
 from flask import send_file
 import sqlite3
-
+import io
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
 # ================= DATABASE =================
