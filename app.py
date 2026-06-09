@@ -166,14 +166,14 @@ def receipt(id):
     pdf = canvas.Canvas(file_name)
     
 
-if os.path.exists(logo_path):
-    pdf.drawImage(
+    if os.path.exists(logo_path):
+     pdf.drawImage(
         logo_path,
         260,
         760,
         width=80,
         height=80
-    )
+     )
     
 
 
