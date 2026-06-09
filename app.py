@@ -168,8 +168,6 @@ def receipt(id):
     pdf.rect(30, 30, 540, 780)
 
     # ================= LOGO =================
-    logo = "static/logo.png"
-
     if os.path.exists(logo):
         pdf.drawImage(
             logo,
