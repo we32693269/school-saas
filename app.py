@@ -77,6 +77,14 @@ def dashboard():
 
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Present'")
+    present_students = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Absent'")
+    absent_students = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Late'")
+    late_students = c.fetchone()[0]
 
     c.execute("SELECT SUM(fee) FROM students")
     total_fee = c.fetchone()[0] or 0
@@ -95,6 +103,9 @@ def dashboard():
         total_fee=total_fee,
         total_paid=total_paid,
         total_balance=total_balance
+        present_students=present_students,
+        absent_students=absent_students,
+        late_students=late_students
     )
 
 
