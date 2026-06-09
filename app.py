@@ -188,7 +188,7 @@ def add_student():
 
     return redirect('/dashboard')
 #============ RECEIPT ==============
-@app.route('/receipt/<int:id>')
+  @app.route('/receipt/<int:id>')
 def receipt(id):
 
     conn = sqlite3.connect("school.db")
@@ -207,7 +207,18 @@ def receipt(id):
 
     # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
-    
+
+    # ================= LOGO =================
+    logo = "static/logo.png"
+
+    if os.path.exists(logo):
+        pdf.drawImage(
+            logo,
+            260,
+            760,
+            width=80,
+            height=80
+        )
 
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
@@ -324,7 +335,7 @@ def receipt(id):
     return send_file(
         file_name,
         as_attachment=True
-    )
+    )      
 
 # ================= EDIT =================
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
