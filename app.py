@@ -169,7 +169,7 @@ def receipt(id):
     logo _path = "static/logo.png"
 
     if os.path.exists(logo_path):
-    pdf.drawImage(logo_path, 260, 760, width=80, height=80)
+       pdf.drawImage(logo_path, 260, 760, width=80, height=80)
 
     pdf.save()
 
