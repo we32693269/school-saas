@@ -180,7 +180,7 @@ def receipt(id):
 
         pdf.drawString(420, 770, "Date: Today")
 
-        pdf.line(40, 730, 560, 760)
+        pdf.line(40, 730, 560, 730)
 
         pdf.setFont("Helvetica-Bold", 12)
         pdf.drawString(50, 740, f"Receipt No: R-{id:05d}")
