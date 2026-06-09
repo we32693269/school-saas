@@ -21,7 +21,14 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
-
+    
+    CREATE TABLE IF NOT EXISTS payments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        amount INTEGER,
+        date TEXT,
+        note TEXT
+     )
     conn.commit()
     conn.close()
 
