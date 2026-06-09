@@ -166,7 +166,7 @@ def receipt(id):
     pdf = canvas.Canvas(file_name)
    
     
- # ================= BORDER =================
+    # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
     
     pdf.drawImage(
@@ -179,7 +179,7 @@ def receipt(id):
 
     
 
-# ================= SCHOOL NAME =================
+    # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
     pdf.drawCentredString(300, 740, "MY SCHOOL")
 
