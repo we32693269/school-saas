@@ -9,6 +9,8 @@ app.secret_key = "school_secret_key"
 def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
+
+    # ================= STUDENTS TABLE =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +22,8 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
+
+    # ================= PAYMENTS TABLE =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS payments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +32,24 @@ def init_db():
         date TEXT,
         note TEXT
     )
+    """)
+
+    # 👇 HERE IS SETTINGS TABLE INSERT (IMPORTANT)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS settings (
+        id INTEGER PRIMARY KEY,
+        school_name TEXT,
+        logo TEXT,
+        default_fee INTEGER,
+        admin_password TEXT
+    )
+    """)
+
+    # 👇 DEFAULT VALUES INSERT (THIS IS YOUR CODE)
+    c.execute("""
+    INSERT OR IGNORE INTO settings
+    (id, school_name, logo, default_fee, admin_password)
+    VALUES (1, 'MY SCHOOL', 'static/logo.png', 0, '1234')
     """)
 
     conn.commit()
@@ -144,6 +166,32 @@ def dashboard():
     absent_students=absent_students,
     late_students=late_students
 )
+#================= SETTING 
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    if request.method == 'POST':
+
+        school_name = request.form.get('school_name')
+        default_fee = request.form.get('default_fee')
+
+        c.execute("""
+            UPDATE settings
+            SET school_name=?, default_fee=?
+            WHERE id=1
+        """, (school_name, default_fee))
+
+        conn.commit()
+
+    c.execute("SELECT * FROM settings WHERE id=1")
+    settings = c.fetchone()
+
+    conn.close()
+
+    return render_template("settings.html", settings=settings)
 #============= PAYMENT ================
 @app.route('/add_payment/<int:id>', methods=['POST'])
 def add_payment(id):
