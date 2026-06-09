@@ -10,6 +10,7 @@ def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # ================= STUDENTS TABLE =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,14 +22,18 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
-    
+
+    # ================= PAYMENTS TABLE =================
+    c.execute("""
     CREATE TABLE IF NOT EXISTS payments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER,
         amount INTEGER,
         date TEXT,
         note TEXT
-     )
+    )
+    """)
+
     conn.commit()
     conn.close()
 
