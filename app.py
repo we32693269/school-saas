@@ -174,16 +174,6 @@ def receipt(id):
         os.path.exists(logo_path):
         pdf.drawImage(logo_path, 260, 760, width=80, height=80)
 
-    #================= LOGO =================
-    pdf.drawImage(
-        "static/logo.png",
-         260,
-         760,
-         width=80,
-         height=80
-        )
-    
-
 
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
