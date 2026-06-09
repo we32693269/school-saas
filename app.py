@@ -147,12 +147,6 @@ def add_student():
 
     return redirect('/dashboard')
 #============ RECEIPT ==============
-from flask import send_file
-from reportlab.pdfgen import canvas
-from datetime import datetime
-import sqlite3
-import os
-
 @app.route('/receipt/<int:id>')
 def receipt(id):
 
