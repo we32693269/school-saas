@@ -165,11 +165,19 @@ def receipt(id):
     file_name = f"receipt_{id}.pdf"
     pdf = canvas.Canvas(file_name)
    
-    if os.path.exists(logo_path):
-        pdf.drawImage(logo_path, 260, 760, 
-    width=80, height=80)
+    
  # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
+    try:
+    pdf.drawImage(
+        "static/logo.png",
+        260,
+        760,
+        width=80,
+        height=80
+    )
+except:
+    pass
 
 # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
