@@ -70,12 +70,28 @@ def student_profile(id):
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # Student info
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     student = c.fetchone()
 
+    # Payment history
+    c.execute("SELECT * FROM payments WHERE student_id=?", (id,))
+    payments = c.fetchall()
+
+    c.execute("SELECT SUM(amount) FROM payments WHERE student_id=?", (id,))
+    total_paid = c.fetchone()[0] or 0
+
+    balance = student[4] - total_paid
+
     conn.close()
 
-    return render_template("student_profile.html", student=student)
+    return render_template(
+        "student_profile.html",
+        student=student,
+        payments=payments,
+        total_paid=total_paid,
+        balance=balance
+    )
 @app.route('/test')
 def test():
     return "Receipt Route Working"
