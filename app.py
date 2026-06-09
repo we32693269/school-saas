@@ -173,7 +173,7 @@ def receipt(id):
         pdf.setFont("Helvetica-Bold", 18)
         pdf.drawCentredString(290, 790, "SCHOOL RECEIPT")
         pdf.setFont("Helvetica-Bold", 18)
-        pdf.drawCentredString(300, 800, "SCHOOL RECEIPT")
+        pdf.drawCentredString(290, 790, "SCHOOL RECEIPT")
 
         pdf.setFont("Helvetica", 10)
         pdf.drawString(50, 770, "School ERP System")
