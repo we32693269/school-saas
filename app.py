@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, session
-from reportlab.pdfgen import canvas
-from flask import send_file
+from flask import Flask, render_template, request, redirect, session, send_file
+
 import sqlite3
-import io
+import os
+
+from datetime import datetime
+from reportlab.pdfgen import canvas
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
 # ================= DATABASE =================
