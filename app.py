@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, send_file
-import sqlite3
-import os
+from flask import Flask, render_template, request, redirect, session
 from reportlab.pdfgen import canvas
 from flask import send_file
+import sqlite3
+
 app = Flask(__name__)
-app.secret_key = "school_erp_secret"
+app.secret_key = "school_secret_key"
 # ================= DATABASE =================
 def init_db():
     conn = sqlite3.connect("school.db")
