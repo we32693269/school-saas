@@ -164,21 +164,32 @@ def receipt(id):
 
     file_name = f"receipt_{id}.pdf"
     pdf = canvas.Canvas(file_name)
-    
+# ================= LOGO =================
+logo_path = "static/logo.png"
 
-    logo _path = "static/logo.png"
+if os.path.exists(logo_path):
+    pdf.drawImage(
+        logo_path,
+        260,
+        760,
+        width=80,
+        height=80
+    )
 
-    if os.path.exists(logo_path):
-       pdf.drawImage(logo_path, 260, 760, width=80, height=80)
+# ================= SCHOOL NAME =================
+pdf.setFont("Helvetica-Bold", 18)
+pdf.drawCentredString(300, 740, "MY SCHOOL")
 
-    pdf.save()
+# ================= TITLE =================
+pdf.setFont("Helvetica-Bold", 14)
+pdf.drawCentredString(300, 720, "PAYMENT RECEIPT")
 
 
-    # ================= BORDER =================
+ # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
 
 
-    # ================= SCHOOL NAME =================
+# ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
     pdf.drawCentredString(300, 740, "MY SCHOOL")
 
