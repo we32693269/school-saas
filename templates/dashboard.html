@@ -131,6 +131,34 @@
     </div>
 
     <br>
+    <!-- ATTENDANCE SUMMARY -->
+
+<div class="row g-3 mt-2">
+
+    <div class="col-md-4">
+        <div class="card-box bg-success">
+            <h5>🟢 Present Students</h5>
+            <h2>{{ present_students }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-box bg-danger">
+            <h5>🔴 Absent Students</h5>
+            <h2>{{ absent_students }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-box bg-warning">
+            <h5>🟡 Late Students</h5>
+            <h2>{{ late_students }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<br>
 
     <!-- ADD STUDENT -->
     <div class="card shadow p-3" id="add">
