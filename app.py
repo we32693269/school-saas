@@ -147,6 +147,7 @@ def add_student():
 
     return redirect('/dashboard')
 #============ RECEIPT ==============
+from datetime import datetime
 @app.route('/receipt/<int:id>')
 def receipt(id):
 
