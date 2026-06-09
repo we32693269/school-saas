@@ -167,8 +167,9 @@ def receipt(id):
 
     # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
-    try:
+    
     #================= LOGO =================
+ try:
     pdf.drawImage(
         "static/logo.png",
         260,
@@ -178,6 +179,7 @@ def receipt(id):
     )
 except:
     pass
+
 
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
