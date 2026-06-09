@@ -150,67 +150,59 @@ def add_student():
 @app.route('/receipt/<int:id>')
 def receipt(id):
 
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
+    try:
+        conn = sqlite3.connect("school.db")
+        c = conn.cursor()
+        c.execute("SELECT * FROM students WHERE id=?", (id,))
+        s = c.fetchone()
+        conn.close()
 
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
-    s = c.fetchone()
+        if not s:
+            return "Student Not Found"
 
-    conn.close()
+        from io import BytesIO
+        buffer = BytesIO()
 
-    if not s:
-        return "Student Not Found"
+        pdf = canvas.Canvas(buffer)
 
-    file_name = f"receipt_{id}.pdf"
-    pdf = canvas.Canvas(file_name)
+        pdf.rect(40, 40, 520, 760)
 
-    # ================= BORDER =================
-    pdf.rect(40, 40, 520, 750)
+        pdf.setFont("Helvetica-Bold", 18)
+        pdf.drawCentredString(300, 800, "SCHOOL RECEIPT")
 
-    # ================= TITLE =================
-    pdf.setFont("Helvetica-Bold", 18)
-    pdf.drawCentredString(300, 800, "SCHOOL RECEIPT")
+        pdf.setFont("Helvetica", 10)
+        pdf.drawString(50, 770, "School ERP System")
 
-    # ================= LOGO =================
-    logo_path = "static/logo.png"
-    if os.path.exists(logo_path):
-        pdf.drawImage(logo_path, 450, 770, width=60, height=50)
+        pdf.drawString(420, 770, "Date: Today")
 
-    # ================= SCHOOL NAME =================
-    pdf.setFont("Helvetica", 10)
-    pdf.drawString(50, 770, "School ERP System")
+        pdf.line(40, 760, 560, 760)
 
-    # ================= DATE =================
-    pdf.drawString(420, 770, f"Date: {datetime.now().strftime('%Y-%m-%d')}")
+        pdf.setFont("Helvetica-Bold", 12)
+        pdf.drawString(50, 740, f"Receipt No: R-{id:05d}")
 
-    # ================= LINE =================
-    pdf.line(40, 760, 560, 760)
+        pdf.setFont("Helvetica", 12)
+        pdf.drawString(120, 700, f"Name: {s[1]}")
+        pdf.drawString(120, 680, f"Age: {s[2]}")
+        pdf.drawString(120, 660, f"Grade: {s[3]}")
+        pdf.drawString(120, 640, f"Fee: {s[4]}")
+        pdf.drawString(120, 620, f"Paid: {s[5]}")
 
-    # ================= RECEIPT NO =================
-    pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawString(50, 740, f"Receipt No: R-{id:05d}")
+        balance = s[4] - s[5]
+        pdf.drawString(120, 600, f"Balance: {balance}")
+        pdf.drawString(120, 580, f"Status: {s[6]}")
 
-    # ================= STUDENT INFO =================
-    pdf.setFont("Helvetica", 12)
+        pdf.save()
+        buffer.seek(0)
 
-    pdf.drawString(120, 700, f"Name: {s[1]}")
-    pdf.drawString(120, 680, f"Age: {s[2]}")
-    pdf.drawString(120, 660, f"Grade: {s[3]}")
-    pdf.drawString(120, 640, f"Fee: {s[4]}")
-    pdf.drawString(120, 620, f"Paid: {s[5]}")
+        return send_file(
+            buffer,
+            as_attachment=True,
+            download_name=f"receipt_{id}.pdf",
+            mimetype="application/pdf"
+        )
 
-    balance = s[4] - s[5]
-    pdf.drawString(120, 600, f"Balance: {balance}")
-    pdf.drawString(120, 580, f"Status: {s[6]}")
-
-    # ================= FOOTER =================
-    pdf.setFont("Helvetica-Oblique", 10)
-    pdf.drawCentredString(300, 50, "Thank you for your payment 💙")
-
-    pdf.save()
-
-    return send_file(file_name, as_attachment=True)
-
+    except Exception as e:
+        return f"ERROR: {str(e)}"
 
 
 # ================= EDIT =================
