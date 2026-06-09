@@ -64,7 +64,9 @@ def student_profile(id):
     conn.close()
 
     return render_template("student_profile.html", student=student)
-
+@app.route('/test')
+def test():
+    return "Receipt Route Working"
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
