@@ -54,17 +54,25 @@ def home():
 
 
 # ================= DASHBOARD =================
-
 @app.route('/dashboard')
 def dashboard():
 
     if not session.get('admin'):
         return redirect('/login')
 
+    search = request.args.get('search', '')
+
     conn = sqlite3.connect('school.db')
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students")
+    if search:
+        c.execute(
+            "SELECT * FROM students WHERE name LIKE ?",
+            ('%' + search + '%',)
+        )
+    else:
+        c.execute("SELECT * FROM students")
+
     students = c.fetchall()
 
     c.execute("SELECT COUNT(*) FROM students")
@@ -88,6 +96,7 @@ def dashboard():
         total_paid=total_paid,
         total_balance=total_balance
     )
+
 
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
