@@ -9,8 +9,6 @@ app.secret_key = "school_secret_key"
 def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
-
-    # ================= STUDENTS TABLE =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,8 +20,6 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
-
-    # ================= PAYMENTS TABLE =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS payments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,37 +60,7 @@ def logout():
 def home():
     return redirect('/dashboard')
 #========== STUDENT PROFILE ===============
-@app.route('/student/<int:id>')
-def student_profile(id):
 
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    # Student info
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
-    student = c.fetchone()
-
-    # Payment history
-    c.execute("SELECT * FROM payments WHERE student_id=?", (id,))
-    payments = c.fetchall()
-
-    c.execute("SELECT SUM(amount) FROM payments WHERE student_id=?", (id,))
-    total_paid = c.fetchone()[0] or 0
-
-    balance = student[4] - total_paid
-
-    conn.close()
-
-    return render_template(
-        "student_profile.html",
-        student=student,
-        payments=payments,
-        total_paid=total_paid,
-        balance=balance
-    )
-@app.route('/test')
-def test():
-    return "Receipt Route Working"
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
@@ -167,7 +133,6 @@ def add_payment(id):
     conn.close()
 
     return redirect(f'/student/{id}')
-
 
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
