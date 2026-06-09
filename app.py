@@ -150,7 +150,9 @@ def add_student():
 from datetime import datetime
 @app.route('/receipt/<int:id>')
 def receipt(id):
-
+    import sqlite3
+    import os
+    from reportlab.pdfgen import canvas
     try:
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
