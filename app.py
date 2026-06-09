@@ -95,18 +95,18 @@ def dashboard():
     total_balance = total_fee - total_paid
 
     conn.close()
-
     return render_template(
-        "dashboard.html",
-        students=students,
-        total_students=total_students,
-        total_fee=total_fee,
-        total_paid=total_paid,
-        total_balance=total_balance
-        present_students=present_students,
-        absent_students=absent_students,
-        late_students=late_students
-    )
+    "dashboard.html",
+    students=students,
+    total_students=total_students,
+    total_fee=total_fee,
+    total_paid=total_paid,
+    total_balance=total_balance,
+    present_students=present_students,
+    absent_students=absent_students,
+    late_students=late_students
+)
+
 
 
 # ================= ADD STUDENT =================
