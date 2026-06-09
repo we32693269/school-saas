@@ -208,7 +208,7 @@ def receipt(id):
     # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
     if os.path.exists(logo_path):
-    pdf.drawImage(logo_path, 260, 760, width=80, height=80)
+        pdf.drawImage(logo_path, 260, 760, width=80, height=80)
 
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
