@@ -169,16 +169,14 @@ def receipt(id):
     pdf.rect(30, 30, 540, 780)
     
     #================= LOGO =================
-    try:
-       pdf.drawImage(
-          "static/logo.png",
-           260,
-           760,
-           width=80,
-           height=80
-         )
-    except:
-         pass
+    pdf.drawImage(
+        "static/logo.png",
+         260,
+         760,
+         width=80,
+         height=80
+        )
+    
 
 
     # ================= SCHOOL NAME =================
