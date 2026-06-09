@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, send_file
-
 import sqlite3
 import os
-
 from datetime import datetime
 from reportlab.pdfgen import canvas
 app = Flask(__name__)
@@ -169,18 +167,6 @@ def receipt(id):
 
     # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
-
-    # ================= LOGO =================
-    logo = "static/logo.png"
-
-    if os.path.exists(logo):
-        pdf.drawImage(
-            logo,
-            260,
-            760,
-            width=80,
-            height=80
-        )
 
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
