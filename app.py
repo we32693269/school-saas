@@ -132,7 +132,25 @@ def dashboard():
     absent_students=absent_students,
     late_students=late_students
 )
+#============= PAYMENT ================
+@app.route('/add_payment/<int:id>', methods=['POST'])
+def add_payment(id):
 
+    amount = request.form.get('amount')
+    note = request.form.get('note')
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO payments (student_id, amount, date, note)
+        VALUES (?, ?, datetime('now'), ?)
+    """, (id, amount, note))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(f'/student/{id}')
 
 
 # ================= ADD STUDENT =================
