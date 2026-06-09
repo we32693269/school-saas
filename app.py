@@ -51,7 +51,19 @@ def logout():
 @app.route('/')
 def home():
     return redirect('/dashboard')
+#========== STUDENT PROFILE ===============
+@app.route('/student/<int:id>')
+def student_profile(id):
 
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template("student_profile.html", student=student)
 
 # ================= DASHBOARD =================
 @app.route('/dashboard')
@@ -133,76 +145,39 @@ def add_student():
 
     return redirect('/dashboard')
 #============ RECEIPT ==============
-from reportlab.pdfgen import canvas
 from flask import send_file
-from datetime import datetime
+from reportlab.pdfgen import canvas
 
 @app.route('/receipt/<int:id>')
 def receipt(id):
 
-    conn = sqlite3.connect('school.db')
+    conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
-    student = c.fetchone()
+    s = c.fetchone()
 
     conn.close()
 
-    if not student:
-        return "Student Not Found"
-
     file_name = f"receipt_{id}.pdf"
-
     pdf = canvas.Canvas(file_name)
 
     # BORDER
     pdf.rect(40, 40, 520, 750)
 
-    
+    # TITLE
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(200, 800, "SCHOOL RECEIPT")
 
-    # SCHOOL NAME
-    pdf.setFont("Helvetica-Bold", 20)
-    pdf.drawString(170, 730, "SCHOOL ERP SYSTEM")
-
-    # INVOICE TITLE
-    pdf.setFont("Helvetica-Bold", 16)
-    pdf.drawString(210, 700, "FEE RECEIPT")
-
-    # DATE
+    # STUDENT INFO
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(70, 660, f"Date: {datetime.now().strftime('%Y-%m-%d')}")
-
-    # RECEIPT NUMBER
-    pdf.drawString(380, 660, f"Receipt No: INV-{id:04}")
-
-    # LINE
-    pdf.line(60, 640, 540, 640)
-
-    # STUDENT DETAILS
-    pdf.drawString(70, 600, f"Student Name: {student[1]}")
-    pdf.drawString(70, 570, f"Age: {student[2]}")
-    pdf.drawString(70, 540, f"Grade: {student[3]}")
-
-    # FINANCE
-    pdf.drawString(70, 490, f"Total Fee: {student[4]} Birr")
-    pdf.drawString(70, 460, f"Paid Amount: {student[5]} Birr")
-
-    balance = student[4] - student[5]
-
-    pdf.drawString(70, 430, f"Balance: {balance} Birr")
-    pdf.drawString(70, 400, f"Status: {student[6]}")
-
-    # FOOTER LINE
-    pdf.line(60, 180, 540, 180)
-
-    # SIGNATURES
-    pdf.drawString(70, 150, "Cashier Signature: ______________")
-
-    pdf.drawString(330, 150, "Principal Signature: ______________")
-
-    # FOOTER
-    pdf.setFont("Helvetica-Oblique", 10)
-    pdf.drawString(170, 100, "Thank you for choosing our school")
+    pdf.drawString(80, 740, f"Name: {s[1]}")
+    pdf.drawString(80, 720, f"Age: {s[2]}")
+    pdf.drawString(80, 700, f"Grade: {s[3]}")
+    pdf.drawString(80, 680, f"Fee: {s[4]}")
+    pdf.drawString(80, 660, f"Paid: {s[5]}")
+    pdf.drawString(80, 640, f"Balance: {s[4]-s[5]}")
+    pdf.drawString(80, 620, f"Status: {s[6]}")
 
     pdf.save()
 
