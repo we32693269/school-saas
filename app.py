@@ -166,7 +166,7 @@ def dashboard():
     absent_students=absent_students,
     late_students=late_students
 )
-#================= SETTING 
+#================= SETTING ====================
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
 
