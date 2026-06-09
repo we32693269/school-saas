@@ -147,56 +147,56 @@ def add_student():
 
     return redirect('/dashboard')
 #============ RECEIPT ==============
+
 import sqlite3
 from flask import send_file
 from reportlab.pdfgen import canvas
-from datetime import datetime
 from io import BytesIO
+from datetime import datetime
 import os
 
 @app.route('/receipt/<int:id>')
 def receipt(id):
 
-    # ================= DATABASE =================
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
     c.execute("SELECT * FROM students WHERE id=?", (id,))
     s = c.fetchone()
     conn.close()
 
+    # ✅ FIX: avoid crash
     if not s:
         return "Student Not Found"
 
-    # ================= MEMORY PDF (IMPORTANT FOR RENDER) =================
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer)
 
-    # ================= BORDER =================
+    # BORDER
     pdf.rect(40, 40, 520, 760)
 
-    # ================= HEADER =================
+    # TITLE
     pdf.setFont("Helvetica-Bold", 20)
     pdf.drawCentredString(300, 800, "SCHOOL RECEIPT")
 
+    # DATE
     pdf.setFont("Helvetica", 10)
-    pdf.drawString(50, 770, "School ERP System")
-    pdf.drawString(420, 770, f"Date: {datetime.now().strftime('%Y-%m-%d')}")
+    pdf.drawString(50, 770, "School ERP")
+    pdf.drawString(420, 770, datetime.now().strftime("%Y-%m-%d"))
 
-    # ================= LINE =================
+    # LINE
     pdf.line(40, 760, 560, 760)
 
-    # ================= RECEIPT NO =================
+    # RECEIPT NO
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(50, 740, f"Receipt No: R-{id:05d}")
 
-    # ================= LOGO =================
+    # LOGO SAFE
     logo_path = "static/logo.png"
     if os.path.exists(logo_path):
-        pdf.drawImage(logo_path, 460, 780, width=60, height=50)
+        pdf.drawImage(logo_path, 450, 780, width=60, height=50)
 
-    # ================= STUDENT INFO =================
+    # DATA
     pdf.setFont("Helvetica", 12)
-
     pdf.drawString(120, 700, f"Name: {s[1]}")
     pdf.drawString(120, 680, f"Age: {s[2]}")
     pdf.drawString(120, 660, f"Grade: {s[3]}")
@@ -204,17 +204,11 @@ def receipt(id):
     pdf.drawString(120, 620, f"Paid: {s[5]}")
 
     balance = s[4] - s[5]
-
     pdf.drawString(120, 600, f"Balance: {balance}")
     pdf.drawString(120, 580, f"Status: {s[6]}")
 
-    # ================= FOOTER =================
-    pdf.setFont("Helvetica-Oblique", 10)
-    pdf.drawCentredString(300, 50, "Thank you for using School ERP System")
-
     pdf.save()
 
-    # ================= RETURN FILE =================
     buffer.seek(0)
 
     return send_file(
@@ -223,7 +217,6 @@ def receipt(id):
         download_name=f"receipt_{id}.pdf",
         mimetype="application/pdf"
     )
-
 
 
 # ================= EDIT =================
