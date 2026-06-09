@@ -167,12 +167,6 @@ def receipt(id):
 
     # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
-    
-    logo_path = "static/logo.png"
-
-
-        os.path.exists(logo_path):
-        pdf.drawImage(logo_path, 260, 760, width=80, height=80)
 
 
     # ================= SCHOOL NAME =================
