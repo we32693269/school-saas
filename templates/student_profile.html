@@ -10,44 +10,134 @@
             background:#f4f6f9;
         }
 
-        .card{
-            border-radius:15px;
+        .container-box{
+            max-width:1000px;
+            margin:auto;
+            margin-top:30px;
         }
 
-        .profile-box{
-            max-width:600px;
-            margin:auto;
-            margin-top:50px;
+        .card{
+            border:none;
+            border-radius:15px;
         }
     </style>
+
 </head>
 
 <body>
 
-<div class="profile-box">
+<div class="container-box">
 
-    <div class="card p-4 shadow">
+    <a href="/dashboard" class="btn btn-secondary mb-3">
+        ← Back to Dashboard
+    </a>
 
-        <h3 class="text-center">🎓 Student Profile</h3>
+    <!-- STUDENT INFO -->
+
+    <div class="card shadow p-4">
+
+        <h2>👨‍🎓 Student Profile</h2>
 
         <hr>
 
-        <h5>Name: {{ student[1] }}</h5>
-        <h5>Age: {{ student[2] }}</h5>
-        <h5>Grade: {{ student[3] }}</h5>
-        <h5>Fee: {{ student[4] }}</h5>
-        <h5>Paid: {{ student[5] }}</h5>
-        <h5>Balance: {{ student[4] - student[5] }}</h5>
+        <div class="row">
 
-        <h5>Status:
-            <span class="badge bg-primary">
-                {{ student[6] }}
-            </span>
-        </h5>
+            <div class="col-md-6">
+                <p><strong>ID:</strong> {{ student[0] }}</p>
+                <p><strong>Name:</strong> {{ student[1] }}</p>
+                <p><strong>Age:</strong> {{ student[2] }}</p>
+                <p><strong>Grade:</strong> {{ student[3] }}</p>
+            </div>
 
-        <br>
+            <div class="col-md-6">
+                <p><strong>Fee:</strong> {{ student[4] }}</p>
+                <p><strong>Paid:</strong> {{ student[5] }}</p>
+                <p><strong>Balance:</strong> {{ student[4] - student[5] }}</p>
+                <p><strong>Status:</strong> {{ student[6] }}</p>
+            </div>
 
-        <a href="/dashboard" class="btn btn-dark w-100">⬅ Back</a>
+        </div>
+
+    </div>
+
+    <br>
+
+    <!-- ADD PAYMENT -->
+
+    <div class="card shadow p-4">
+
+        <h3>➕ Add Payment</h3>
+
+        <form method="POST" action="/add_payment/{{ student[0] }}">
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        placeholder="Amount"
+                        required>
+                </div>
+
+                <div class="col-md-6">
+                    <input
+                        type="text"
+                        name="note"
+                        class="form-control"
+                        placeholder="Payment Note">
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-success w-100">
+                        Save Payment
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <br>
+
+    <!-- PAYMENT HISTORY -->
+
+    <div class="card shadow p-4">
+
+        <h3>💰 Payment History</h3>
+
+        <table class="table table-bordered table-striped">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Note</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for p in payments %}
+
+                <tr>
+                    <td>{{ p[0] }}</td>
+                    <td>{{ p[2] }}</td>
+                    <td>{{ p[3] }}</td>
+                    <td>{{ p[4] }}</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
 
     </div>
 
