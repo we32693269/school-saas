@@ -42,6 +42,11 @@ def login():
         return "Invalid Username or Password"
 
     return render_template('login.html')
+#=============== LOGOUT ==================
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
 # ================= HOME =================
 @app.route('/')
 def home():
@@ -235,11 +240,6 @@ def delete_student(id):
     conn.close()
 
     return redirect('/dashboard')
-#=============== LOGOUT ==================
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/login')
 
 # ================= RUN =================
 if __name__ == "__main__":
