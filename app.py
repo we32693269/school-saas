@@ -181,31 +181,30 @@ def dashboard():
 def settings():
 
     conn = sqlite3.connect("school.db")
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     if request.method == 'POST':
 
-        school_name = request.form.get('school_name')
-        default_fee = request.form.get('default_fee')
-        admin_password = request.form.get('admin_password')
-        phone = request.form.get('phone')
-        email = request.form.get('email')
-        footer = request.form.get('footer_message')
-
         c.execute("""
-            UPDATE settings
-            SET school_name=?,
-                default_fee=?,
-                admin_password=?,
-                phone=?,
-                email=?,
-                footer_message=?
-            WHERE id=1
-        """, (school_name, default_fee, admin_password, phone, email, footer))
+        UPDATE settings SET
+            school_name=?,
+            default_fee=?,
+            admin_password=?,
+            phone=?,
+            email=?,
+            footer_message=?
+        WHERE id=1
+        """, (
+            request.form.get('school_name'),
+            request.form.get('default_fee'),
+            request.form.get('admin_password'),
+            request.form.get('phone'),
+            request.form.get('email'),
+            request.form.get('footer_message')
+        ))
 
-        conn.commit()   # 🔥 VERY IMPORTANT
-
-        print("SETTINGS UPDATED")  # debug
+        conn.commit()
 
     c.execute("SELECT * FROM settings WHERE id=1")
     data = c.fetchone()
