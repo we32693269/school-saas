@@ -164,9 +164,34 @@ def dashboard():
     late_students=late_students
 )
 # ================= SETTINGS =================
-@app.route('/settings')
+@app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    return "SETTINGS OK"
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    if request.method == 'POST':
+
+        school_name = request.form.get('school_name')
+        default_fee = request.form.get('default_fee')
+
+        c.execute("""
+            UPDATE settings
+            SET school_name=?, default_fee=?
+            WHERE id=1
+        """, (school_name, default_fee))
+
+        conn.commit()
+
+    c.execute("SELECT * FROM settings WHERE id=1")
+    setting_data = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "settings.html",
+        settings=setting_data
+    )
 
 #============= PAYMENT ================
 @app.route('/add_payment/<int:id>', methods=['POST'])
