@@ -236,7 +236,7 @@ def receipt(id):
     logo=os.path.join(os.path.dirname(__file__), "static", "logo.png")
 
     if os.path.exists(logo):
-    pdf.drawImage(logo, 260, 760, width=80, height=80)
+        pdf.drawImage(logo, 260, 760, width=80, height=80)
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
     pdf.drawCentredString(300, 740, "MY SCHOOL")
