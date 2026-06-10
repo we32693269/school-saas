@@ -76,6 +76,7 @@
 
     <a href="/dashboard">📊 Dashboard</a>
     <a href="#add">➕ Add Student</a>
+    <a href="/attendance">📅 Attendance</a>
     <a href="/settings">⚙️ Settings</a>
     <a href="/logout">🚪 Logout</a>
 
@@ -325,6 +326,12 @@
                    <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm"> Delete
                    </a>
                    <a href="/receipt/{{ s[0] }}" class="btn btn-outline-warning btn-sm">🧾 Receipt
+                   </a>
+                   <a href="/mark_attendance/{{ s[0] }}/Present"class="btn btn-success btn-sm">Present
+                   </a>
+                   <a href="/mark_attendance/{{ s[0] }}/Absent"class="btn btn-danger btn-sm">Absent
+                   </a>
+                   <a href="/mark_attendance/{{ s[0] }}/Late"class="btn btn-warning btn-sm">Late
                    </a>
 
                    
