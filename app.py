@@ -10,7 +10,7 @@ def init_db():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # ================= STUDENTS TABLE =================
+    # ================= STUDENTS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +23,7 @@ def init_db():
     )
     """)
 
-    # ================= PAYMENTS TABLE =================
+    # ================= PAYMENTS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS payments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +34,7 @@ def init_db():
     )
     """)
 
-    # 👇 HERE IS SETTINGS TABLE INSERT (IMPORTANT)
+    # ================= SETTINGS TABLE (HERE 👇) =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS settings (
         id INTEGER PRIMARY KEY,
@@ -45,7 +45,7 @@ def init_db():
     )
     """)
 
-    # 👇 DEFAULT VALUES INSERT (THIS IS YOUR CODE)
+    # ================= DEFAULT SETTINGS DATA =================
     c.execute("""
     INSERT OR IGNORE INTO settings
     (id, school_name, logo, default_fee, admin_password)
