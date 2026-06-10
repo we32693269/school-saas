@@ -110,9 +110,6 @@ def student_profile(id):
         total_paid=total_paid,
         balance=balance
     )
-@app.route('/test')
-def test():
-    return "Receipt Route Working"
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
@@ -235,6 +232,7 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
+
 #============ RECEIPT ==============
 @app.route('/receipt/<int:id>')
 def receipt(id):
