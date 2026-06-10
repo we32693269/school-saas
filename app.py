@@ -163,32 +163,7 @@ def dashboard():
     absent_students=absent_students,
     late_students=late_students
 )
-#================= SETTING ====================
-@app.route('/settings', methods=['GET', 'POST'])
-def settings():
 
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    if request.method == 'POST':
-
-        school_name = request.form.get('school_name')
-        default_fee = request.form.get('default_fee')
-
-        c.execute("""
-            UPDATE settings
-            SET school_name=?, default_fee=?
-            WHERE id=1
-        """, (school_name, default_fee))
-
-        conn.commit()
-
-    c.execute("SELECT * FROM settings WHERE id=1")
-    settings = c.fetchone()
-
-    conn.close()
-
-    return render_template("settings.html", settings=settings)
 #============= PAYMENT ================
 @app.route('/add_payment/<int:id>', methods=['POST'])
 def add_payment(id):
