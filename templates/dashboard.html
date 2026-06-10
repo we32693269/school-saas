@@ -6,18 +6,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+
         body{
             background:#f4f6f9;
         }
-.sidebar{
-    position:fixed;
-    width:180px;
-    height:100vh;
-    background:#111827;
-    padding:20px;
-    color:white;
-}
-        
+
+        /* SIDEBAR */
+        .sidebar{
+            position:fixed;
+            width:180px;
+            height:100vh;
+            background:#111827;
+            padding:20px;
+            color:white;
+        }
 
         .sidebar h4{
             margin-bottom:25px;
@@ -37,11 +39,13 @@
             color:white;
         }
 
+        /* MAIN */
         .main{
-            margin-left:240px;
+            margin-left:200px;
             padding:20px;
         }
 
+        /* CARDS */
         .card-box{
             padding:20px;
             border-radius:15px;
@@ -64,7 +68,9 @@
             margin-bottom:20px;
             box-shadow:0 2px 10px rgba(0,0,0,0.1);
         }
+
     </style>
+
 </head>
 
 <body>
@@ -133,151 +139,84 @@
     </div>
 
     <br>
-    <!-- ATTENDANCE SUMMARY -->
 
-<div class="row g-3 mt-2">
+    <!-- ATTENDANCE -->
+    <div class="row g-3">
 
-    <div class="col-md-4">
-        <div class="card-box bg-success">
-            <h5>🟢 Present Students</h5>
-            <h2>{{ present_students }}</h2>
+        <div class="col-md-4">
+            <div class="card-box bg-success">
+                <h5>🟢 Present</h5>
+                <h2>{{ present_students }}</h2>
+            </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="card-box bg-danger">
+                <h5>🔴 Absent</h5>
+                <h2>{{ absent_students }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card-box bg-warning">
+                <h5>🟡 Late</h5>
+                <h2>{{ late_students }}</h2>
+            </div>
+        </div>
+
     </div>
 
-    <div class="col-md-4">
-        <div class="card-box bg-danger">
-            <h5>🔴 Absent Students</h5>
-            <h2>{{ absent_students }}</h2>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card-box bg-warning">
-            <h5>🟡 Late Students</h5>
-            <h2>{{ late_students }}</h2>
-        </div>
-    </div>
-
-</div>
-
-<br>
+    <br>
 
     <!-- ADD STUDENT -->
     <div class="card shadow p-3" id="add">
 
         <h4>➕ Add Student</h4>
-       <form method="POST" action="/add_student">
-</div>
-<div class="row g-2">
 
-    <div class="col-md-3">
-        <input type="text"
-               class="form-control"
-               name="name"
-               placeholder="Student Name"
-               required>
+        <form method="POST" action="/add_student">
+
+        <div class="row g-2">
+
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="name" placeholder="Student Name" required>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="age" placeholder="Age" required>
+            </div>
+
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="grade" placeholder="Grade" required>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="fee" placeholder="Fee" required>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="paid" placeholder="Paid" required>
+            </div>
+
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-success w-100">
+                    Add
+                </button>
+            </div>
+
+        </div>
+
+        </form>
+
     </div>
-
-    <div class="col-md-2">
-        <input type="number"
-               class="form-control"
-               name="age"
-               placeholder="Age"
-               required>
-    </div>
-
-    <div class="col-md-2">
-        <input type="text"
-               class="form-control"
-               name="grade"
-               placeholder="Grade"
-               required>
-    </div>
-
-    <div class="col-md-2">
-        <input type="number"
-               class="form-control"
-               name="fee"
-               placeholder="Fee"
-               required>
-    </div>
-
-    <div class="col-md-2">
-        <input type="number"
-               class="form-control"
-               name="paid"
-               placeholder="Paid"
-               required>
-    </div>
-
-    <div class="col-md-1">
-        <button type="submit"
-                class="btn btn-success w-100">
-            Add
-        </button>
-    </div>
-
-</div>
-
-</form>  
-
-            
-
-    
 
     <br>
-<form method="GET" action="/dashboard">
-
-<div class="row g-2">
-
-    <div class="col-md-3">
-        <input type="text"
-               name="search"
-               class="form-control"
-               placeholder="Student Name">
-    </div>
-
-    <div class="col-md-2">
-        <input type="number"
-               name="student_id"
-               class="form-control"
-               placeholder="ID">
-    </div>
-
-    <div class="col-md-2">
-        <input type="text"
-               name="grade"
-               class="form-control"
-               placeholder="Grade">
-    </div>
-
-    <div class="col-md-3">
-        <select name="status" class="form-control">
-
-            <option value="">All Status</option>
-            <option value="Present">Present</option>
-            <option value="Absent">Absent</option>
-            <option value="Late">Late</option>
-
-        </select>
-    </div>
-
-    <div class="col-md-2">
-        <button class="btn btn-primary w-100">
-            Search
-        </button>
-    </div>
-
-</div>
-
-</form>
 
     <!-- STUDENTS TABLE -->
     <div class="card shadow p-3">
 
         <h4>📋 Students List</h4>
 
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover table-responsive">
 
             <thead class="table-dark">
                 <tr>
@@ -309,49 +248,34 @@
                 <td>
                     {% if s[6] == 'Present' %}
                         <span class="badge bg-success">Present</span>
-
                     {% elif s[6] == 'Absent' %}
                         <span class="badge bg-danger">Absent</span>
-
                     {% elif s[6] == 'Late' %}
                         <span class="badge bg-warning text-dark">Late</span>
-
                     {% else %}
                         <span class="badge bg-secondary">Not Marked</span>
                     {% endif %}
                 </td>
-                
+
                 <td>
 
-                <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm">View</a>
+                    <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm">View</a>
+                    <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                    <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">Receipt</a>
 
-                <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">Edit</a>
+                    <select class="form-select form-select-sm mt-1"
+                            onchange="location=this.value">
 
-                <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                        <option selected>Attendance</option>
 
-                <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">Receipt</a>
+                        <option value="/mark_attendance/{{ s[0] }}/Present">🟢 Present</option>
+                        <option value="/mark_attendance/{{ s[0] }}/Absent">🔴 Absent</option>
+                        <option value="/mark_attendance/{{ s[0] }}/Late">🟡 Late</option>
 
-                <select class="form-select form-select-sm mt-1"
-                onchange="location=this.value">
+                    </select>
 
-                <option selected>Attendance</option>
-
-                <option value="/mark_attendance/{{ s[0] }}/Present">
-                🟢 Present
-              </option>
-
-               <option value="/mark_attendance/{{ s[0] }}/Absent">
-               🔴 Absent
-              </option>
-
-              <option value="/mark_attendance/{{ s[0] }}/Late">
-             🟡 Late
-           </option>
-
-          </select>
-
-        </td>
-
+                </td>
 
             </tr>
             {% endfor %}
