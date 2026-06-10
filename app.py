@@ -236,7 +236,7 @@ def add_student():
 
     return redirect('/dashboard')
 #============ RECEIPT ==============
-  @app.route('/receipt/<int:id>')
+@app.route('/receipt/<int:id>')
 def receipt(id):
 
     conn = sqlite3.connect("school.db")
