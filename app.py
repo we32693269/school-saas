@@ -22,6 +22,7 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
+    
 
     # ================= PAYMENTS =================
     c.execute("""
@@ -41,9 +42,14 @@ def init_db():
         school_name TEXT,
         logo TEXT,
         default_fee INTEGER,
-        admin_password TEXT
+        admin_password TEXT,
+        phone TEXT,
+        email TEXT,
+        address TEXT,
+        footer_message TEXT
     )
     """)
+   
 
     # ================= DEFAULT SETTINGS DATA =================
     c.execute("""
