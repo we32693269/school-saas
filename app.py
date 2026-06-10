@@ -234,16 +234,13 @@ def receipt(id):
     pdf.rect(30, 30, 540, 780)
 
     # ================= LOGO =================
-    logo = "static/logo.png"
+    logo = os.path.join("static", "logo.png")
 
-    if os.path.exists(logo):
-        pdf.drawImage(
-            logo,
-            260,
-            760,
-            width=80,
-            height=80
-        )
+if os.path.exists(logo):
+    pdf.drawImage(logo, 260, 760, width=80, height=80)
+else:
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(260, 760, "NO LOGO")
 
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
