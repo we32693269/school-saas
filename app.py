@@ -188,16 +188,24 @@ def settings():
         school_name = request.form.get('school_name')
         default_fee = request.form.get('default_fee')
         admin_password = request.form.get('admin_password')
+        phone = request.form.get('phone')
+        email = request.form.get('email')
+        footer = request.form.get('footer_message')
 
         c.execute("""
             UPDATE settings
             SET school_name=?,
                 default_fee=?,
-                admin_password=?
+                admin_password=?,
+                phone=?,
+                email=?,
+                footer_message=?
             WHERE id=1
-        """, (school_name, default_fee, admin_password))
+        """, (school_name, default_fee, admin_password, phone, email, footer))
 
         conn.commit()   # 🔥 VERY IMPORTANT
+
+        print("SETTINGS UPDATED")  # debug
 
     c.execute("SELECT * FROM settings WHERE id=1")
     data = c.fetchone()
