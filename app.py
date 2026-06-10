@@ -34,7 +34,15 @@ def init_db():
         note TEXT
     )
     """)
-
+    
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        date TEXT,
+        status TEXT
+    )
+    """)
     # ================= SETTINGS TABLE (HERE 👇) ================
     c.execute("""
     CREATE TABLE IF NOT EXISTS settings (
@@ -232,7 +240,23 @@ def add_payment(id):
     conn.close()
 
     return redirect(f'/student/{id}')
+#================ MARK ATTENDANCE ==============
+@app.route('/mark_attendance/<int:id>/<status>')
+def mark_attendance(id, status):
 
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    INSERT INTO attendance
+    (student_id, date, status)
+    VALUES (?, date('now'), ?)
+    """, (id, status))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/dashboard')
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
 def add_student():
@@ -256,7 +280,32 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
+#================= ATTENDANCE ==================
+@app.route('/attendance')
+def attendance():
 
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT attendance.id,
+           students.name,
+           attendance.date,
+           attendance.status
+    FROM attendance
+    JOIN students
+    ON attendance.student_id = students.id
+    ORDER BY attendance.id DESC
+    """)
+
+    records = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "attendance.html",
+        records=records
+    )
 #============ RECEIPT ==============
 @app.route('/receipt/<int:id>')
 def receipt(id):
