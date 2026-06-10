@@ -314,29 +314,38 @@
                         <span class="badge bg-secondary">Not Marked</span>
                     {% endif %}
                 </td>
+                
+                <td>
 
-              <td>
+                <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm">View</a>
 
-                   <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm"> View 
-                   </a>
+                <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">Edit</a>
 
-                   <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm"> Edit
-                   </a>
+                <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">Delete</a>
 
-                   <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm"> Delete
-                   </a>
-                   <a href="/receipt/{{ s[0] }}" class="btn btn-outline-warning btn-sm">🧾 Receipt
-                   </a>
-                   <a href="/mark_attendance/{{ s[0] }}/Present"class="btn btn-success btn-sm">Present
-                   </a>
-                   <a href="/mark_attendance/{{ s[0] }}/Absent"class="btn btn-danger btn-sm">Absent
-                   </a>
-                   <a href="/mark_attendance/{{ s[0] }}/Late"class="btn btn-warning btn-sm">Late
-                   </a>
+                <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">Receipt</a>
 
-                   
+                <select class="form-select form-select-sm mt-1"
+                onchange="location=this.value">
 
-               </td>
+                <option selected>Attendance</option>
+
+                <option value="/mark_attendance/{{ s[0] }}/Present">
+                🟢 Present
+              </option>
+
+               <option value="/mark_attendance/{{ s[0] }}/Absent">
+               🔴 Absent
+              </option>
+
+              <option value="/mark_attendance/{{ s[0] }}/Late">
+             🟡 Late
+           </option>
+
+          </select>
+
+        </td>
+
 
             </tr>
             {% endfor %}
