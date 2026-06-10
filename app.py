@@ -185,31 +185,19 @@ def settings():
 
     if request.method == 'POST':
 
-        c.execute("""
-        UPDATE settings SET
-            school_name=?,
-            default_fee=?,
-            admin_password=?,
-            academic_year=?,
-            phone=?,
-            email=?,
-            email_password=?,
-            sms_api_key=?,
-            footer_message=?
-        WHERE id=1
-        """, (
-            request.form.get('school_name'),
-            request.form.get('default_fee'),
-            request.form.get('admin_password'),
-            request.form.get('academic_year'),
-            request.form.get('phone'),
-            request.form.get('email'),
-            request.form.get('email_password'),
-            request.form.get('sms_api_key'),
-            request.form.get('footer_message')
-        ))
+        school_name = request.form.get('school_name')
+        default_fee = request.form.get('default_fee')
+        admin_password = request.form.get('admin_password')
 
-        conn.commit()
+        c.execute("""
+            UPDATE settings
+            SET school_name=?,
+                default_fee=?,
+                admin_password=?
+            WHERE id=1
+        """, (school_name, default_fee, admin_password))
+
+        conn.commit()   # 🔥 VERY IMPORTANT
 
     c.execute("SELECT * FROM settings WHERE id=1")
     data = c.fetchone()
