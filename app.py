@@ -35,7 +35,7 @@ def init_db():
     )
     """)
 
-    # ================= SETTINGS TABLE (HERE 👇) =================
+    # ================= SETTINGS TABLE (HERE 👇) ================
     c.execute("""
     CREATE TABLE IF NOT EXISTS settings (
         id INTEGER PRIMARY KEY,
@@ -43,13 +43,20 @@ def init_db():
         logo TEXT,
         default_fee INTEGER,
         admin_password TEXT,
+        academic_year TEXT,
         phone TEXT,
         email TEXT,
-        address TEXT,
+        email_password TEXT,
+        sms_api_key TEXT,
         footer_message TEXT
     )
     """)
-   
+
+    c.execute("""
+    INSERT OR IGNORE INTO settings
+    (id, school_name, logo, default_fee, admin_password, academic_year)
+    VALUES (1, 'MY SCHOOL', 'static/logo.png', 0, '1234', '2025/2026')
+    """)
 
     # ================= DEFAULT SETTINGS DATA =================
     c.execute("""
@@ -178,26 +185,38 @@ def settings():
 
     if request.method == 'POST':
 
-        school_name = request.form.get('school_name')
-        default_fee = request.form.get('default_fee')
-
         c.execute("""
-            UPDATE settings
-            SET school_name=?, default_fee=?
-            WHERE id=1
-        """, (school_name, default_fee))
+        UPDATE settings SET
+            school_name=?,
+            default_fee=?,
+            admin_password=?,
+            academic_year=?,
+            phone=?,
+            email=?,
+            email_password=?,
+            sms_api_key=?,
+            footer_message=?
+        WHERE id=1
+        """, (
+            request.form.get('school_name'),
+            request.form.get('default_fee'),
+            request.form.get('admin_password'),
+            request.form.get('academic_year'),
+            request.form.get('phone'),
+            request.form.get('email'),
+            request.form.get('email_password'),
+            request.form.get('sms_api_key'),
+            request.form.get('footer_message')
+        ))
 
         conn.commit()
 
     c.execute("SELECT * FROM settings WHERE id=1")
-    setting_data = c.fetchone()
+    data = c.fetchone()
 
     conn.close()
 
-    return render_template(
-        "settings.html",
-        settings=setting_data
-    )
+    return render_template("settings.html", settings=data)
 
 #============= PAYMENT ================
 @app.route('/add_payment/<int:id>', methods=['POST'])
