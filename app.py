@@ -257,7 +257,27 @@ def receipt(id):
 
     # ================= BORDER =================
     pdf.rect(30, 30, 540, 780)
-    
+    from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+import os
+
+pdf = canvas.Canvas("report.pdf")
+
+logo = "logo.png"   # የlogo ፋይል ስም
+
+if os.path.exists(logo):
+    pdf.drawImage(
+        ImageReader(logo),
+        x=260,      # ቦታ
+        y=760,
+        width=80,
+        height=80,
+        mask='auto'
+    )
+else:
+    print("Logo file not found!")
+
+pdf.save()
     # ================= SCHOOL NAME =================
     pdf.setFont("Helvetica-Bold", 18)
     pdf.drawCentredString(300, 740, "MY SCHOOL")
