@@ -11,68 +11,98 @@
 
     <div class="card shadow p-4">
 
-        <h3 class="text-center mb-4">✏️ Edit Student (ERP)</h3>
+        <h3 class="text-center mb-4">
+            ✏️ Edit Student
+        </h3>
 
         <form method="POST">
 
-            <!-- NAME -->
             <div class="mb-3">
-                <label>Name</label>
-                <input type="text" name="name" value="{{ student[1] }}" class="form-control" required>
+                <label>Student Name</label>
+                <input type="text"
+                       name="name"
+                       value="{{ student[1] }}"
+                       class="form-control"
+                       required>
             </div>
 
-            <!-- AGE -->
             <div class="mb-3">
                 <label>Age</label>
-                <input type="number" name="age" value="{{ student[2] }}" class="form-control" required>
+                <input type="number"
+                       name="age"
+                       value="{{ student[2] }}"
+                       class="form-control"
+                       required>
             </div>
 
-            <!-- GRADE -->
             <div class="mb-3">
                 <label>Grade</label>
-                <input type="text" name="grade" value="{{ student[3] }}" class="form-control" required>
+                <input type="text"
+                       name="grade"
+                       value="{{ student[3] }}"
+                       class="form-control"
+                       required>
             </div>
 
-            <!-- FEE -->
             <div class="mb-3">
                 <label>Fee</label>
-                <input type="number" name="fee" value="{{ student[4] }}" class="form-control" required>
+                <input type="number"
+                       name="fee"
+                       value="{{ student[4] }}"
+                       class="form-control"
+                       required>
             </div>
 
-            <!-- PAID -->
             <div class="mb-3">
                 <label>Paid</label>
-                <input type="number" name="paid" value="{{ student[5] }}" class="form-control" required>
+                <input type="number"
+                       name="paid"
+                       value="{{ student[5] }}"
+                       class="form-control"
+                       required>
             </div>
 
-            <!-- STATUS -->
             <div class="mb-3">
+
                 <label>Status</label>
-                <select name="status" class="form-control" required>
 
-                    <option value="Present" {% if student[6]=='Present' %}selected{% endif %}>
-                        Present
+                <select name="status"
+                        class="form-select"
+                        required>
+
+                    <option value="Present"
+                    {% if student[6]=='Present' %}selected{% endif %}>
+                        🟢 Present
                     </option>
 
-                    <option value="Absent" {% if student[6]=='Absent' %}selected{% endif %}>
-                        Absent
+                    <option value="Absent"
+                    {% if student[6]=='Absent' %}selected{% endif %}>
+                        🔴 Absent
                     </option>
 
-                    <option value="Late" {% if student[6]=='Late' %}selected{% endif %}>
-                        Late
+                    <option value="Late"
+                    {% if student[6]=='Late' %}selected{% endif %}>
+                        🟡 Late
                     </option>
 
-                    <option value="Not Marked" {% if student[6]=='Not Marked' %}selected{% endif %}>
-                        Not Marked
+                    <option value="Not Marked"
+                    {% if student[6]=='Not Marked' %}selected{% endif %}>
+                        ⚪ Not Marked
                     </option>
 
                 </select>
+
             </div>
 
-            <!-- BUTTON -->
-            <button type="submit" class="btn btn-success w-100">
-                Update Student
+            <button type="submit"
+                    class="btn btn-success w-100">
+                💾 Update Student
             </button>
+
+            <a href="/dashboard"
+               class="btn btn-secondary w-100 mt-2">
+               ⬅ Back to Dashboard
+            </a>
 
         </form>
 
