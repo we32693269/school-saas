@@ -279,36 +279,26 @@ def mark_attendance(id, status):
 
     if student:
 
-        # Delete old attendance
         c.execute(
             "DELETE FROM attendance WHERE student_id=?",
             (id,)
         )
 
-        # Save new attendance
         c.execute("""
         INSERT INTO attendance
-        (
-            student_id,
-            student_name,
-            status,
-            date
-        )
+        (student_id, student_name, status, date)
         VALUES (?, ?, ?, datetime('now'))
-        """,
-        (
+        """, (
             id,
             student[0],
             status
         ))
 
-        # Update student status
         c.execute("""
         UPDATE students
         SET status=?
         WHERE id=?
-        """,
-        (
+        """, (
             status,
             id
         ))
