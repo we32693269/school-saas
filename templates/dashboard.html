@@ -246,21 +246,9 @@
                 <td>{{ s[4] }}</td>
                 <td>{{ s[5] }}</td>
                 <td>{{ s[4] - s[5] }}</td>
-
-                <td>
-                    {% if s[6] == 'Present' %}
-                        <span class="badge bg-success">Present</span>
-                    {% elif s[6] == 'Absent' %}
-                        <span class="badge bg-danger">Absent</span>
-                    {% elif s[6] == 'Late' %}
-                        <span class="badge bg-warning text-dark">Late</span>
-                    {% else %}
-                        <span class="badge bg-secondary">Not Marked</span>
-                    {% endif %}
-                </td>
                 <td>
 
-<div class="d-flex gap-1">
+<div class="d-flex flex-wrap gap-1">
 
     <a href="/student/{{ s[0] }}"
        class="btn btn-info btn-sm">
@@ -273,7 +261,8 @@
     </a>
 
     <a href="/delete_student/{{ s[0] }}"
-       class="btn btn-danger btn-sm">
+       class="btn btn-danger btn-sm"
+       onclick="return confirm('Delete this student?')">
        Delete
     </a>
 
@@ -282,9 +271,31 @@
        Receipt
     </a>
 
+    <select class="form-select form-select-sm"
+            style="width:140px;"
+            onchange="if(this.value) location=this.value">
+
+        <option value="">Attendance</option>
+
+        <option value="/mark_attendance/{{ s[0] }}/Present">
+            🟢 Present
+        </option>
+
+        <option value="/mark_attendance/{{ s[0] }}/Absent">
+            🔴 Absent
+        </option>
+
+        <option value="/mark_attendance/{{ s[0] }}/Late">
+            🟡 Late
+        </option>
+
+    </select>
+
 </div>
 
 </td>
+
+
 
                 
 
