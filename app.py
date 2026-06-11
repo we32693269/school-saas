@@ -33,6 +33,17 @@ def init_db():
         note TEXT
     )
     """)
+    
+    # ================= ATTENDANCE (FIXED ONLY ONE) =================
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS attendance(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        student_name TEXT,
+        status TEXT,
+        date TEXT
+    )
+    """)
 
     # ================= ATTENDANCE (FIXED ONLY ONE) =================
     c.execute("""
