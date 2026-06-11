@@ -268,42 +268,46 @@ def mark_attendance(id, status):
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "SELECT name FROM students WHERE id=?",
-        (id,)
-    )
-
-    student = c.fetchone()
-
-    if student:
-
+    try:
+        # Get student name
         c.execute(
-            "DELETE FROM attendance WHERE student_id=?",
+            "SELECT name FROM students WHERE id=?",
             (id,)
         )
 
-        c.execute("""
-        INSERT INTO attendance
-        (student_id, student_name, status, date)
-        VALUES (?, ?, ?, datetime('now'))
-        """, (
-            id,
-            student[0],
-            status
-        ))
+        student = c.fetchone()
 
-        c.execute("""
-        UPDATE students
-        SET status=?
-        WHERE id=?
-        """, (
-            status,
-            id
-        ))
+        if student:
 
-        conn.commit()
+            # Delete old attendance (only one record per student)
+            c.execute(
+                "DELETE FROM attendance WHERE student_id=?",
+                (id,)
+            )
 
-    conn.close()
+            # Insert new attendance
+            c.execute("""
+                INSERT INTO attendance
+                (student_id, student_name, status, date)
+                VALUES (?, ?, ?, datetime('now'))
+            """, (id, student[0], status))
+
+            # Update student status (dashboard)
+            c.execute("""
+                UPDATE students
+                SET status=?
+                WHERE id=?
+            """, (status, id))
+
+            conn.commit()
+
+            print("ATTENDANCE SAVED:", id, student[0], status)
+
+    except Exception as e:
+        print("ERROR:", e)
+
+    finally:
+        conn.close()
 
     return redirect('/dashboard')
 
