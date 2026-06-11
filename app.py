@@ -249,23 +249,7 @@ def add_payment(id):
     conn.close()
 
     return redirect(f'/student/{id}')
-#================ MARK ATTENDANCE ==============
-@app.route('/mark_attendance/<int:id>/<status>')
-def mark_attendance(id, status):
 
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    c.execute("""
-    INSERT INTO attendance
-    (student_id, date, status)
-    VALUES (?, date('now'), ?)
-    """, (id, status))
-
-    conn.commit()
-    conn.close()
-
-    return redirect('/dashboard')
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
 def add_student():
