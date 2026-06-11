@@ -264,6 +264,58 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
+#============== ATTENDANCE PDF =================
+from flask import send_file
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+import io
+import sqlite3
+
+@app.route('/attendance_pdf')
+def attendance_pdf():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT student_id, student_name, status, date
+        FROM attendance
+        ORDER BY id DESC
+    """)
+
+    data = c.fetchall()
+    conn.close()
+
+    # PDF in memory
+    buffer = io.BytesIO()
+    pdf = SimpleDocTemplate(buffer)
+
+    # Table data
+    table_data = []
+    table_data.append(["ID", "Student", "Status", "Date"])
+
+    for row in data:
+        table_data.append(list(row))
+
+    table = Table(table_data)
+
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.grey),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.black),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+    ]))
+
+    pdf.build([table])
+
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name="attendance_report.pdf",
+        mimetype='application/pdf'
+    )
 # ================= MARK ATTENDANCE =================
 
 @app.route('/mark_attendance/<int:id>/<status>')
