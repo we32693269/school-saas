@@ -262,55 +262,41 @@ def add_student():
 
     return redirect('/dashboard')
 # ================= MARK ATTENDANCE =================
+
 @app.route('/mark_attendance/<int:id>/<status>')
 def mark_attendance(id, status):
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    try:
-        # Get student name
-        c.execute(
-            "SELECT name FROM students WHERE id=?",
-            (id,)
-        )
+    # Get student
+    c.execute("SELECT name FROM students WHERE id=?", (id,))
+    student = c.fetchone()
 
-        student = c.fetchone()
+    if student:
 
-        if student:
+        # keep only one record per student
+        c.execute("DELETE FROM attendance WHERE student_id=?", (id,))
 
-            # Delete old attendance (only one record per student)
-            c.execute(
-                "DELETE FROM attendance WHERE student_id=?",
-                (id,)
-            )
+        # insert new record
+        c.execute("""
+            INSERT INTO attendance
+            (student_id, student_name, status, date)
+            VALUES (?, ?, ?, datetime('now'))
+        """, (id, student[0], status))
 
-            # Insert new attendance
-            c.execute("""
-                INSERT INTO attendance
-                (student_id, student_name, status, date)
-                VALUES (?, ?, ?, datetime('now'))
-            """, (id, student[0], status))
+        # update dashboard status
+        c.execute("""
+            UPDATE students
+            SET status=?
+            WHERE id=?
+        """, (status, id))
 
-            # Update student status (dashboard)
-            c.execute("""
-                UPDATE students
-                SET status=?
-                WHERE id=?
-            """, (status, id))
+        conn.commit()
 
-            conn.commit()
-
-            print("ATTENDANCE SAVED:", id, student[0], status)
-
-    except Exception as e:
-        print("ERROR:", e)
-
-    finally:
-        conn.close()
+    conn.close()
 
     return redirect('/dashboard')
-
 # ================= ATTENDANCE REPORT =================
 @app.route('/attendance')
 def attendance():
