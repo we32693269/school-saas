@@ -380,49 +380,6 @@ def late_students():
     return render_template("late_students.html", students=students)
 
 
-# ================= ATTENDANCE REPORT =================
-@app.route('/attendance')
-def attendance():
-
-    date = request.args.get('date')
-    student = request.args.get('student')
-    status = request.args.get('status')
-
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    query = """
-    SELECT student_id, student_name, status, date
-    FROM attendance
-    WHERE 1=1
-    """
-
-    params = []
-
-    if date:
-        query += " AND date(date)=date(?)"
-        params.append(date)
-
-    if student:
-        query += " AND student_name LIKE ?"
-        params.append(f"%{student}%")
-
-    if status:
-        query += " AND status=?"
-        params.append(status)
-
-    query += " ORDER BY id DESC"
-
-    c.execute(query, params)
-    data = c.fetchall()
-
-    conn.close()
-
-    return render_template("attendance.html", data=data)
-
-
-
-
 #============ RECEIPT ==============
 @app.route('/receipt/<int:id>')
 def receipt(id):
