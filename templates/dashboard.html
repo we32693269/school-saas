@@ -266,16 +266,8 @@
                     <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">Delete</a>
                     <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">Receipt</a>
 
-                    <select class="form-select form-select-sm mt-1"
-                            onchange="location=this.value">
-
-                        <option selected>Attendance</option>
-
-                        <option value="/mark_attendance/{{ s[0] }}/Present">🟢 Present</option>
-                        <option value="/mark_attendance/{{ s[0] }}/Absent">🔴 Absent</option>
-                        <option value="/mark_attendance/{{ s[0] }}/Late">🟡 Late</option>
-
-                    </select>
+                    
+                    
 
                 </td>
 
