@@ -290,6 +290,61 @@ def add_student():
 
     return redirect('/dashboard')
 #================= ATTENDANCE ==================
+# ================= ATTENDANCE =================
+
+@app.route('/mark_attendance/<int:id>/<status>')
+def mark_attendance(id, status):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    # Student name
+    c.execute(
+        "SELECT name FROM students WHERE id=?",
+        (id,)
+    )
+
+    student = c.fetchone()
+
+    if student:
+
+        # Save attendance history
+        c.execute("""
+        INSERT INTO attendance
+        (
+            student_id,
+            student_name,
+            status,
+            date
+        )
+        VALUES (?, ?, ?, datetime('now'))
+        """,
+        (
+            id,
+            student[0],
+            status
+        ))
+
+        # Update current status
+        c.execute("""
+        UPDATE students
+        SET status=?
+        WHERE id=?
+        """,
+        (
+            status,
+            id
+        ))
+
+        conn.commit()
+
+    conn.close()
+
+    return redirect('/dashboard')
+
+
+# ================= ATTENDANCE REPORT =================
+
 @app.route('/attendance')
 def attendance():
 
@@ -297,23 +352,91 @@ def attendance():
     c = conn.cursor()
 
     c.execute("""
-    SELECT attendance.id,
-           students.name,
-           attendance.date,
-           attendance.status
+    SELECT
+        student_id,
+        student_name,
+        status,
+        date
     FROM attendance
-    JOIN students
-    ON attendance.student_id = students.id
-    ORDER BY attendance.id DESC
+    ORDER BY id DESC
     """)
 
-    records = c.fetchall()
+    data = c.fetchall()
 
     conn.close()
 
     return render_template(
         "attendance.html",
-        records=records
+        data=data
+    )
+
+
+# ================= PRESENT STUDENTS =================
+
+@app.route('/present_students')
+def present_students():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT * FROM students
+    WHERE status='Present'
+    """)
+
+    students = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "present_students.html",
+        students=students
+    )
+
+
+# ================= ABSENT STUDENTS =================
+
+@app.route('/absent_students')
+def absent_students():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT * FROM students
+    WHERE status='Absent'
+    """)
+
+    students = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "absent_students.html",
+        students=students
+    )
+
+
+# ================= LATE STUDENTS =================
+
+@app.route('/late_students')
+def late_students():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT * FROM students
+    WHERE status='Late'
+    """)
+
+    students = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "late_students.html",
+        students=students
     )
 #============ RECEIPT ==============
 @app.route('/receipt/<int:id>')
