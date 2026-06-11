@@ -33,21 +33,10 @@ def init_db():
         note TEXT
     )
     """)
-    
-    # ================= ATTENDANCE (FIXED ONLY ONE) =================
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS attendance(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        student_name TEXT,
-        status TEXT,
-        date TEXT
-    )
-    """)
 
-    # ================= ATTENDANCE (FIXED ONLY ONE) =================
+    # ================= ATTENDANCE (ONLY ONCE) =================
     c.execute("""
-    CREATE TABLE IF NOT EXISTS attendance(
+    CREATE TABLE IF NOT EXISTS attendance (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER,
         student_name TEXT,
@@ -73,18 +62,21 @@ def init_db():
     )
     """)
 
-    # ================= DEFAULT SETTINGS (ONLY ONCE) =================
+    # DEFAULT SETTINGS
     c.execute("""
     INSERT OR IGNORE INTO settings
-    (id, school_name, logo, default_fee, admin_password, academic_year, phone, email, email_password, sms_api_key, footer_message)
+    (id, school_name, logo, default_fee, admin_password, academic_year,
+     phone, email, email_password, sms_api_key, footer_message)
     VALUES
-    (1, 'MY SCHOOL', 'static/logo.png', 0, '1234', '2025/2026', '', '', '', '', '')
+    (1, 'MY SCHOOL', 'static/logo.png', 0, '1234', '2025/2026',
+     '', '', '', '', '')
     """)
 
     conn.commit()
     conn.close()
 
 init_db()
+
 #============= login ==============
 @app.route('/login', methods=['GET', 'POST'])
 def login():
