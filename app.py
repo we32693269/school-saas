@@ -286,6 +286,7 @@ def mark_attendance(id, status):
         """, (status, id))
 
         conn.commit()
+        print("ATTENDANCE SAVED:", id, status)
 
     conn.close()
 
