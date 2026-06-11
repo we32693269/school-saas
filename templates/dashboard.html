@@ -247,34 +247,42 @@
                 <td>{{ s[5] }}</td>
                 <td>{{ s[4] - s[5] }}</td>
                 <td>
+        <td>
 
-<div class="d-flex flex-wrap gap-1">
-<a href="/student/{{ s[0] }}" class="btn btn-info btn-sm w-100">
-View
-</a>
+ <div class="d-grid gap-1">
 
-<a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm w-100">
-Edit
-</a>
+    <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm">
+        View
+    </a>
 
-<a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm w-100">
-Delete
-</a>
+    <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">
+        Edit
+    </a>
 
-<a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm w-100">
-Receipt
-</a>
+    <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">
+        Delete
+    </a>
 
-<a href="/attendance_pdf/{{ s[0] }}" class="btn btn-secondary btn-sm w-100">
-Export PDF
-</a>
+    <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">
+        Receipt
+    </a>
 
-<select class="form-select form-select-sm">
-    <option>Attendance</option>
-    <option value="/mark_attendance/{{ s[0] }}/Present">Present</option>
-    <option value="/mark_attendance/{{ s[0] }}/Absent">Absent</option>
-    <option value="/mark_attendance/{{ s[0] }}/Late">Late</option>
-</select>
+    <a href="/attendance_pdf/{{ s[0] }}" class="btn btn-secondary btn-sm">
+        Export PDF
+    </a>
+
+    <select class="form-select form-select-sm">
+        <option>Attendance</option>
+        <option value="/mark_attendance/{{ s[0] }}/Present">Present</option>
+        <option value="/mark_attendance/{{ s[0] }}/Absent">Absent</option>
+        <option value="/mark_attendance/{{ s[0] }}/Late">Late</option>
+    </select>
+
+</div>
+
+</td>
+
+
 
     
 
