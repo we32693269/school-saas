@@ -264,39 +264,52 @@ def add_student():
 
     return redirect('/dashboard')
 # ================= MARK ATTENDANCE =================
-@app.route('/mark_attendance/<int:id>/<status>')
-def mark_attendance(id, status):
+@app.route('/attendance')
+def attendance():
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # Get student
-    c.execute("SELECT name FROM students WHERE id=?", (id,))
-    student = c.fetchone()
+    date = request.args.get("date")
+    student = request.args.get("student")
+    status = request.args.get("status")
+
+    query = """
+    SELECT
+    id,
+    student_name,
+    status,
+    date
+    FROM attendance
+    WHERE 1=1
+    """
+
+    params = []
+
+    if date:
+        query += " AND date(date)=?"
+        params.append(date)
 
     if student:
+        query += " AND student_name LIKE ?"
+        params.append("%"+student+"%")
 
-        # 1. Save history (attendance table)
-        c.execute("""
-        INSERT INTO attendance
-        (student_id, student_name, status, date)
-        VALUES (?, ?, ?, datetime('now'))
-        """, (id, student[0], status))
+    if status:
+        query += " AND status=?"
+        params.append(status)
 
-        # 2. Update dashboard status (students table)
-        c.execute("""
-        UPDATE students
-        SET status=?
-        WHERE id=?
-        """, (status, id))
+    query += " ORDER BY id DESC"
 
-        conn.commit()
+    c.execute(query, params)
 
-        print("ATTENDANCE SAVED:", id, status)
+    data = c.fetchall()
 
     conn.close()
 
-    return redirect('/dashboard')
+    return render_template(
+        "attendance.html",
+        data=data
+    )
 
 
 # ================= ATTENDANCE REPORT =================
