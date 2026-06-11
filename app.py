@@ -22,7 +22,6 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
-    
 
     # ================= PAYMENTS =================
     c.execute("""
@@ -34,6 +33,8 @@ def init_db():
         note TEXT
     )
     """)
+
+    # ================= ATTENDANCE (FIXED ONLY ONE) =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS attendance(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,16 +44,8 @@ def init_db():
         date TEXT
     )
     """)
-    
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS attendance (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        date TEXT,
-        status TEXT
-    )
-    """)
-    # ================= SETTINGS TABLE (HERE 👇) ================
+
+    # ================= SETTINGS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS settings (
         id INTEGER PRIMARY KEY,
@@ -69,17 +62,12 @@ def init_db():
     )
     """)
 
+    # ================= DEFAULT SETTINGS (ONLY ONCE) =================
     c.execute("""
     INSERT OR IGNORE INTO settings
-    (id, school_name, logo, default_fee, admin_password, academic_year)
-    VALUES (1, 'MY SCHOOL', 'static/logo.png', 0, '1234', '2025/2026')
-    """)
-
-    # ================= DEFAULT SETTINGS DATA =================
-    c.execute("""
-    INSERT OR IGNORE INTO settings
-    (id, school_name, logo, default_fee, admin_password)
-    VALUES (1, 'MY SCHOOL', 'static/logo.png', 0, '1234')
+    (id, school_name, logo, default_fee, admin_password, academic_year, phone, email, email_password, sms_api_key, footer_message)
+    VALUES
+    (1, 'MY SCHOOL', 'static/logo.png', 0, '1234', '2025/2026', '', '', '', '', '')
     """)
 
     conn.commit()
