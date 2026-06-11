@@ -268,17 +268,19 @@ def mark_attendance(id, status):
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # 1. Get student name
     c.execute("SELECT name FROM students WHERE id=?", (id,))
     student = c.fetchone()
 
     if student:
 
+        # 2. Save attendance history
         c.execute("""
-        INSERT INTO attendance
-        (student_id, student_name, status, date)
+        INSERT INTO attendance (student_id, student_name, status, date)
         VALUES (?, ?, ?, datetime('now'))
         """, (id, student[0], status))
 
+        # 3. UPDATE STUDENTS TABLE (THIS IS YOUR QUESTION)
         c.execute("""
         UPDATE students
         SET status=?
@@ -286,7 +288,8 @@ def mark_attendance(id, status):
         """, (status, id))
 
         conn.commit()
-        print("ATTENDANCE SAVED:", id, status)
+
+        print("UPDATED:", id, status)
 
     conn.close()
 
