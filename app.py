@@ -264,53 +264,60 @@ def add_student():
 
     return redirect('/dashboard')
 # ================= MARK ATTENDANCE =================
-@app.route('/attendance')
-def attendance():
+@app.route('/mark_attendance/<int:id>/<status>')
+def mark_attendance(id, status):
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    date = request.args.get("date")
-    student = request.args.get("student")
-    status = request.args.get("status")
+    c.execute(
+        "SELECT name FROM students WHERE id=?",
+        (id,)
+    )
 
-    query = """
-    SELECT
-    id,
-    student_name,
-    status,
-    date
-    FROM attendance
-    WHERE 1=1
-    """
-
-    params = []
-
-    if date:
-        query += " AND date(date)=?"
-        params.append(date)
+    student = c.fetchone()
 
     if student:
-        query += " AND student_name LIKE ?"
-        params.append("%"+student+"%")
 
-    if status:
-        query += " AND status=?"
-        params.append(status)
+        # Delete old attendance
+        c.execute(
+            "DELETE FROM attendance WHERE student_id=?",
+            (id,)
+        )
 
-    query += " ORDER BY id DESC"
+        # Save new attendance
+        c.execute("""
+        INSERT INTO attendance
+        (
+            student_id,
+            student_name,
+            status,
+            date
+        )
+        VALUES (?, ?, ?, datetime('now'))
+        """,
+        (
+            id,
+            student[0],
+            status
+        ))
 
-    c.execute(query, params)
+        # Update student status
+        c.execute("""
+        UPDATE students
+        SET status=?
+        WHERE id=?
+        """,
+        (
+            status,
+            id
+        ))
 
-    data = c.fetchall()
+        conn.commit()
 
     conn.close()
 
-    return render_template(
-        "attendance.html",
-        data=data
-    )
-
+    return redirect('/dashboard')
 
 # ================= ATTENDANCE REPORT =================
 @app.route('/attendance')
