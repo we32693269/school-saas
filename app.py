@@ -261,12 +261,6 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
-#================= MARK ATTENDANCE ==================
-import sqlite3
-from flask import Flask, render_template, request, redirect
-
-app = Flask(__name__)
-
 # ================= MARK ATTENDANCE =================
 @app.route('/mark_attendance/<int:id>/<status>')
 def mark_attendance(id, status):
