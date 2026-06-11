@@ -273,52 +273,29 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
-#================= ATTENDANCE ==================
-# ================= ATTENDANCE =================
-
+#================= MARK ATTENDANCE ==================
 @app.route('/mark_attendance/<int:id>/<status>')
 def mark_attendance(id, status):
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # Student name
-    c.execute(
-        "SELECT name FROM students WHERE id=?",
-        (id,)
-    )
-
+    c.execute("SELECT name FROM students WHERE id=?", (id,))
     student = c.fetchone()
 
     if student:
 
-        # Save attendance history
         c.execute("""
         INSERT INTO attendance
-        (
-            student_id,
-            student_name,
-            status,
-            date
-        )
+        (student_id, student_name, status, date)
         VALUES (?, ?, ?, datetime('now'))
-        """,
-        (
-            id,
-            student[0],
-            status
-        ))
+        """, (id, student[0], status))
 
-        # Update current status
         c.execute("""
         UPDATE students
         SET status=?
         WHERE id=?
-        """,
-        (
-            status,
-            id
-        ))
+        """, (status, id))
 
         conn.commit()
 
@@ -328,100 +305,48 @@ def mark_attendance(id, status):
 
 
 # ================= ATTENDANCE REPORT =================
-
 @app.route('/attendance')
 def attendance():
+
+    date = request.args.get('date')
+    student = request.args.get('student')
+    status = request.args.get('status')
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("""
-    SELECT
-        student_id,
-        student_name,
-        status,
-        date
+    query = """
+    SELECT student_id, student_name, status, date
     FROM attendance
-    ORDER BY id DESC
-    """)
+    WHERE 1=1
+    """
 
+    params = []
+
+    if date:
+        query += " AND date(date)=date(?)"
+        params.append(date)
+
+    if student:
+        query += " AND student_name LIKE ?"
+        params.append(f"%{student}%")
+
+    if status:
+        query += " AND status=?"
+        params.append(status)
+
+    query += " ORDER BY id DESC"
+
+    c.execute(query, params)
     data = c.fetchall()
 
     conn.close()
 
-    return render_template(
-        "attendance.html",
-        data=data
-    )
+    return render_template("attendance.html", data=data)
 
 
-# ================= PRESENT STUDENTS =================
-
-@app.route('/present_students')
-def present_students():
-
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    c.execute("""
-    SELECT * FROM students
-    WHERE status='Present'
-    """)
-
-    students = c.fetchall()
-
-    conn.close()
-
-    return render_template(
-        "present_students.html",
-        students=students
-    )
 
 
-# ================= ABSENT STUDENTS =================
-
-@app.route('/absent_students')
-def absent_students():
-
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    c.execute("""
-    SELECT * FROM students
-    WHERE status='Absent'
-    """)
-
-    students = c.fetchall()
-
-    conn.close()
-
-    return render_template(
-        "absent_students.html",
-        students=students
-    )
-
-
-# ================= LATE STUDENTS =================
-
-@app.route('/late_students')
-def late_students():
-
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    c.execute("""
-    SELECT * FROM students
-    WHERE status='Late'
-    """)
-
-    students = c.fetchall()
-
-    conn.close()
-
-    return render_template(
-        "late_students.html",
-        students=students
-    )
 #============ RECEIPT ==============
 @app.route('/receipt/<int:id>')
 def receipt(id):
