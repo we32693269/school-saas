@@ -262,25 +262,32 @@ def add_student():
 
     return redirect('/dashboard')
 #================= MARK ATTENDANCE ==================
+import sqlite3
+from flask import Flask, render_template, request, redirect
+
+app = Flask(__name__)
+
+# ================= MARK ATTENDANCE =================
 @app.route('/mark_attendance/<int:id>/<status>')
 def mark_attendance(id, status):
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # 1. Get student name
+    # Get student
     c.execute("SELECT name FROM students WHERE id=?", (id,))
     student = c.fetchone()
 
     if student:
 
-        # 2. Save attendance history
+        # 1. Save history (attendance table)
         c.execute("""
-        INSERT INTO attendance (student_id, student_name, status, date)
+        INSERT INTO attendance
+        (student_id, student_name, status, date)
         VALUES (?, ?, ?, datetime('now'))
         """, (id, student[0], status))
 
-        # 3. UPDATE STUDENTS TABLE (THIS IS YOUR QUESTION)
+        # 2. Update dashboard status (students table)
         c.execute("""
         UPDATE students
         SET status=?
@@ -289,11 +296,88 @@ def mark_attendance(id, status):
 
         conn.commit()
 
-        print("UPDATED:", id, status)
+        print("ATTENDANCE SAVED:", id, status)
 
     conn.close()
 
     return redirect('/dashboard')
+
+
+# ================= ATTENDANCE REPORT =================
+@app.route('/attendance')
+def attendance():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT student_id, student_name, status, date
+    FROM attendance
+    ORDER BY id DESC
+    """)
+
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template("attendance.html", data=data)
+
+
+# ================= PRESENT STUDENTS =================
+@app.route('/present_students')
+def present_students():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT * FROM students
+    WHERE status='Present'
+    """)
+
+    students = c.fetchall()
+
+    conn.close()
+
+    return render_template("present_students.html", students=students)
+
+
+# ================= ABSENT STUDENTS =================
+@app.route('/absent_students')
+def absent_students():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT * FROM students
+    WHERE status='Absent'
+    """)
+
+    students = c.fetchall()
+
+    conn.close()
+
+    return render_template("absent_students.html", students=students)
+
+
+# ================= LATE STUDENTS =================
+@app.route('/late_students')
+def late_students():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT * FROM students
+    WHERE status='Late'
+    """)
+
+    students = c.fetchall()
+
+    conn.close()
+
+    return render_template("late_students.html", students=students)
 
 
 # ================= ATTENDANCE REPORT =================
