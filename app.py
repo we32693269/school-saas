@@ -62,6 +62,12 @@ def init_db():
         date TEXT
     )
     """)
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        password TEXT,
+        role TEXT
+    );
 
     # ================= SETTINGS =================
     c.execute("""
