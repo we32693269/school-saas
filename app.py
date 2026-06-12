@@ -96,9 +96,38 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        if username == "admin" and password == "1234":
-            session['admin'] = True
-            return redirect('/dashboard')
+        conn = sqlite3.connect("school.db")
+        c = conn.cursor()
+
+        # 🔥 check user from database (ALL ROLES)
+        c.execute("""
+        SELECT role FROM users
+        WHERE username=? AND password=?
+        """, (username, password))
+
+        user = c.fetchone()
+
+        conn.close()
+
+        if user:
+
+            role = user[0]
+
+            # 🔐 store role in session
+            session['role'] = role
+
+            # 🚀 redirect based on role
+            if role == "admin":
+                return redirect('/dashboard')
+
+            elif role == "teacher":
+                return redirect('/teacher_dashboard')
+
+            elif role == "student":
+                return redirect('/student_dashboard')
+
+            else:
+                return "Unknown role"
 
         return "Invalid Username or Password"
 
