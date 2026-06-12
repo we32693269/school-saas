@@ -216,7 +216,7 @@
     <br>
 
     <!-- STUDENTS TABLE -->
-<div class="card shadow p-3">
+    <div class="card shadow p-3">
 
     <h4>📋 Students List</h4>
 
@@ -243,50 +243,80 @@
             {% for s in students %}
             <tr>
 
+                <!-- ID -->
                 <td>{{ s[0] }}</td>
+
+                <!-- Name -->
                 <td>{{ s[1] }}</td>
+
+                <!-- Age -->
                 <td>{{ s[2] }}</td>
+
+                <!-- Grade -->
                 <td>{{ s[3] }}</td>
+
+                <!-- Fee -->
                 <td>{{ s[4] }}</td>
+
+                <!-- Paid -->
                 <td>{{ s[5] }}</td>
+
+                <!-- Balance -->
                 <td>{{ s[4] - s[5] }}</td>
+
+                <!-- STATUS (FIXED HERE 👇) -->
                 <td>
-{% if s[6] == 'Present' %}
-    <span class="badge bg-success">Present</span>
+                    {% if s[6] == 'Present' %}
+                        <span class="badge bg-success">Present</span>
 
-{% elif s[6] == 'Absent' %}
-    <span class="badge bg-danger">Absent</span>
+                    {% elif s[6] == 'Absent' %}
+                        <span class="badge bg-danger">Absent</span>
 
-{% elif s[6] == 'Late' %}
-    <span class="badge bg-warning text-dark">Late</span>
+                    {% elif s[6] == 'Late' %}
+                        <span class="badge bg-warning text-dark">Late</span>
 
-{% else %}
-    <span class="badge bg-secondary">Not Marked</span>
-{% endif %}
-</td>
+                    {% else %}
+                        <span class="badge bg-secondary">Not Marked</span>
+                    {% endif %}
+                </td>
+
+                <!-- ACTIONS -->
                 <td>
 
-<a href="/student/{{ s[0] }}"
-class="btn btn-info btn-sm">
-View
-</a>
+                    <div class="d-flex flex-wrap gap-1">
 
-<a href="/edit_student/{{ s[0] }}"
-class="btn btn-primary btn-sm">
-Edit
-</a>
+                        <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm">
+                            View
+                        </a>
 
-<a href="/delete_student/{{ s[0] }}"
-class="btn btn-danger btn-sm">
-Delete
-</a>
+                        <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">
+                            Edit
+                        </a>
 
-<a href="/receipt/{{ s[0] }}"
-class="btn btn-warning btn-sm">
-Receipt
-</a>
+                        <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure?')">
+                            Delete
+                        </a>
 
-</td>
+                        <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">
+                            Receipt
+                        </a>
+
+                        <!-- Attendance Dropdown -->
+                        <select class="form-select form-select-sm"
+                                onchange="if(this.value) location=this.value">
+
+                            <option value="">Attendance</option>
+
+                            <option value="/mark_attendance/{{ s[0] }}/Present">Present</option>
+                            <option value="/mark_attendance/{{ s[0] }}/Absent">Absent</option>
+                            <option value="/mark_attendance/{{ s[0] }}/Late">Late</option>
+
+                        </select>
+
+                    </div>
+
+                </td>
 
             </tr>
             {% endfor %}
@@ -298,6 +328,7 @@ Receipt
     </div>
 
 </div>
+
 
 </body>
 </html>
