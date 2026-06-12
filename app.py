@@ -62,14 +62,26 @@ def init_db():
         date TEXT
     )
     """)
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        password TEXT,
-        role TEXT
-    )
-    """)
+    # DEFAULT USERS
+
+c.execute("""
+INSERT OR IGNORE INTO users
+(username,password,role)
+VALUES ('admin','1234','admin')
+""")
+
+c.execute("""
+INSERT OR IGNORE INTO users
+(username,password,role)
+VALUES ('teacher1','1234','teacher')
+""")
+
+c.execute("""
+INSERT OR IGNORE INTO users
+(username,password,role)
+VALUES ('student1','1234','student')
+""")
+
 
     # ================= SETTINGS =================
     c.execute("""
