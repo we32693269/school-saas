@@ -115,20 +115,20 @@ def login():
         print("DB USER:", user)
         print("INPUT:", username, password)
 
-        if user and user[1] == password:
+        if user is None:
+            return "User not found"
 
-            session['role'] = user[2]
+        if user[1] != password:
+            return "Wrong password"
 
-            if user[2] == "admin":
-                return redirect('/dashboard')
-            elif user[2] == "teacher":
-                return redirect('/teacher_dashboard')
-            else:
-                return redirect('/student_dashboard')
+        session['role'] = user[2]
 
-        return "Invalid login"
-
-    return render_template("login.html")
+        if user[2] == "admin":
+            return redirect('/dashboard')
+        elif user[2] == "teacher":
+            return redirect('/teacher_dashboard')
+        else:
+            return redirect('/student_dashboard')
 #=============== LOGOUT ==================
 @app.route('/logout')
 def logout():
