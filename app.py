@@ -22,6 +22,8 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
+
+    # ================= TEACHERS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS teachers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +34,8 @@ def init_db():
         date TEXT DEFAULT CURRENT_TIMESTAMP
     )
     """)
-    
+
+    # ================= USERS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,6 +44,7 @@ def init_db():
         role TEXT
     )
     """)
+
     # ================= PAYMENTS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS payments (
@@ -52,7 +56,7 @@ def init_db():
     )
     """)
 
-    # ================= ATTENDANCE (ONLY ONCE) =================
+    # ================= ATTENDANCE =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS attendance (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,26 +66,25 @@ def init_db():
         date TEXT
     )
     """)
-    # DEFAULT USERS
 
-     c.execute("""
-     INSERT OR IGNORE INTO users
-     (username,password,role)
-     VALUES ('admin','1234','admin')
-    """)
-
-     c.execute("""
-     INSERT OR IGNORE INTO users
-     (username,password,role)
-     VALUES ('teacher1','1234','teacher')
+    # ================= DEFAULT USERS =================
+    c.execute("""
+    INSERT OR IGNORE INTO users
+    (username, password, role)
+    VALUES ('admin', '1234', 'admin')
     """)
 
     c.execute("""
     INSERT OR IGNORE INTO users
-    (username,password,role)
-    VALUES ('student1','1234','student')
+    (username, password, role)
+    VALUES ('teacher1', '1234', 'teacher')
     """)
 
+    c.execute("""
+    INSERT OR IGNORE INTO users
+    (username, password, role)
+    VALUES ('student1', '1234', 'student')
+    """)
 
     # ================= SETTINGS =================
     c.execute("""
@@ -100,14 +103,15 @@ def init_db():
     )
     """)
 
-    # DEFAULT SETTINGS
+    # ================= DEFAULT SETTINGS =================
     c.execute("""
     INSERT OR IGNORE INTO settings
-    (id, school_name, logo, default_fee, admin_password, academic_year,
-     phone, email, email_password, sms_api_key, footer_message)
+    (id, school_name, logo, default_fee, admin_password,
+     academic_year, phone, email, email_password,
+     sms_api_key, footer_message)
     VALUES
-    (1, 'MY SCHOOL', 'static/logo.png', 0, '1234', '2025/2026',
-     '', '', '', '', '')
+    (1, 'MY SCHOOL', 'static/logo.png', 0, '1234',
+     '2025/2026', '', '', '', '', '')
     """)
 
     conn.commit()
