@@ -264,6 +264,9 @@ def add_student():
     conn.close()
 
     return redirect('/dashboard')
+@app.route('/test')
+def test():
+    return "WORKING"
 #============== ATTENDANCE PDF =================
 from flask import send_file
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
