@@ -253,29 +253,56 @@
                 <td>
                 <td>
 
-<div style="display:flex; flex-direction:column; gap:5px; min-width:120px;">
+<div class="d-flex flex-wrap gap-1">
 
-    <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm">View</a>
+    <a href="/student/{{ s[0] }}" class="btn btn-info btn-sm">
+        View
+    </a>
 
-    <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">Edit</a>
+    <a href="/edit_student/{{ s[0] }}" class="btn btn-primary btn-sm">
+        Edit
+    </a>
 
-    <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">Delete</a>
+    <a href="/delete_student/{{ s[0] }}" class="btn btn-danger btn-sm">
+        Delete
+    </a>
 
-    <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">Receipt</a>
+    <a href="/receipt/{{ s[0] }}" class="btn btn-warning btn-sm">
+        Receipt
+    </a>
 
-    <select class="form-select form-select-sm"
-        onchange="location = this.value;">
-
-        <option value="">Attendance</option>
-        <option value="/mark_attendance/{{ s[0] }}/Present">Present</option>
-        <option value="/mark_attendance/{{ s[0] }}/Absent">Absent</option>
-        <option value="/mark_attendance/{{ s[0] }}/Late">Late</option>
-
-    </select>
+    <a href="/attendance_pdf/{{ s[0] }}"
+       class="btn btn-secondary btn-sm">
+       PDF
+    </a>
 
 </div>
 
+<br>
+
+<select class="form-select form-select-sm"
+onchange="if(this.value) location=this.value">
+
+    <option value="">Attendance</option>
+
+    <option value="/mark_attendance/{{ s[0] }}/Present">
+        Present
+    </option>
+
+    <option value="/mark_attendance/{{ s[0] }}/Absent">
+        Absent
+    </option>
+
+    <option value="/mark_attendance/{{ s[0] }}/Late">
+        Late
+    </option>
+
+</select>
+
 </td>
+
+
+</div>
             </tr>
             {% endfor %}
 
