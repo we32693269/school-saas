@@ -107,28 +107,29 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute("SELECT username, password, role FROM users WHERE username=?", (username,))
+        c.execute("""
+        SELECT role FROM users
+        WHERE username=? AND password=?
+        """, (username, password))
+
         user = c.fetchone()
 
         conn.close()
 
-        print("DB USER:", user)
-        print("INPUT:", username, password)
+        if user:
 
-        if user is None:
-            return "User not found"
+            session['role'] = user[0]
 
-        if user[1] != password:
-            return "Wrong password"
+            if user[0] == "admin":
+                return redirect('/dashboard')
+            elif user[0] == "teacher":
+                return redirect('/teacher_dashboard')
+            else:
+                return redirect('/student_dashboard')
 
-        session['role'] = user[2]
+        return "Invalid login ❌"
 
-        if user[2] == "admin":
-            return redirect('/dashboard')
-        elif user[2] == "teacher":
-            return redirect('/teacher_dashboard')
-        else:
-            return redirect('/student_dashboard')
+    return render_template('login.html')
 #=============== LOGOUT ==================
 @app.route('/logout')
 def logout():
