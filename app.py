@@ -91,36 +91,33 @@ init_db()
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
-    if request.method == 'POST':
+    try:
+        if request.method == 'POST':
 
-        username = request.form.get('username')
-        password = request.form.get('password')
+            username = request.form.get('username')
+            password = request.form.get('password')
 
-        conn = sqlite3.connect("school.db")
-        c = conn.cursor()
+            conn = sqlite3.connect("school.db")
+            c = conn.cursor()
 
-        c.execute("""
-        SELECT role FROM users
-        WHERE username=? AND password=?
-        """, (username, password))
+            c.execute("""
+            SELECT role FROM users
+            WHERE username=? AND password=?
+            """, (username, password))
 
-        user = c.fetchone()
+            user = c.fetchone()
+            conn.close()
 
-        conn.close()
-
-        if user:
-            session['role'] = user[0]
-
-            if user[0] == "admin":
+            if user:
+                session['role'] = user[0]
                 return redirect('/dashboard')
-            elif user[0] == "teacher":
-                return redirect('/teacher_dashboard')
-            else:
-                return redirect('/student_dashboard')
 
-        return "Invalid login"
+            return "Invalid login"
 
-    return render_template("login.html")
+        return render_template('login.html')
+
+    except Exception as e:
+        return str(e)
 #=============== LOGOUT ==================
 @app.route('/logout')
 def logout():
