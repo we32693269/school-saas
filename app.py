@@ -99,7 +99,6 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        # 🔥 check user from database (ALL ROLES)
         c.execute("""
         SELECT role FROM users
         WHERE username=? AND password=?
@@ -110,28 +109,18 @@ def login():
         conn.close()
 
         if user:
+            session['role'] = user[0]
 
-            role = user[0]
-
-            # 🔐 store role in session
-            session['role'] = role
-
-            # 🚀 redirect based on role
-            if role == "admin":
+            if user[0] == "admin":
                 return redirect('/dashboard')
-
-            elif role == "teacher":
+            elif user[0] == "teacher":
                 return redirect('/teacher_dashboard')
-
-            elif role == "student":
+            else:
                 return redirect('/student_dashboard')
 
-            else:
-                return "Unknown role"
+        return "Invalid login"
 
-        return "Invalid Username or Password"
-
-    return render_template('login.html')
+    return render_template("login.html")
 #=============== LOGOUT ==================
 @app.route('/logout')
 def logout():
