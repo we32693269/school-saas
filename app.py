@@ -96,8 +96,6 @@ def init_db():
 init_db()
 
 #============= login ==============
-from werkzeug.security import check_password_hash
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -109,18 +107,21 @@ def login():
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
 
-        c.execute("SELECT password, role FROM users WHERE username=?", (username,))
-        user = c.fetchone()
+        c.execute("""
+        SELECT role FROM users
+        WHERE username=? AND password=?
+        """, (username, password))
 
+        user = c.fetchone()
         conn.close()
 
-        if user and check_password_hash(user[0], password):
+        if user:
 
-            session['role'] = user[1]
+            session['role'] = user[0]
 
-            if user[1] == "admin":
+            if user[0] == "admin":
                 return redirect('/dashboard')
-            elif user[1] == "teacher":
+            elif user[0] == "teacher":
                 return redirect('/teacher_dashboard')
             else:
                 return redirect('/student_dashboard')
