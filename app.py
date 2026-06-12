@@ -32,7 +32,15 @@ def init_db():
         date TEXT DEFAULT CURRENT_TIMESTAMP
     )
     """)
-
+    
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT,
+        role TEXT
+    )
+    """)
     # ================= PAYMENTS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS payments (
