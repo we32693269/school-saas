@@ -22,6 +22,16 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS teachers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        subject TEXT,
+        phone TEXT,
+        salary INTEGER,
+        date TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
 
     # ================= PAYMENTS =================
     c.execute("""
@@ -240,6 +250,86 @@ def add_payment(id):
     conn.close()
 
     return redirect(f'/student/{id}')
+#=============== TEACHERS ================
+@app.route('/teachers')
+def teachers():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM teachers")
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template("teachers.html", teachers=data)
+
+#================ ADD TEACHER ======================
+@app.route('/add_teacher', methods=['POST'])
+def add_teacher():
+
+    name = request.form['name']
+    subject = request.form['subject']
+    phone = request.form['phone']
+    salary = request.form['salary']
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO teachers (name, subject, phone, salary)
+        VALUES (?, ?, ?, ?)
+    """, (name, subject, phone, salary))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/teachers')
+#================= EDIT TEACHER ==================
+@app.route('/edit_teacher/<int:id>', methods=['GET', 'POST'])
+def edit_teacher(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM teachers WHERE id=?", (id,))
+    teacher = c.fetchone()
+
+    if request.method == 'POST':
+
+        name = request.form['name']
+        subject = request.form['subject']
+        phone = request.form['phone']
+        salary = request.form['salary']
+
+        c.execute("""
+            UPDATE teachers
+            SET name=?, subject=?, phone=?, salary=?
+            WHERE id=?
+        """, (name, subject, phone, salary, id))
+
+        conn.commit()
+        conn.close()
+
+        return redirect('/teachers')
+
+    conn.close()
+
+    return render_template("edit_teacher.html", teacher=teacher)
+#============= DELETE TEACHER ===============
+@app.route('/delete_teacher/<int:id>')
+def delete_teacher(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("DELETE FROM teachers WHERE id=?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/teachers')
+    
 
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
