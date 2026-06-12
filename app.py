@@ -64,23 +64,23 @@ def init_db():
     """)
     # DEFAULT USERS
 
-c.execute("""
-INSERT OR IGNORE INTO users
-(username,password,role)
-VALUES ('admin','1234','admin')
-""")
+     c.execute("""
+     INSERT OR IGNORE INTO users
+     (username,password,role)
+     VALUES ('admin','1234','admin')
+    """)
 
-c.execute("""
-INSERT OR IGNORE INTO users
-(username,password,role)
-VALUES ('teacher1','1234','teacher')
-""")
+     c.execute("""
+     INSERT OR IGNORE INTO users
+     (username,password,role)
+     VALUES ('teacher1','1234','teacher')
+    """)
 
-c.execute("""
-INSERT OR IGNORE INTO users
-(username,password,role)
-VALUES ('student1','1234','student')
-""")
+    c.execute("""
+    INSERT OR IGNORE INTO users
+    (username,password,role)
+    VALUES ('student1','1234','student')
+    """)
 
 
     # ================= SETTINGS =================
