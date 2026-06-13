@@ -34,6 +34,15 @@ def init_db():
         date TEXT DEFAULT CURRENT_TIMESTAMP
     )
     """)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS teacher_attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        teacher_id INTEGER,
+        teacher_name TEXT,
+        status TEXT,
+        date TEXT
+   )
+   """)
     # ================= USERS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS users (
@@ -348,6 +357,55 @@ def teachers():
     conn.close()
 
     return render_template("teachers.html", teachers=data)
+#=========== TEACHER ATTENDANCE =================
+@app.route('/mark_teacher_attendance/<int:id>/<status>')
+def mark_teacher_attendance(id, status):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    # get teacher
+    c.execute("SELECT name FROM teachers WHERE id=?", (id,))
+    teacher = c.fetchone()
+
+    if teacher:
+
+        # remove old record for today (optional)
+        c.execute("""
+        DELETE FROM teacher_attendance
+        WHERE teacher_id=? AND date=date('now')
+        """, (id,))
+
+        # insert new record
+        c.execute("""
+        INSERT INTO teacher_attendance
+        (teacher_id, teacher_name, status, date)
+        VALUES (?, ?, ?, date('now'))
+        """, (id, teacher[0], status))
+
+        conn.commit()
+
+    conn.close()
+
+    return redirect('/teachers')
+
+#========== TEACHER ATTENDANCE REPORT ==============
+@app.route('/teacher_attendance_report')
+def teacher_attendance_report():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT teacher_name, status, date
+    FROM teacher_attendance
+    ORDER BY id DESC
+    """)
+
+    data = c.fetchall()
+    conn.close()
+
+    return render_template("teacher_attendance.html", data=data)
 
 #================ ADD TEACHER ======================
 @app.route('/add_teacher', methods=['POST'])
@@ -370,6 +428,7 @@ def add_teacher():
     conn.close()
 
     return redirect('/teachers')
+
 #================= EDIT TEACHER ==================
 @app.route('/edit_teacher/<int:id>', methods=['GET', 'POST'])
 def edit_teacher(id):
@@ -401,6 +460,7 @@ def edit_teacher(id):
     conn.close()
 
     return render_template("edit_teacher.html", teacher=teacher)
+
 #============= DELETE TEACHER ===============
 @app.route('/delete_teacher/<int:id>')
 def delete_teacher(id):
