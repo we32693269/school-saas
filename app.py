@@ -34,6 +34,11 @@ def init_db():
         date TEXT DEFAULT CURRENT_TIMESTAMP
     )
     """)
+    c.execute("""
+    INSERT OR IGNORE INTO users
+    (username, password, role)
+    VALUES ('admin', '1234', 'admin')
+    """)
 
     # ================= USERS =================
     c.execute("""
