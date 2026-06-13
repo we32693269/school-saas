@@ -412,8 +412,32 @@ def delete_teacher(id):
     conn.close()
 
     return redirect('/teachers')
-    
+# ================= STUDENT DASHBOARD =================
+@app.route('/student_dashboard')
+def student_dashboard():
 
+    if session.get('role') != 'student':
+        return redirect('/login')
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    # ለጊዜው student1 እንደ ተማሪ እንወስዳለን
+    c.execute("SELECT * FROM students LIMIT 1")
+    student = c.fetchone()
+
+    conn.close()
+
+    if not student:
+        return "No student found"
+
+    return render_template(
+        "student_dashboard.html",
+        student_name=student[1],
+        grade=student[3],
+        paid=student[5],
+        balance=student[4] - student[5]
+    )
 # ================= ADD STUDENT =================
 @app.route('/add_student', methods=['POST'])
 def add_student():
