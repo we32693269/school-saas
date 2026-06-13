@@ -43,6 +43,17 @@ def init_db():
         date TEXT
    )
    """)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS exams (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        subject TEXT,
+        exam_name TEXT,
+        score REAL,
+        total REAL,
+        grade TEXT
+   )
+   """)
     # ================= USERS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS users (
@@ -302,6 +313,69 @@ def add_payment(id):
         INSERT INTO payments (student_id, amount, date, note)
         VALUES (?, ?, datetime('now'), ?)
     """, (id, amount, note))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(f'/student/{id}')
+#========== STUDENT EXAMS ==============
+@app.route('/student_exams/<int:id>')
+def student_exams(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    c.execute("""
+    SELECT subject, exam_name, score, total, grade
+    FROM exams
+    WHERE student_id=?
+    """, (id,))
+
+    exams = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "student_exams.html",
+        student=student,
+        exams=exams
+    )
+
+#============ ADD EXAM ==============
+@app.route('/add_exam/<int:id>', methods=['POST'])
+def add_exam(id):
+
+    subject = request.form['subject']
+    exam_name = request.form['exam_name']
+    score = float(request.form['score'])
+    total = float(request.form['total'])
+
+    percent = (score / total) * 100
+
+    if percent >= 90:
+        grade = "A+"
+    elif percent >= 80:
+        grade = "A"
+    elif percent >= 70:
+        grade = "B"
+    elif percent >= 60:
+        grade = "C"
+    elif percent >= 50:
+        grade = "D"
+    else:
+        grade = "F"
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    INSERT INTO exams
+    (student_id, subject, exam_name, score, total, grade)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (id, subject, exam_name, score, total, grade))
 
     conn.commit()
     conn.close()
