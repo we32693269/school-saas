@@ -308,30 +308,32 @@ def teacher_dashboard():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    # teacher info
-    c.execute("""
-    SELECT * FROM teachers
-    """)
-    teachers = c.fetchall()
+    # Teacher info (for demo teacher1)
+    c.execute("SELECT * FROM teachers LIMIT 1")
+    teacher = c.fetchone()
 
-    # students count
+    # Students summary
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
 
-    # attendance today
-    c.execute("""
-    SELECT COUNT(*) FROM attendance
-    WHERE date(date) = date('now')
-    """)
-    today_attendance = c.fetchone()[0]
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Present'")
+    present = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Absent'")
+    absent = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM students WHERE status='Late'")
+    late = c.fetchone()[0]
 
     conn.close()
 
     return render_template(
         "teacher_dashboard.html",
-        teachers=teachers,
+        teacher=teacher,
         total_students=total_students,
-        today_attendance=today_attendance
+        present=present,
+        absent=absent,
+        late=late
     )
 #=============== TEACHERS ================
 @app.route('/teachers')
