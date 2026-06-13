@@ -193,7 +193,7 @@ def student_profile(id):
 # ================= DASHBOARD =================
 @app.route('/dashboard')
 def dashboard():
-    if not session.get('admin'):
+    if session.get('role') != 'admin':
         return redirect('/login')
 
     search = request.args.get('search', '')
