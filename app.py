@@ -397,6 +397,43 @@ def add_exam(id):
     conn.close()
 
     return redirect(f'/student/{id}')
+
+#============== RANKING ===================
+@app.route('/ranking')
+def ranking():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT student_id, AVG(gpa) as avg_gpa
+    FROM exams
+    GROUP BY student_id
+    ORDER BY avg_gpa DESC
+    """)
+
+    data = c.fetchall()
+
+    students_ranked = []
+
+    for row in data:
+
+        student_id = row[0]
+        avg_gpa = row[1]
+
+        c.execute("SELECT name FROM students WHERE id=?", (student_id,))
+        student = c.fetchone()
+
+        if student:
+            students_ranked.append({
+                "id": student_id,
+                "name": student[0],
+                "gpa": round(avg_gpa, 2)
+            })
+
+    conn.close()
+
+    return render_template("ranking.html", students=students_ranked)
 #=============== TEACHER DASHBOARD =================
 @app.route('/teacher_dashboard')
 def teacher_dashboard():
