@@ -51,7 +51,8 @@ def init_db():
         exam_name TEXT,
         score REAL,
         total REAL,
-        grade TEXT
+        grade TEXT,
+        gpa REAL
    )
    """)
     # ================= USERS =================
@@ -335,6 +336,14 @@ def student_exams(id):
     """, (id,))
 
     exams = c.fetchall()
+    c.execute("""
+    SELECT AVG(gpa)
+    FROM exams
+    WHERE student_id=?
+    """, (id,))
+
+    avg_gpa = c.fetchone()[0] or 0
+    
 
     conn.close()
 
@@ -342,6 +351,7 @@ def student_exams(id):
         "student_exams.html",
         student=student,
         exams=exams
+        avg_gpa=avg_gpa
     )
 
 #============ ADD EXAM ==============
@@ -355,21 +365,32 @@ def add_exam(id):
 
     percent = (score / total) * 100
 
-    if percent >= 90:
-        grade = "A+"
-    elif percent >= 80:
-        grade = "A"
-    elif percent >= 70:
-        grade = "B"
-    elif percent >= 60:
-        grade = "C"
-    elif percent >= 50:
-        grade = "D"
-    else:
-        grade = "F"
+if percent >= 90:
+    grade = "A+"
+    gpa = 4.0
+elif percent >= 80:
+    grade = "A"
+    gpa = 3.5
+elif percent >= 70:
+    grade = "B"
+    gpa = 3.0
+elif percent >= 60:
+    grade = "C"
+    gpa = 2.5
+elif percent >= 50:
+    grade = "D"
+    gpa = 2.0
+else:
+    grade = "F"
+    gpa = 0.0
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
+    c.execute("""
+    INSERT INTO exams
+    (student_id, subject, exam_name, score, total, grade, gpa)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (id, subject, exam_name, score, total, grade, gpa))
 
     c.execute("""
     INSERT INTO exams
