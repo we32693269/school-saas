@@ -405,35 +405,35 @@ def ranking():
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
+    # safe query (no crash)
     c.execute("""
-    SELECT student_id, AVG(gpa) as avg_gpa
+    SELECT student_id, AVG(gpa)
     FROM exams
     GROUP BY student_id
-    ORDER BY avg_gpa DESC
+    ORDER BY AVG(gpa) DESC
     """)
 
-    data = c.fetchall()
+    rows = c.fetchall()
 
-    students_ranked = []
+    result = []
 
-    for row in data:
+    for r in rows:
 
-        student_id = row[0]
-        avg_gpa = row[1]
+        student_id = r[0]
+        avg_gpa = r[1] or 0
 
         c.execute("SELECT name FROM students WHERE id=?", (student_id,))
         student = c.fetchone()
 
         if student:
-            students_ranked.append({
-                "id": student_id,
+            result.append({
                 "name": student[0],
                 "gpa": round(avg_gpa, 2)
             })
 
     conn.close()
 
-    return render_template("ranking.html", students=students_ranked)
+    return render_template("ranking.html", students=result)
 #=============== TEACHER DASHBOARD =================
 @app.route('/teacher_dashboard')
 def teacher_dashboard():
