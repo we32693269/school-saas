@@ -350,7 +350,7 @@ def student_exams(id):
     return render_template(
         "student_exams.html",
         student=student,
-        exams=exams
+        exams=exams,
         avg_gpa=avg_gpa
     )
 
