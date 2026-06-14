@@ -365,38 +365,33 @@ def add_exam(id):
 
     percent = (score / total) * 100
 
-if percent >= 90:
-    grade = "A+"
-    gpa = 4.0
-elif percent >= 80:
-    grade = "A"
-    gpa = 3.5
-elif percent >= 70:
-    grade = "B"
-    gpa = 3.0
-elif percent >= 60:
-    grade = "C"
-    gpa = 2.5
-elif percent >= 50:
-    grade = "D"
-    gpa = 2.0
-else:
-    grade = "F"
-    gpa = 0.0
+    if percent >= 90:
+        grade = "A+"
+        gpa = 4.0
+    elif percent >= 80:
+        grade = "A"
+        gpa = 3.5
+    elif percent >= 70:
+        grade = "B"
+        gpa = 3.0
+    elif percent >= 60:
+        grade = "C"
+        gpa = 2.5
+    elif percent >= 50:
+        grade = "D"
+        gpa = 2.0
+    else:
+        grade = "F"
+        gpa = 0.0
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
+
     c.execute("""
     INSERT INTO exams
     (student_id, subject, exam_name, score, total, grade, gpa)
     VALUES (?, ?, ?, ?, ?, ?, ?)
     """, (id, subject, exam_name, score, total, grade, gpa))
-
-    c.execute("""
-    INSERT INTO exams
-    (student_id, subject, exam_name, score, total, grade)
-    VALUES (?, ?, ?, ?, ?, ?)
-    """, (id, subject, exam_name, score, total, grade))
 
     conn.commit()
     conn.close()
