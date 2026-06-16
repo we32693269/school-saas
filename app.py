@@ -363,8 +363,16 @@ def add_exam(id):
     score = float(request.form['score'])
     total = float(request.form['total'])
 
+    # Validation
+    if total <= 0:
+        return "❌ Total marks must be greater than 0"
+
+    if score > total:
+        return "❌ Score cannot be greater than Total Marks"
+
     percent = (score / total) * 100
 
+    # Grade + GPA
     if percent >= 90:
         grade = "A+"
         gpa = 4.0
@@ -391,12 +399,20 @@ def add_exam(id):
     INSERT INTO exams
     (student_id, subject, exam_name, score, total, grade, gpa)
     VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (id, subject, exam_name, score, total, grade, gpa))
+    """, (
+        id,
+        subject,
+        exam_name,
+        score,
+        total,
+        grade,
+        gpa
+    ))
 
     conn.commit()
     conn.close()
 
-    return redirect(f'/student/{id}')
+    return redirect(f'/student_exams/{id}')
 
 #============== RANKING ===================
 @app.route('/ranking')
