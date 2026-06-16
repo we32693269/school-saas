@@ -326,16 +326,23 @@ def student_exams(id):
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    # Student info
+    c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
     student = c.fetchone()
 
+    # Exams
     c.execute("""
-    SELECT subject, exam_name, score, total, grade
+    SELECT *
     FROM exams
     WHERE student_id=?
     """, (id,))
 
     exams = c.fetchall()
+
+    # Average GPA
     c.execute("""
     SELECT AVG(gpa)
     FROM exams
@@ -343,7 +350,6 @@ def student_exams(id):
     """, (id,))
 
     avg_gpa = c.fetchone()[0] or 0
-    
 
     conn.close()
 
