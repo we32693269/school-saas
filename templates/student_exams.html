@@ -52,25 +52,28 @@
 
 {% for e in exams %}
 <tr>
-    <td>{{ e[0] }}</td>
-    <td>{{ e[1] }}</td>
+
     <td>{{ e[2] }}</td>
     <td>{{ e[3] }}</td>
     <td>{{ e[4] }}</td>
-</tr>
+    <td>{{ e[5] }}</td>
+    <td>{{ e[6] }}</td>
+
     <td>
 
-    <a href="/edit_exam/{{ e[0] }}"
-       class="btn btn-primary btn-sm">
-       Edit
-    </a>
+        <a href="/edit_exam/{{ e[0] }}"
+           class="btn btn-primary btn-sm">
+           Edit
+        </a>
 
-    <a href="/delete_exam/{{ e[0] }}/{{ student[0] }}"
-       class="btn btn-danger btn-sm">
-       Delete
-    </a>
+        <a href="/delete_exam/{{ e[0] }}/{{ student[0] }}"
+           class="btn btn-danger btn-sm">
+           Delete
+        </a>
 
-</td>
+    </td>
+
+</tr>
 {% endfor %}
 
 </table>
