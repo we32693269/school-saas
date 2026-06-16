@@ -9,6 +9,11 @@
 <div class="container mt-4">
 
 <h2>🎓 {{ student[1] }} Exam Results</h2>
+    <div class="mb-3">
+    <a href="/dashboard" class="btn btn-outline-primary">
+        ⬅ Back Home
+    </a>
+</div>
 <h4>📊 Average GPA: {{ avg_gpa|round(2) }}</h4>
 
 <form method="POST" action="/add_exam/{{ student[0] }}">
