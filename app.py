@@ -353,6 +353,98 @@ def student_exams(id):
         exams=exams,
         avg_gpa=avg_gpa
     )
+#=============== EDIT EXAM ===============
+@app.route('/edit_exam/<int:exam_id>', methods=['GET', 'POST'])
+def edit_exam(exam_id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    if request.method == 'POST':
+
+        subject = request.form['subject']
+        exam_name = request.form['exam_name']
+        score = float(request.form['score'])
+        total = float(request.form['total'])
+
+        if score > total:
+            return "❌ Score cannot be greater than Total"
+
+        percent = (score / total) * 100
+
+        if percent >= 90:
+            grade = "A+"
+            gpa = 4.0
+        elif percent >= 80:
+            grade = "A"
+            gpa = 3.5
+        elif percent >= 70:
+            grade = "B"
+            gpa = 3.0
+        elif percent >= 60:
+            grade = "C"
+            gpa = 2.5
+        elif percent >= 50:
+            grade = "D"
+            gpa = 2.0
+        else:
+            grade = "F"
+            gpa = 0.0
+
+        c.execute("""
+        UPDATE exams
+        SET subject=?,
+            exam_name=?,
+            score=?,
+            total=?,
+            grade=?,
+            gpa=?
+        WHERE id=?
+        """, (
+            subject,
+            exam_name,
+            score,
+            total,
+            grade,
+            gpa,
+            exam_id
+        ))
+
+        conn.commit()
+
+        c.execute(
+            "SELECT student_id FROM exams WHERE id=?",
+            (exam_id,)
+        )
+
+        student_id = c.fetchone()[0]
+
+        conn.close()
+
+        return redirect(f'/student_exams/{student_id}')
+
+    c.execute("SELECT * FROM exams WHERE id=?", (exam_id,))
+    exam = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "edit_exam.html",
+        exam=exam
+    )
+#============== DELETE ===============
+@app.route('/delete_exam/<int:exam_id>/<int:student_id>')
+def delete_exam(exam_id, student_id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("DELETE FROM exams WHERE id=?", (exam_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(f'/student_exams/{student_id}')
 
 #============ ADD EXAM ==============
 @app.route('/add_exam/<int:id>', methods=['POST'])
