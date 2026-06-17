@@ -3,6 +3,7 @@ import sqlite3
 import os
 from datetime import datetime
 from reportlab.pdfgen import canvas
+import qrcode
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
 UPLOAD_FOLDER = os.path.join("static", "uploads")
