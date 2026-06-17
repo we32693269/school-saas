@@ -238,31 +238,41 @@ def id_card(id):
     file_name = f"id_card_{id}.pdf"
     pdf = canvas.Canvas(file_name)
 
-    # 🟦 Card Border
-    pdf.rect(50, 500, 350, 220)
+    # 🟦 CARD BORDER
+    pdf.setFillColorRGB(0.9, 0.9, 0.9)
+    pdf.rect(40, 480, 400, 250, fill=1)
+    pdf.setFillColorRGB(0, 0, 0)
 
-    # 🏫 School Name
+    # 🏫 TITLE
     pdf.setFont("Helvetica-Bold", 18)
-    pdf.drawString(120, 700, "MY SCHOOL ID CARD")
+    pdf.drawString(120, 700, "STUDENT ID CARD")
 
-    # 👤 Student Info
+    # 👤 INFO
     pdf.setFont("Helvetica", 12)
     pdf.drawString(70, 660, f"ID: {s[0]}")
     pdf.drawString(70, 630, f"Name: {s[1]}")
     pdf.drawString(70, 600, f"Age: {s[2]}")
     pdf.drawString(70, 570, f"Grade: {s[3]}")
 
-    # 📷 Photo (if exists)
+    # 📷 PHOTO
     if len(s) > 7 and s[7]:
         photo_path = f"static/uploads/{s[7]}"
-
         if os.path.exists(photo_path):
             pdf.drawImage(photo_path, 280, 590, width=90, height=100)
+
+    # 🔳 QR CODE CREATE
+    qr_data = f"ID:{s[0]} Name:{s[1]} Grade:{s[3]}"
+
+    qr = qrcode.make(qr_data)
+    qr_path = f"static/uploads/qr_{id}.png"
+    qr.save(qr_path)
+
+    # 📌 QR CODE ADD TO PDF
+    pdf.drawImage(qr_path, 280, 500, width=80, height=80)
 
     pdf.save()
 
     return send_file(file_name, as_attachment=True)
-
 #========== STUDENT PROFILE ===============
 @app.route('/student/<int:id>')
 def student_profile(id):
