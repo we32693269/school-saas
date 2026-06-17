@@ -239,16 +239,16 @@ def id_card(id):
     file_name = f"id_card_{id}.pdf"
     pdf = canvas.Canvas(file_name)
 
-    # 🟦 CARD BORDER
+    # 🎨 BACKGROUND CARD
     pdf.setFillColorRGB(0.9, 0.9, 0.9)
     pdf.rect(40, 480, 400, 250, fill=1)
     pdf.setFillColorRGB(0, 0, 0)
 
-    # 🏫 TITLE
+    # 🏫 SCHOOL NAME
     pdf.setFont("Helvetica-Bold", 18)
-    pdf.drawString(120, 700, "STUDENT ID CARD")
+    pdf.drawString(120, 700, "🏫 MY SCHOOL ID CARD")
 
-    # 👤 INFO
+    # 👤 STUDENT INFO
     pdf.setFont("Helvetica", 12)
     pdf.drawString(70, 660, f"ID: {s[0]}")
     pdf.drawString(70, 630, f"Name: {s[1]}")
@@ -261,15 +261,26 @@ def id_card(id):
         if os.path.exists(photo_path):
             pdf.drawImage(photo_path, 280, 590, width=90, height=100)
 
-    # 🔳 QR CODE CREATE
-    qr_data = f"ID:{s[0]} Name:{s[1]} Grade:{s[3]}"
+    # 🔳 QR CODE DATA (FULL INFO)
+    qr_data = f"""
+ID: {s[0]}
+Name: {s[1]}
+Age: {s[2]}
+Grade: {s[3]}
+School: MY SCHOOL
+"""
 
     qr = qrcode.make(qr_data)
+
     qr_path = f"static/uploads/qr_{id}.png"
     qr.save(qr_path)
 
-    # 📌 QR CODE ADD TO PDF
-    pdf.drawImage(qr_path, 280, 500, width=80, height=80)
+    # 📌 ADD QR TO PDF
+    pdf.drawImage(qr_path, 280, 500, width=90, height=90)
+
+    # ✍️ FOOTER
+    pdf.setFont("Helvetica-Oblique", 10)
+    pdf.drawString(70, 500, "This card is property of the school.")
 
     pdf.save()
 
