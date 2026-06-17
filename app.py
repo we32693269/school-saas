@@ -25,16 +25,6 @@ def init_db():
         status TEXT DEFAULT 'Not Marked'
     )
     """)
-    c.execute("""
-    CREATE TABLE students (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        age TEXT,
-        grade TEXT,
-        phone TEXT,
-        photo TEXT
-    )
-    """)
     # ================= TEACHERS =================
     c.execute("""
     CREATE TABLE IF NOT EXISTS teachers (
