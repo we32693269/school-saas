@@ -5,10 +5,6 @@ from datetime import datetime
 from reportlab.pdfgen import canvas
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # ================= DATABASE =================
 def init_db():
     conn = sqlite3.connect("school.db")
