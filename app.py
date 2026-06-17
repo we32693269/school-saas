@@ -359,6 +359,49 @@ def student_exams(id):
         exams=exams,
         avg_gpa=avg_gpa
     )
+#=============== STUDENTS PDF =============
+@app.route('/students_pdf')
+def students_pdf():
+
+    pdf_file = "students_report.pdf"
+
+    c = canvas.Canvas(pdf_file)
+
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(200, 800, "Students Report")
+
+    conn = sqlite3.connect("school.db")
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM students")
+    students = cur.fetchall()
+
+    y = 760
+
+    for s in students:
+
+        c.setFont("Helvetica", 10)
+
+        c.drawString(
+            50,
+            y,
+            f"ID:{s[0]}  Name:{s[1]}"
+        )
+
+        y -= 20
+
+        if y < 50:
+            c.showPage()
+            y = 800
+
+    conn.close()
+
+    c.save()
+
+    return send_file(
+        pdf_file,
+        as_attachment=True
+    )
 #=============== EDIT EXAM ===============
 @app.route('/edit_exam/<int:exam_id>', methods=['GET', 'POST'])
 def edit_exam(exam_id):
