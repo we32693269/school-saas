@@ -285,6 +285,26 @@ School: MY SCHOOL
     pdf.save()
 
     return send_file(file_name, as_attachment=True)
+#========= STUDENT MENU ===========
+@app.route('/student_menu/<int:id>')
+def student_menu(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "student_menu.html",
+        student=student
+    )
 #========== STUDENT PROFILE ===============
 @app.route('/student/<int:id>')
 def student_profile(id):
