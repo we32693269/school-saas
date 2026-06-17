@@ -319,6 +319,54 @@ def add_payment(id):
     conn.close()
 
     return redirect(f'/student/{id}')
+#============ REPORT CARD ==============
+@app.route('/report_card/<int:id>')
+def report_card(id):
+
+    pdf_file = f"report_card_{id}.pdf"
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    c.execute("""
+    SELECT subject, exam_name, score, total, grade
+    FROM exams
+    WHERE student_id=?
+    """, (id,))
+
+    exams = c.fetchall()
+
+    pdf = canvas.Canvas(pdf_file)
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(180, 800, "Student Report Card")
+
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(50, 760, f"Student: {student[1]}")
+
+    y = 720
+
+    for e in exams:
+
+        pdf.drawString(
+            50,
+            y,
+            f"{e[0]} | {e[1]} | {e[2]}/{e[3]} | Grade:{e[4]}"
+        )
+
+        y -= 20
+
+    pdf.save()
+
+    conn.close()
+
+    return send_file(
+        pdf_file,
+        as_attachment=True
+    )
 #========== STUDENT EXAMS ==============
 @app.route('/student_exams/<int:id>')
 def student_exams(id):
@@ -554,7 +602,54 @@ def add_exam(id):
     conn.close()
 
     return redirect(f'/student_exams/{id}')
+#============= RANKING PDF ==============
+@app.route('/ranking_pdf')
+def ranking_pdf():
 
+    pdf_file = "ranking.pdf"
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT students.name,
+           AVG(exams.gpa)
+    FROM students
+    JOIN exams
+    ON students.id=exams.student_id
+    GROUP BY students.id
+    ORDER BY AVG(exams.gpa) DESC
+    """)
+
+    rows = c.fetchall()
+
+    pdf = canvas.Canvas(pdf_file)
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(180, 800, "Student Ranking")
+
+    y = 760
+    rank = 1
+
+    for r in rows:
+
+        pdf.drawString(
+            50,
+            y,
+            f"{rank}. {r[0]} GPA={round(r[1],2)}"
+        )
+
+        y -= 25
+        rank += 1
+
+    pdf.save()
+
+    conn.close()
+
+    return send_file(
+        pdf_file,
+        as_attachment=True
+    )
 #============== RANKING ===================
 @app.route('/ranking')
 def ranking():
@@ -672,7 +767,43 @@ def mark_teacher_attendance(id, status):
     conn.close()
 
     return redirect('/teachers')
+#============== TEACHERS PDF ===============
+@app.route('/teachers_pdf')
+def teachers_pdf():
 
+    pdf_file = "teachers_report.pdf"
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM teachers")
+    teachers = c.fetchall()
+
+    pdf = canvas.Canvas(pdf_file)
+
+    pdf.setFont("Helvetica-Bold",18)
+    pdf.drawString(180,800,"Teachers Report")
+
+    y = 760
+
+    for t in teachers:
+
+        pdf.drawString(
+            50,
+            y,
+            f"{t[1]} | {t[2]} | {t[3]}"
+        )
+
+        y -= 20
+
+    pdf.save()
+
+    conn.close()
+
+    return send_file(
+        pdf_file,
+        as_attachment=True
+    )
 #========== TEACHER ATTENDANCE REPORT ==============
 @app.route('/teacher_attendance_report')
 def teacher_attendance_report():
@@ -973,8 +1104,34 @@ def late_students():
     conn.close()
 
     return render_template("late_students.html", students=students)
+#===========  RECEIPT PDF ==============
+@app.route('/receipt_pdf/<int:id>')
+def receipt_pdf(id):
 
+    pdf_file = f"receipt_{id}.pdf"
 
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    s = c.fetchone()
+
+    pdf = canvas.Canvas(pdf_file)
+
+    pdf.setFont("Helvetica-Bold",18)
+    pdf.drawString(180,800,"Fee Receipt")
+
+    pdf.drawString(50,740,f"Student: {s[1]}")
+    pdf.drawString(50,710,f"ID: {s[0]}")
+
+    pdf.save()
+
+    conn.close()
+
+    return send_file(
+        pdf_file,
+        as_attachment=True
+    )
 #============ RECEIPT ==============
 @app.route('/receipt/<int:id>')
 def receipt(id):
