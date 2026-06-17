@@ -227,52 +227,42 @@ def home():
 @app.route('/id_card/<int:id>')
 def id_card(id):
 
-    pdf_file = f"id_card_{id}.pdf"
-
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute(
-        "SELECT * FROM students WHERE id=?",
-        (id,)
-    )
-
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
     s = c.fetchone()
 
     conn.close()
 
-    pdf = canvas.Canvas(pdf_file)
+    file_name = f"id_card_{id}.pdf"
+    pdf = canvas.Canvas(file_name)
 
-    pdf.rect(50,600,300,150)
+    # 🟦 Card Border
+    pdf.rect(50, 500, 350, 220)
 
-    pdf.setFont("Helvetica-Bold",16)
+    # 🏫 School Name
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(120, 700, "MY SCHOOL ID CARD")
 
-    pdf.drawString(
-        100,
-        720,
-        "STUDENT ID CARD"
-    )
+    # 👤 Student Info
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(70, 660, f"ID: {s[0]}")
+    pdf.drawString(70, 630, f"Name: {s[1]}")
+    pdf.drawString(70, 600, f"Age: {s[2]}")
+    pdf.drawString(70, 570, f"Grade: {s[3]}")
 
-    pdf.setFont("Helvetica",12)
+    # 📷 Photo (if exists)
+    if len(s) > 7 and s[7]:
+        photo_path = f"static/uploads/{s[7]}"
 
-    pdf.drawString(
-        70,
-        680,
-        f"ID: {s[0]}"
-    )
-
-    pdf.drawString(
-        70,
-        650,
-        f"Name: {s[1]}"
-    )
+        if os.path.exists(photo_path):
+            pdf.drawImage(photo_path, 280, 590, width=90, height=100)
 
     pdf.save()
 
-    return send_file(
-        pdf_file,
-        as_attachment=True
-    )
+    return send_file(file_name, as_attachment=True)
+
 #========== STUDENT PROFILE ===============
 @app.route('/student/<int:id>')
 def student_profile(id):
