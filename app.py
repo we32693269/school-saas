@@ -138,7 +138,44 @@ def init_db():
     conn.close()
 
 init_db()
+#=========== BACKUP =========
+import shutil
 
+@app.route('/backup')
+def backup():
+
+    backup_file = "school_backup.db"
+
+    shutil.copy(
+        "school.db",
+        backup_file
+    )
+
+    return send_file(
+        backup_file,
+        as_attachment=True
+    )
+#============ RESTORE =============
+from flask import request
+import shutil
+
+@app.route('/restore', methods=['POST'])
+def restore():
+
+    file = request.files['dbfile']
+
+    file.save("restore.db")
+
+    shutil.copy(
+        "restore.db",
+        "school.db"
+    )
+
+    return redirect('/dashboard')
+#========= RESTORE PAGE =========
+@app.route('/restore_page')
+def restore_page():
+    return render_template("restore.html")
 #============= login ==============
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -182,6 +219,56 @@ def logout():
 @app.route('/')
 def home():
     return redirect('/dashboard')
+#============ ID CARD ==========
+@app.route('/id_card/<int:id>')
+def id_card(id):
+
+    pdf_file = f"id_card_{id}.pdf"
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
+    s = c.fetchone()
+
+    conn.close()
+
+    pdf = canvas.Canvas(pdf_file)
+
+    pdf.rect(50,600,300,150)
+
+    pdf.setFont("Helvetica-Bold",16)
+
+    pdf.drawString(
+        100,
+        720,
+        "STUDENT ID CARD"
+    )
+
+    pdf.setFont("Helvetica",12)
+
+    pdf.drawString(
+        70,
+        680,
+        f"ID: {s[0]}"
+    )
+
+    pdf.drawString(
+        70,
+        650,
+        f"Name: {s[1]}"
+    )
+
+    pdf.save()
+
+    return send_file(
+        pdf_file,
+        as_attachment=True
+    )
 #========== STUDENT PROFILE ===============
 @app.route('/student/<int:id>')
 def student_profile(id):
