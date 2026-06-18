@@ -1,2 +1,137 @@
-<h1>QR ID Card</h1>
-<p>{{ student[1] }}</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Student ID Card</title>
+
+    <style>
+
+        body{
+            background:#f2f2f2;
+            font-family:Arial, sans-serif;
+        }
+
+        .card{
+            width:380px;
+            margin:30px auto;
+            background:white;
+            border-radius:20px;
+            overflow:hidden;
+            box-shadow:0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .header{
+            background:#198754;
+            color:white;
+            text-align:center;
+            padding:15px;
+        }
+
+        .logo{
+            width:70px;
+            margin-bottom:10px;
+        }
+
+        .content{
+            text-align:center;
+            padding:20px;
+        }
+
+        .photo{
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            border:4px solid #198754;
+            object-fit:cover;
+        }
+
+        .name{
+            font-size:24px;
+            font-weight:bold;
+            margin-top:10px;
+        }
+
+        .info{
+            margin:8px;
+            font-size:18px;
+        }
+
+        .qr{
+            width:140px;
+            height:140px;
+            margin-top:15px;
+        }
+
+        .footer{
+            background:#198754;
+            color:white;
+            text-align:center;
+            padding:10px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="card">
+
+    <div class="header">
+
+        <img src="/static/logo.png" class="logo">
+
+        <h2>MY SCHOOL</h2>
+
+        <h4>QR Student ID Card</h4>
+
+    </div>
+
+    <div class="content">
+
+        <img src="/static/logo.png"
+             class="photo">
+
+        <div class="name">
+            {{ student[1] }}
+        </div>
+
+        <hr>
+
+        <div class="info">
+            🆔 ID : {{ student[0] }}
+        </div>
+
+        <div class="info">
+            🎓 Grade : {{ student[3] }}
+        </div>
+
+        <div class="info">
+            🎂 Age : {{ student[2] }}
+        </div>
+
+        <div class="info">
+            💰 Fee : {{ student[4] }}
+        </div>
+
+        <div class="info">
+            ✅ Paid : {{ student[5] }}
+        </div>
+
+        <hr>
+
+        <img src="/static/logo.png"
+             class="qr">
+
+        <p><b>QR CODE</b></p>
+
+    </div>
+
+    <div class="footer">
+
+        School ERP System
+
+    </div>
+
+</div>
+
+</body>
+</html>
