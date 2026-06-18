@@ -321,13 +321,41 @@ def student_menu(id):
         "student_menu.html",
         student=student
     )
+#============ QR PROFESSIONAL ID ===========
+@app.route("/qr_professional_id/<int:id>")
+def qr_professional_id(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
+    student = c.fetchone()
+
+    conn.close()
+
+    if not student:
+        return "Student Not Found"
+
+    return render_template(
+        "qr_professional_id.html",
+        student=student
+    )
+#============ PROFESSIONAL ID =============
 @app.route("/professional_id/<int:id>")
 def professional_id(id):
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
     student = c.fetchone()
 
     conn.close()
@@ -336,38 +364,24 @@ def professional_id(id):
         "professional_id.html",
         student=student
     )
-
-#=========== QR ID ============
+#========== QR ID ============
 @app.route("/qr_id/<int:id>")
 def qr_id(id):
 
     conn = sqlite3.connect("school.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    c.execute(
+        "SELECT * FROM students WHERE id=?",
+        (id,)
+    )
+
     student = c.fetchone()
 
     conn.close()
 
     return render_template(
         "qr_id.html",
-        student=student
-    )
-
-
-@app.route("/qr_professional_id/<int:id>")
-def qr_professional_id(id):
-
-    conn = sqlite3.connect("school.db")
-    c = conn.cursor()
-
-    c.execute("SELECT * FROM students WHERE id=?", (id,))
-    student = c.fetchone()
-
-    conn.close()
-
-    return render_template(
-        "qr_professional_id.html",
         student=student
     )
 #========== STUDENT PROFILE ===============
