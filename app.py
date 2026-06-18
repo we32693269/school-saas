@@ -321,6 +321,55 @@ def student_menu(id):
         "student_menu.html",
         student=student
     )
+@app.route("/professional_id/<int:id>")
+def professional_id(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "professional_id.html",
+        student=student
+    )
+
+#=========== QR ID ============
+@app.route("/qr_id/<int:id>")
+def qr_id(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "qr_id.html",
+        student=student
+    )
+
+
+@app.route("/qr_professional_id/<int:id>")
+def qr_professional_id(id):
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE id=?", (id,))
+    student = c.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "qr_professional_id.html",
+        student=student
+    )
 #========== STUDENT PROFILE ===============
 @app.route('/student/<int:id>')
 def student_profile(id):
