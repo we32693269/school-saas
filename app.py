@@ -285,6 +285,22 @@ School: MY SCHOOL
     pdf.save()
 
     return send_file(file_name, as_attachment=True)
+#============ STUDENT SETTING ==============
+@app.route('/student_settings')
+def student_settings():
+
+    conn = sqlite3.connect("school.db")
+    c = conn.cursor()
+
+    c.execute("SELECT id, name FROM students")
+    students = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "student_settings.html",
+        students=students
+    )
 #========= STUDENT MENU ===========
 @app.route('/student_menu/<int:id>')
 def student_menu(id):
