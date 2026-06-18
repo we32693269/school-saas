@@ -5,6 +5,8 @@ from datetime import datetime
 from reportlab.pdfgen import canvas
 import qrcode
 app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+DB_PATH = os.path.join(BASE_DIR, "school.db")
 app.secret_key = "school_secret_key"
 UPLOAD_FOLDER = os.path.join("static", "uploads")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
