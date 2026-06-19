@@ -1,17 +1,18 @@
 from flask import Flask, render_template, request
 import psycopg2
-DATABASE_URL = "postgresql://postgres:wr32693269@abc@db
-.eeiuppapncwnhwzonakg.supabase.co:5432/postgres"
-def get_db():
-    return psycopg2.connect(DATABASE_URL)
 import os
 from datetime import datetime
 from reportlab.pdfgen import canvas
 import qrcode
+
 app = Flask(__name__)
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DB_PATH = os.path.join(BASE_DIR, "school.db")
 app.secret_key = "school_secret_key"
+
+DATABASE_URL = "postgresql://postgres:wr32693269%40abc@db.eeiuppapncwnhwzonakg.supabase.co:5432/postgres"
+
+def get_db():
+    return psycopg2.connect(DATABASE_URL)
+
 UPLOAD_FOLDER = os.path.join("static", "uploads")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
