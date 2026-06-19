@@ -443,12 +443,12 @@ def dashboard():
 
     search = request.args.get('search', '')
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
 
     if search:
         c.execute(
-            "SELECT * FROM students WHERE name LIKE ?",
+            "SELECT * FROM students WHERE name ILIKE %s",
             ('%' + search + '%',)
         )
     else:
@@ -458,6 +458,7 @@ def dashboard():
 
     c.execute("SELECT COUNT(*) FROM students")
     total_students = c.fetchone()[0]
+
     c.execute("SELECT COUNT(*) FROM students WHERE status='Present'")
     present_students = c.fetchone()[0]
 
@@ -467,26 +468,28 @@ def dashboard():
     c.execute("SELECT COUNT(*) FROM students WHERE status='Late'")
     late_students = c.fetchone()[0]
 
-    c.execute("SELECT SUM(fee) FROM students")
-    total_fee = c.fetchone()[0] or 0
+    c.execute("SELECT COALESCE(SUM(fee),0) FROM students")
+    total_fee = c.fetchone()[0]
 
-    c.execute("SELECT SUM(paid) FROM students")
-    total_paid = c.fetchone()[0] or 0
+    c.execute("SELECT COALESCE(SUM(paid),0) FROM students")
+    total_paid = c.fetchone()[0]
 
     total_balance = total_fee - total_paid
 
+    c.close()
     conn.close()
+
     return render_template(
-    "dashboard.html",
-    students=students,
-    total_students=total_students,
-    total_fee=total_fee,
-    total_paid=total_paid,
-    total_balance=total_balance,
-    present_students=present_students,
-    absent_students=absent_students,
-    late_students=late_students
-)
+        "dashboard.html",
+        students=students,
+        total_students=total_students,
+        total_fee=total_fee,
+        total_paid=total_paid,
+        total_balance=total_balance,
+        present_students=present_students,
+        absent_students=absent_students,
+        late_students=late_students
+    )
 # ================= SETTINGS =================
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
@@ -1148,22 +1151,21 @@ def add_student():
     fee = request.form.get('fee')
     paid = request.form.get('paid')
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
 
     c.execute("""
         INSERT INTO students
         (name, age, grade, fee, paid, status)
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
     """, (name, age, grade, fee, paid, "Not Marked"))
 
     conn.commit()
+
+    c.close()
     conn.close()
 
     return redirect('/dashboard')
-@app.route('/test')
-def test():
-    return "WORKING"
 #============== ATTENDANCE PDF =================
 from flask import send_file
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
