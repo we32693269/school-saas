@@ -1,5 +1,8 @@
-from flask import Flask, render_template, request, redirect, session, send_file
-import sqlite3
+from flask import Flask, render_template, request
+import psycopg2
+DATABASE_URL = "PASTE_YOUR_CONNECTION_STRING_HERE"
+def get_db():
+    return psycopg2.connect(DATABASE_URL)
 import os
 from datetime import datetime
 from reportlab.pdfgen import canvas
