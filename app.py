@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import psycopg2
-DATABASE_URL = "postgresql://postgres:YOUR_PASSWORD@db.eeiuppapncwnhwzonakg.supabase.co:5432/postgres"
+DATABASE_URL = "postgresql://postgres:wr32693269@abc@db
+.eeiuppapncwnhwzonakg.supabase.co:5432/postgres"
 def get_db():
     return psycopg2.connect(DATABASE_URL)
 import os
