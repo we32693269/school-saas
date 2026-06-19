@@ -307,7 +307,7 @@ def student_settings():
 @app.route('/student_menu/<int:id>')
 def student_menu(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute(
@@ -327,7 +327,7 @@ def student_menu(id):
 @app.route("/qr_professional_id/<int:id>")
 def qr_professional_id(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute(
@@ -350,7 +350,7 @@ def qr_professional_id(id):
 @app.route("/professional_id/<int:id>")
 def professional_id(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute(
@@ -370,7 +370,7 @@ def professional_id(id):
 @app.route("/qr_id/<int:id>")
 def qr_id(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute(
@@ -390,7 +390,7 @@ def qr_id(id):
 @app.route('/student/<int:id>')
 def student_profile(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # Student info
@@ -423,7 +423,7 @@ def dashboard():
 
     search = request.args.get('search', '')
 
-    conn = sqlite3.connect('school.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     if search:
@@ -471,7 +471,7 @@ def dashboard():
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -511,7 +511,7 @@ def add_payment(id):
     amount = request.form.get('amount')
     note = request.form.get('note')
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -529,7 +529,7 @@ def report_card(id):
 
     pdf_file = f"report_card_{id}.pdf"
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
@@ -575,7 +575,7 @@ def report_card(id):
 @app.route('/student_exams/<int:id>')
 def student_exams(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # Student info
@@ -622,7 +622,7 @@ def students_pdf():
     c.setFont("Helvetica-Bold", 16)
     c.drawString(200, 800, "Students Report")
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     cur.execute("SELECT * FROM students")
@@ -658,7 +658,7 @@ def students_pdf():
 @app.route('/edit_exam/<int:exam_id>', methods=['GET', 'POST'])
 def edit_exam(exam_id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     if request.method == 'POST':
@@ -737,7 +737,7 @@ def edit_exam(exam_id):
 @app.route('/delete_exam/<int:exam_id>/<int:student_id>')
 def delete_exam(exam_id, student_id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("DELETE FROM exams WHERE id=?", (exam_id,))
@@ -785,7 +785,7 @@ def add_exam(id):
         grade = "F"
         gpa = 0.0
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -812,7 +812,7 @@ def ranking_pdf():
 
     pdf_file = "ranking.pdf"
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -858,7 +858,7 @@ def ranking_pdf():
 @app.route('/ranking')
 def ranking():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # safe query (no crash)
@@ -897,7 +897,7 @@ def teacher_dashboard():
     if session.get('role') != 'teacher':
         return redirect('/login')
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # Teacher info (for demo teacher1)
@@ -931,7 +931,7 @@ def teacher_dashboard():
 @app.route('/teachers')
 def teachers():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM teachers")
@@ -944,7 +944,7 @@ def teachers():
 @app.route('/mark_teacher_attendance/<int:id>/<status>')
 def mark_teacher_attendance(id, status):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # get teacher
@@ -977,7 +977,7 @@ def teachers_pdf():
 
     pdf_file = "teachers_report.pdf"
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM teachers")
@@ -1012,7 +1012,7 @@ def teachers_pdf():
 @app.route('/teacher_attendance_report')
 def teacher_attendance_report():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1035,7 +1035,7 @@ def add_teacher():
     phone = request.form['phone']
     salary = request.form['salary']
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1052,7 +1052,7 @@ def add_teacher():
 @app.route('/edit_teacher/<int:id>', methods=['GET', 'POST'])
 def edit_teacher(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM teachers WHERE id=?", (id,))
@@ -1083,8 +1083,7 @@ def edit_teacher(id):
 #============= DELETE TEACHER ===============
 @app.route('/delete_teacher/<int:id>')
 def delete_teacher(id):
-
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("DELETE FROM teachers WHERE id=?", (id,))
@@ -1100,7 +1099,7 @@ def student_dashboard():
     if session.get('role') != 'student':
         return redirect('/login')
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # ለጊዜው student1 እንደ ተማሪ እንወስዳለን
@@ -1129,7 +1128,7 @@ def add_student():
     fee = request.form.get('fee')
     paid = request.form.get('paid')
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1155,7 +1154,7 @@ import sqlite3
 @app.route('/attendance_pdf')
 def attendance_pdf():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)  
     c = conn.cursor()
 
     c.execute("""
@@ -1202,7 +1201,7 @@ def attendance_pdf():
 @app.route('/mark_attendance/<int:id>/<status>')
 def mark_attendance(id, status):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # Get student
@@ -1237,7 +1236,7 @@ def mark_attendance(id, status):
 @app.route('/attendance')
 def attendance():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1257,7 +1256,7 @@ def attendance():
 @app.route('/present_students')
 def present_students():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1276,7 +1275,7 @@ def present_students():
 @app.route('/absent_students')
 def absent_students():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1295,7 +1294,7 @@ def absent_students():
 @app.route('/late_students')
 def late_students():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1314,7 +1313,7 @@ def receipt_pdf(id):
 
     pdf_file = f"receipt_{id}.pdf"
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
@@ -1340,7 +1339,7 @@ def receipt_pdf(id):
 @app.route('/receipt/<int:id>')
 def receipt(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
@@ -1478,7 +1477,7 @@ def receipt(id):
 @app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
 def edit_student(id):
 
-    conn = sqlite3.connect('school.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
@@ -1517,7 +1516,7 @@ def edit_student(id):
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
 
-    conn = sqlite3.connect('school.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("DELETE FROM students WHERE id=?", (id,))
