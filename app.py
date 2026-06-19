@@ -194,7 +194,7 @@ def login():
 
         conn = sqlite3.connect("school.db")
         c = conn.cursor()
-
+        
         c.execute("""
         SELECT role FROM users
         WHERE username=? AND password=?
