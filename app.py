@@ -15,7 +15,7 @@ if not os.path.isdir(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 # ================= DATABASE =================
 def init_db():
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     # ================= STUDENTS =================
@@ -192,7 +192,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        conn = sqlite3.connect("school.db")
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
         c.execute("""
@@ -230,7 +230,7 @@ def home():
 @app.route('/id_card/<int:id>')
 def id_card(id):
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT * FROM students WHERE id=?", (id,))
@@ -291,7 +291,7 @@ School: MY SCHOOL
 @app.route('/student_settings')
 def student_settings():
 
-    conn = sqlite3.connect("school.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT id, name FROM students")
