@@ -20,7 +20,8 @@ if not os.path.isdir(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 # ================= DATABASE =================
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    
+    conn = get_db()
     c = conn.cursor()
 
     # ================= STUDENTS =================
