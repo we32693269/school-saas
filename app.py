@@ -9,6 +9,9 @@ app = Flask(__name__)
 app.secret_key = "school_secret_key"
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
+
+def get_db():
+    return psycopg2.connect(DATABASE_URL)
 # ================= DATABASE =================
 # init_db()
     
