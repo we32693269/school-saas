@@ -139,7 +139,7 @@ def get_db():
     conn.commit()
     conn.close()
 
-init_db()
+
 #=========== BACKUP =========
 import shutil
 
