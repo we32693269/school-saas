@@ -8,16 +8,7 @@ import qrcode
 app = Flask(__name__)
 app.secret_key = "school_secret_key"
 
-DATABASE_URL = "postgresql://postgres:wr32693269%40abc@db.eeiuppapncwnhwzonakg.supabase.co:5432/postgres"
-
-def get_db():
-    return psycopg2.connect(DATABASE_URL)
-
-UPLOAD_FOLDER = os.path.join("static", "uploads")
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-if not os.path.isdir(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+DATABASE_URL = os.environ.get("DATABASE_URL")
 # ================= DATABASE =================
 def # init_db()
     
