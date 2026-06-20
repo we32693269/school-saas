@@ -138,50 +138,16 @@ def get_db():
 
     conn.commit()
     conn.close()
-
-
-#=========== BACKUP =========
-import shutil
-
 @app.route('/backup')
 def backup():
-
-    backup_file = "school_backup.db"
-
-    shutil.copy(
-        "school.db",
-        backup_file
-    )
-
-    return send_file(
-        backup_file,
-        as_attachment=True
-    )
-#============ RESTORE =============
-from flask import request
-import shutil
-
-@app.route('/restore', methods=['POST'])
-def restore():
-
-    file = request.files['dbfile']
-
-    file.save("restore.db")
-
-    shutil.copy(
-        "restore.db",
-        "school.db"
-    )
-
-    return redirect('/dashboard')
-#========== test db ============
+    return "⚠ Backup should be done in Supabase dashboard (not SQLite)"
 @app.route("/test_db")
 def test_db():
     try:
         conn = get_db()
         c = conn.cursor()
 
-        c.execute("SELECT NOW()")
+        c.execute("SELECT 1")
         result = c.fetchone()
 
         conn.close()
@@ -190,6 +156,7 @@ def test_db():
 
     except Exception as e:
         return f"❌ Error: {e}"
+
 #========= RESTORE PAGE =========
 @app.route('/restore_page')
 def restore_page():
