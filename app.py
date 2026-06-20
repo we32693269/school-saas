@@ -12,11 +12,6 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 def get_db():
     return psycopg2.connect(DATABASE_URL)
-# ================= DATABASE =================
-# init_db()
-    
-    conn = get_db()
-    c = conn.cursor()
 
     # ================= STUDENTS =================
     c.execute("""
