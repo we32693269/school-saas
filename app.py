@@ -187,6 +187,9 @@ def login():
         return "Invalid login"
 
     return render_template('login.html')
+@app.route("/debug")
+def debug():
+    return "APP IS RUNNING"
 #=============== LOGOUT ==================
 @app.route('/logout')
 def logout():
