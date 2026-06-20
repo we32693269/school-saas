@@ -164,37 +164,29 @@ def restore_page():
 #============= login ==============
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        conn = sqlite3.connect(DB_PATH)
+        conn = get_db()
         c = conn.cursor()
-        
-        c.execute("""
-        SELECT role FROM users
-        WHERE username=? AND password=?
-        """, (username, password))
+
+        c.execute(
+            "SELECT * FROM users WHERE username=%s AND password=%s",
+            (username, password)
+        )
 
         user = c.fetchone()
         conn.close()
 
         if user:
+            session['user_id'] = user[0]
+            session['role'] = user[3]
+            return redirect('/dashboard')
 
-            session['role'] = user[0]
+        return "Invalid login"
 
-            if user[0] == "admin":
-                return redirect('/dashboard')
-            elif user[0] == "teacher":
-                return redirect('/teacher_dashboard')
-            else:
-                return redirect('/student_dashboard')
-
-        return "Invalid login ❌"
-
-    return render_template("login.html")
+    return render_template('login.html')
 #=============== LOGOUT ==================
 @app.route('/logout')
 def logout():
