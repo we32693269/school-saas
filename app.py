@@ -10,7 +10,7 @@ app.secret_key = "school_secret_key"
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 # ================= DATABASE =================
-def # init_db()
+# init_db()
     
     conn = get_db()
     c = conn.cursor()
