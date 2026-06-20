@@ -19,7 +19,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.isdir(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 # ================= DATABASE =================
-def init_db():
+def # init_db()
     
     conn = get_db()
     c = conn.cursor()
