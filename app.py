@@ -198,9 +198,6 @@ def logout():
 @app.route('/')
 def home():
     return redirect('/dashboard')
-@app.route('/')
-def home():
-    return redirect('/login')
 #============ ID CARD ==========
 @app.route('/id_card/<int:id>')
 def id_card(id):
