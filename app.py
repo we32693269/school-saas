@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request
-import psycopg2
+from flask import Flask, render_template, request, redirect, session
 import os
 from datetime import datetime
 from reportlab.pdfgen import canvas
@@ -199,6 +198,9 @@ def logout():
 @app.route('/')
 def home():
     return redirect('/dashboard')
+@app.route('/')
+def home():
+    return redirect('/login')
 #============ ID CARD ==========
 @app.route('/id_card/<int:id>')
 def id_card(id):
