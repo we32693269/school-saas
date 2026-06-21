@@ -1,6 +1,0 @@
-flask
-gunicorn
-reportlab
-qrcode[pil]
-Pillow
-psycopg2-binary
